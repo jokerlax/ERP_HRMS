@@ -1,0 +1,29 @@
+pg_ctl -D C:\pgsql\data -l C:\pgsql\postgres.log start
+
+psql -U postgres
+
+
+
+
+
+C:\Users\Arfath.khan>D:\ERP_HRMS\postgresql-18.4-2-windows-x64-binaries\pgsql\bin\pg_ctl.exe -D C:\pgsql\data -l C:\pgsql\postgres.log start
+waiting for server to start.... done
+server started
+
+C:\Users\Arfath.khan>
+C:\Users\Arfath.khan>D:\ERP_HRMS\postgresql-18.4-2-windows-x64-binaries\pgsql\bin\pg_isready.exe -h localhost -p 5432
+localhost:5432 - accepting connections
+
+C:\Users\Arfath.khan>D:\ERP_HRMS\postgresql-18.4-2-windows-x64-binaries\pgsql\bin\createdb.exe -h localhost -p 5432 -U postgres hrms
+
+C:\Users\Arfath.khan>D:\ERP_HRMS\postgresql-18.4-2-windows-x64-binaries\pgsql\bin\psql.exe -h localhost -p 5432 -U postgres -d hrms -f "C:\Users\Arfath.khan\Videos\HRM\hrms_schemas.sql"
+psql: error: C:\Users\Arfath.khan\Videos\HRM\hrms_payroll\hrms_payroll\hrms_schemas.sql
+
+C:\Users\Arfath.khan>
+
+
+
+D:\ERP_HRMS\postgresql-18.4-2-windows-x64-binaries\pgsql\bin\psql.exe -h localhost -p 5432 -U postgres -d hrms -f "C:\Users\Arfath.khan\Videos\HRM\hrms_payroll\hrms_payroll\hrms_schemas.sql"
+
+C:\Users\Arfath.khan>D:\ERP_HRMS\postgresql-18.4-2-windows-x64-binaries\pgsql\bin\psql.exe -h localhost -p 5432 -U postgres -d hrms -f "C:\Users\Arfath.khan\Videos\HRM\hrms_payroll\hrms_payroll\seed.sql"
+BEGIN

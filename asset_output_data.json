@@ -1,0 +1,189 @@
+{
+    "config": {
+        "assets_register": {
+            "group": "Master Data & Setup",
+            "title": "Asset Register",
+            "url": "/assets/register"
+        },
+        "assets_categories": {
+            "group": "Master Data & Setup",
+            "title": "Asset Category Master",
+            "url": "/assets/categories"
+        },
+        "assets_locations": {
+            "group": "Master Data & Setup",
+            "title": "Asset Location Master",
+            "url": "/assets/locations"
+        },
+        "assets_manufacturers": {
+            "group": "Master Data & Setup",
+            "title": "Vendor / Manufacturer Master",
+            "url": "/assets/manufacturers"
+        },
+        "assets_depreciation_methods": {
+            "group": "Master Data & Setup",
+            "title": "Depreciation Method Setup",
+            "url": "/assets/depreciation-methods"
+        },
+        "assets_acquisition": {
+            "group": "Asset Lifecycle",
+            "title": "Asset Acquisition / Capitalization",
+            "url": "/assets/acquisition"
+        },
+        "assets_transfer": {
+            "group": "Asset Lifecycle",
+            "title": "Asset Transfer",
+            "url": "/assets/transfer"
+        },
+        "assets_revaluation": {
+            "group": "Asset Lifecycle",
+            "title": "Asset Revaluation",
+            "url": "/assets/revaluation"
+        },
+        "assets_disposal": {
+            "group": "Asset Lifecycle",
+            "title": "Asset Disposal / Retirement",
+            "url": "/assets/disposal"
+        },
+        "assets_requests": {
+            "group": "Assignment & Requests",
+            "title": "Asset Request List",
+            "url": "/assets/requests"
+        },
+        "assets_check_in_out": {
+            "group": "Assignment & Requests",
+            "title": "Asset Check-In / Check-Out",
+            "url": "/assets/check-in-out"
+        },
+        "assets_assignment_history": {
+            "group": "Assignment & Requests",
+            "title": "Assignment History",
+            "url": "/assets/assignment-history"
+        },
+        "assets_pm_schedule": {
+            "group": "Maintenance",
+            "title": "Preventive Maintenance Schedule",
+            "url": "/assets/maintenance/pm-schedule"
+        },
+        "assets_work_orders": {
+            "group": "Maintenance",
+            "title": "Maintenance Work Order",
+            "url": "/assets/maintenance/work-orders"
+        },
+        "assets_breakdown": {
+            "group": "Maintenance",
+            "title": "Corrective Maintenance / Breakdown",
+            "url": "/assets/maintenance/breakdown"
+        },
+        "assets_history": {
+            "group": "Maintenance",
+            "title": "Maintenance History Log",
+            "url": "/assets/maintenance/history"
+        },
+        "assets_spare_parts": {
+            "group": "Maintenance",
+            "title": "Spare Parts Inventory",
+            "url": "/assets/maintenance/spare-parts"
+        },
+        "assets_depreciation_run": {
+            "group": "Depreciation & Financials",
+            "title": "Depreciation Run / Schedule",
+            "url": "/assets/depreciation-run"
+        },
+        "assets_depreciation_forecast": {
+            "group": "Depreciation & Financials",
+            "title": "Depreciation Forecast",
+            "url": "/assets/depreciation-forecast"
+        },
+        "assets_valuation_report": {
+            "group": "Depreciation & Financials",
+            "title": "Asset Valuation Report",
+            "url": "/assets/valuation-report"
+        },
+        "assets_insurance_warranty": {
+            "group": "Depreciation & Financials",
+            "title": "Insurance & Warranty Tracking",
+            "url": "/assets/insurance-warranty"
+        },
+        "assets_live_tracking": {
+            "group": "Tracking & Inspection",
+            "title": "Asset Tracking (GPS / RFID)",
+            "url": "/assets/live-tracking"
+        },
+        "assets_physical_verification": {
+            "group": "Tracking & Inspection",
+            "title": "Physical Verification / Audit",
+            "url": "/assets/physical-verification"
+        },
+        "assets_condition_inspection": {
+            "group": "Tracking & Inspection",
+            "title": "Condition Inspection",
+            "url": "/assets/condition-inspection"
+        },
+        "assets_tagging": {
+            "group": "Tracking & Inspection",
+            "title": "Asset Tagging / Barcode Generation",
+            "url": "/assets/tagging"
+        },
+        "assets_calibration_schedule": {
+            "group": "Compliance & Docs",
+            "title": "Compliance / Calibration Schedule",
+            "url": "/assets/calibration-schedule"
+        },
+        "assets_documents": {
+            "group": "Compliance & Docs",
+            "title": "Document Repository (Manuals, Certs)",
+            "url": "/assets/documents"
+        },
+        "assets_licenses_permits": {
+            "group": "Compliance & Docs",
+            "title": "License & Permit Tracking",
+            "url": "/assets/licenses-permits"
+        },
+        "assets_leases": {
+            "group": "Leasing",
+            "title": "Lease Asset Management",
+            "url": "/assets/leases"
+        },
+        "assets_lease_vs_buy": {
+            "group": "Leasing",
+            "title": "Lease vs Buy Analysis",
+            "url": "/assets/lease-vs-buy"
+        },
+        "assets_utilization": {
+            "group": "Analytics & Reporting",
+            "title": "Asset Utilization Dashboard",
+            "url": "/assets/utilization"
+        },
+        "assets_tco_report": {
+            "group": "Analytics & Reporting",
+            "title": "Total Cost of Ownership (TCO)",
+            "url": "/assets/tco-report"
+        },
+        "assets_aging_report": {
+            "group": "Analytics & Reporting",
+            "title": "Asset Aging Report",
+            "url": "/assets/aging-report"
+        },
+        "assets_downtime_analysis": {
+            "group": "Analytics & Reporting",
+            "title": "Downtime / Failure Analysis",
+            "url": "/assets/downtime-analysis"
+        },
+        "assets_executive_dashboard": {
+            "group": "Analytics & Reporting",
+            "title": "Executive Asset Dashboard",
+            "url": "/assets/executive-dashboard"
+        },
+        "assets_roles": {
+            "group": "Administration",
+            "title": "Roles & Permissions",
+            "url": "/assets/roles"
+        },
+        "assets_audit_log": {
+            "group": "Administration",
+            "title": "Asset Audit Log",
+            "url": "/assets/audit-log"
+        }
+    }
+}

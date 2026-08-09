@@ -1,0 +1,189 @@
+{
+    "config": {
+        "crm_lead_sources": {
+            "group": "Setup & Master Data",
+            "title": "Lead Source Master",
+            "url": "/crm/lead-sources"
+        },
+        "crm_territories": {
+            "group": "Setup & Master Data",
+            "title": "Sales Territory / Team Master",
+            "url": "/crm/territories"
+        },
+        "crm_price_list": {
+            "group": "Setup & Master Data",
+            "title": "Product / Price List Master",
+            "url": "/crm/price-list"
+        },
+        "crm_pipeline_stages": {
+            "group": "Setup & Master Data",
+            "title": "Pipeline Stage Configuration",
+            "url": "/crm/pipeline-stages"
+        },
+        "crm_leads": {
+            "group": "Lead Management",
+            "title": "Lead List",
+            "url": "/crm/leads"
+        },
+        "crm_leads_new": {
+            "group": "Lead Management",
+            "title": "New Lead Form",
+            "url": "/crm/leads/new"
+        },
+        "crm_lead_detail": {
+            "group": "Lead Management",
+            "title": "Lead Detail / Scoring",
+            "url": "/crm/leads/LD-30291"
+        },
+        "crm_lead_assignment_rules": {
+            "group": "Lead Management",
+            "title": "Lead Assignment Rules",
+            "url": "/crm/lead-assignment-rules"
+        },
+        "crm_contacts": {
+            "group": "Contacts & Accounts",
+            "title": "Contact List",
+            "url": "/crm/contacts"
+        },
+        "crm_account_profile": {
+            "group": "Contacts & Accounts",
+            "title": "Account / Company Profile",
+            "url": "/crm/accounts/ACC-4471"
+        },
+        "crm_contact_detail": {
+            "group": "Contacts & Accounts",
+            "title": "Contact Detail (360\u00b0 View)",
+            "url": "/crm/contacts/CT-9021"
+        },
+        "crm_account_hierarchy": {
+            "group": "Contacts & Accounts",
+            "title": "Account Hierarchy",
+            "url": "/crm/accounts/hierarchy"
+        },
+        "crm_pipeline": {
+            "group": "Opportunity / Deals",
+            "title": "Deal Pipeline (Kanban)",
+            "url": "/crm/pipeline"
+        },
+        "crm_opportunities_new": {
+            "group": "Opportunity / Deals",
+            "title": "New Opportunity Form",
+            "url": "/crm/opportunities/new"
+        },
+        "crm_opportunity_detail": {
+            "group": "Opportunity / Deals",
+            "title": "Opportunity Detail",
+            "url": "/crm/opportunities/OPP-1187"
+        },
+        "crm_quotes_new": {
+            "group": "Opportunity / Deals",
+            "title": "Quote / Proposal Builder",
+            "url": "/crm/quotes/new"
+        },
+        "crm_win_loss_analysis": {
+            "group": "Opportunity / Deals",
+            "title": "Win / Loss Analysis",
+            "url": "/crm/win-loss-analysis"
+        },
+        "crm_activity_timeline": {
+            "group": "Sales Activities",
+            "title": "Activity Timeline",
+            "url": "/crm/activity-timeline"
+        },
+        "crm_tasks": {
+            "group": "Sales Activities",
+            "title": "Task & Follow-Up List",
+            "url": "/crm/tasks"
+        },
+        "crm_call_log": {
+            "group": "Sales Activities",
+            "title": "Call Logging",
+            "url": "/crm/call-log"
+        },
+        "crm_meetings": {
+            "group": "Sales Activities",
+            "title": "Meeting Scheduler / Calendar",
+            "url": "/crm/meetings"
+        },
+        "crm_campaigns": {
+            "group": "Marketing & Campaigns",
+            "title": "Campaign List",
+            "url": "/crm/campaigns"
+        },
+        "crm_campaigns_new": {
+            "group": "Marketing & Campaigns",
+            "title": "Campaign Builder",
+            "url": "/crm/campaigns/new"
+        },
+        "crm_email_composer": {
+            "group": "Marketing & Campaigns",
+            "title": "Email Marketing Composer",
+            "url": "/crm/email-composer"
+        },
+        "crm_campaign_roi": {
+            "group": "Marketing & Campaigns",
+            "title": "Campaign ROI Dashboard",
+            "url": "/crm/campaign-roi"
+        },
+        "crm_customer_cases": {
+            "group": "Customer Service",
+            "title": "Customer Case History",
+            "url": "/crm/accounts/ACC-4471/cases"
+        },
+        "crm_health_score": {
+            "group": "Customer Service",
+            "title": "Customer Health Score",
+            "url": "/crm/accounts/ACC-4471/health-score"
+        },
+        "crm_forecast": {
+            "group": "Sales Forecasting",
+            "title": "Sales Forecast Dashboard",
+            "url": "/crm/forecast"
+        },
+        "crm_quota_management": {
+            "group": "Sales Forecasting",
+            "title": "Quota Management",
+            "url": "/crm/quota-management"
+        },
+        "crm_territory_performance": {
+            "group": "Sales Forecasting",
+            "title": "Territory Performance",
+            "url": "/crm/territory-performance"
+        },
+        "crm_sales_performance": {
+            "group": "Reporting & Analytics",
+            "title": "Sales Performance Dashboard",
+            "url": "/crm/sales-performance"
+        },
+        "crm_conversion_funnel": {
+            "group": "Reporting & Analytics",
+            "title": "Conversion Funnel Report",
+            "url": "/crm/conversion-funnel"
+        },
+        "crm_leaderboard": {
+            "group": "Reporting & Analytics",
+            "title": "Rep Leaderboard",
+            "url": "/crm/leaderboard"
+        },
+        "crm_revenue_analytics": {
+            "group": "Reporting & Analytics",
+            "title": "Revenue Analytics",
+            "url": "/crm/revenue-analytics"
+        },
+        "crm_executive_dashboard": {
+            "group": "Reporting & Analytics",
+            "title": "Executive CRM Dashboard",
+            "url": "/crm/executive-dashboard"
+        },
+        "crm_roles": {
+            "group": "Administration",
+            "title": "Roles & Permissions",
+            "url": "/crm/roles"
+        },
+        "crm_audit_log": {
+            "group": "Administration",
+            "title": "CRM Audit Log",
+            "url": "/crm/audit-log"
+        }
+    }
+}

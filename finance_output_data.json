@@ -1,0 +1,224 @@
+{
+    "config": {
+        "finance_coa": {
+            "group": "Financial Setup",
+            "title": "Chart of Accounts",
+            "url": "/finance/coa"
+        },
+        "finance_fiscal_calendar": {
+            "group": "Financial Setup",
+            "title": "Fiscal Year / Period Calendar",
+            "url": "/finance/fiscal-calendar"
+        },
+        "finance_entities": {
+            "group": "Financial Setup",
+            "title": "Company / Legal Entity Master",
+            "url": "/finance/entities"
+        },
+        "finance_currency_exchange": {
+            "group": "Financial Setup",
+            "title": "Currency & Exchange Rate Master",
+            "url": "/finance/currency-exchange"
+        },
+        "gl_journal_entries": {
+            "group": "General Ledger",
+            "title": "Journal Entry List",
+            "url": "/gl/journal-entries"
+        },
+        "gl_journal_entries_new": {
+            "group": "General Ledger",
+            "title": "New Journal Entry",
+            "url": "/gl/journal-entries/new"
+        },
+        "gl_ledger_inquiry": {
+            "group": "General Ledger",
+            "title": "General Ledger Inquiry",
+            "url": "/gl/ledger-inquiry"
+        },
+        "gl_trial_balance": {
+            "group": "General Ledger",
+            "title": "Trial Balance",
+            "url": "/gl/trial-balance"
+        },
+        "gl_recurring_entries": {
+            "group": "General Ledger",
+            "title": "Recurring Journal Templates",
+            "url": "/gl/recurring-entries"
+        },
+        "ap_invoices": {
+            "group": "Accounts Payable",
+            "title": "Vendor Invoice List (AP)",
+            "url": "/ap/invoices"
+        },
+        "ap_bill_entry": {
+            "group": "Accounts Payable",
+            "title": "Bill / Invoice Entry",
+            "url": "/ap/bill-entry"
+        },
+        "ap_payment_run": {
+            "group": "Accounts Payable",
+            "title": "Payment Run / Batch Payments",
+            "url": "/ap/payment-run"
+        },
+        "ap_aging": {
+            "group": "Accounts Payable",
+            "title": "AP Aging Report",
+            "url": "/ap/aging"
+        },
+        "ap_vendor_statements": {
+            "group": "Accounts Payable",
+            "title": "Vendor Statement / Reconciliation",
+            "url": "/ap/vendor-statements"
+        },
+        "ar_customers": {
+            "group": "Accounts Receivable",
+            "title": "Customer Master",
+            "url": "/ar/customers"
+        },
+        "ar_invoices_new": {
+            "group": "Accounts Receivable",
+            "title": "Sales / Customer Invoice",
+            "url": "/ar/invoices/new"
+        },
+        "ar_receipts": {
+            "group": "Accounts Receivable",
+            "title": "Receive Payment / Cash Application",
+            "url": "/ar/receipts"
+        },
+        "ar_aging": {
+            "group": "Accounts Receivable",
+            "title": "AR Aging Report",
+            "url": "/ar/aging"
+        },
+        "ar_collections": {
+            "group": "Accounts Receivable",
+            "title": "Collections Workbench",
+            "url": "/ar/collections"
+        },
+        "cash_bank_accounts": {
+            "group": "Cash & Banking",
+            "title": "Bank Account Master",
+            "url": "/cash/bank-accounts"
+        },
+        "cash_reconciliation": {
+            "group": "Cash & Banking",
+            "title": "Bank Reconciliation",
+            "url": "/cash/reconciliation"
+        },
+        "cash_flow_forecast": {
+            "group": "Cash & Banking",
+            "title": "Cash Flow Forecast",
+            "url": "/cash/flow-forecast"
+        },
+        "cash_petty_cash": {
+            "group": "Cash & Banking",
+            "title": "Petty Cash Management",
+            "url": "/cash/petty-cash"
+        },
+        "assets_register": {
+            "group": "Fixed Assets",
+            "title": "Fixed Asset Register",
+            "url": "/assets/register"
+        },
+        "assets_new": {
+            "group": "Fixed Assets",
+            "title": "Asset Acquisition / Capitalization",
+            "url": "/assets/new"
+        },
+        "assets_depreciation": {
+            "group": "Fixed Assets",
+            "title": "Depreciation Schedule",
+            "url": "/assets/depreciation"
+        },
+        "assets_disposal": {
+            "group": "Fixed Assets",
+            "title": "Asset Transfer / Disposal",
+            "url": "/assets/disposal"
+        },
+        "tax_codes": {
+            "group": "Tax & Compliance",
+            "title": "Tax Code / Rate Master",
+            "url": "/tax/codes"
+        },
+        "tax_vat_return": {
+            "group": "Tax & Compliance",
+            "title": "VAT / Tax Return Filing",
+            "url": "/tax/vat-return"
+        },
+        "tax_withholding": {
+            "group": "Tax & Compliance",
+            "title": "Withholding Tax Report",
+            "url": "/tax/withholding"
+        },
+        "budget_annual_plan": {
+            "group": "Budgeting & Planning",
+            "title": "Annual Budget Planning",
+            "url": "/budget/annual-plan"
+        },
+        "budget_vs_actual": {
+            "group": "Budgeting & Planning",
+            "title": "Budget vs Actual Dashboard",
+            "url": "/budget/vs-actual"
+        },
+        "budget_forecast": {
+            "group": "Budgeting & Planning",
+            "title": "Rolling Forecast",
+            "url": "/budget/forecast"
+        },
+        "costing_centers": {
+            "group": "Cost Accounting",
+            "title": "Cost Center / Profit Center Master",
+            "url": "/costing/centers"
+        },
+        "costing_allocation": {
+            "group": "Cost Accounting",
+            "title": "Cost Allocation Rules",
+            "url": "/costing/allocation"
+        },
+        "costing_profitability": {
+            "group": "Cost Accounting",
+            "title": "Profitability Analysis",
+            "url": "/costing/profitability"
+        },
+        "reports_income_statement": {
+            "group": "Financial Reporting",
+            "title": "Income Statement (P&L)",
+            "url": "/reports/income-statement"
+        },
+        "reports_balance_sheet": {
+            "group": "Financial Reporting",
+            "title": "Balance Sheet",
+            "url": "/reports/balance-sheet"
+        },
+        "reports_cash_flow_statement": {
+            "group": "Financial Reporting",
+            "title": "Cash Flow Statement",
+            "url": "/reports/cash-flow-statement"
+        },
+        "reports_executive_dashboard": {
+            "group": "Financial Reporting",
+            "title": "Executive Financial Dashboard",
+            "url": "/reports/executive-dashboard"
+        },
+        "close_checklist": {
+            "group": "Period Close & Admin",
+            "title": "Month-End Close Checklist",
+            "url": "/close/checklist"
+        },
+        "finance_approval_matrix": {
+            "group": "Period Close & Admin",
+            "title": "Finance Approval Matrix",
+            "url": "/finance/approval-matrix"
+        },
+        "finance_user_roles": {
+            "group": "Period Close & Admin",
+            "title": "User Roles & Permissions",
+            "url": "/finance/user-roles"
+        },
+        "finance_audit_log": {
+            "group": "Period Close & Admin",
+            "title": "Financial Audit Log",
+            "url": "/finance/audit-log"
+        }
+    }
+}

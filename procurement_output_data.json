@@ -1,0 +1,214 @@
+{
+    "config": {
+        "procurement_vendors": {
+            "group": "Master Data",
+            "title": "Vendor / Supplier Master",
+            "url": "/procurement/vendors"
+        },
+        "vendors_onboarding": {
+            "group": "Master Data",
+            "title": "Vendor Onboarding / KYC",
+            "url": "/vendors/onboarding"
+        },
+        "catalog_items": {
+            "group": "Master Data",
+            "title": "Item / Catalog Master",
+            "url": "/catalog/items"
+        },
+        "budget_cost_centers": {
+            "group": "Master Data",
+            "title": "Cost Center / Budget Master",
+            "url": "/budget/cost-centers"
+        },
+        "settings_approval_matrix": {
+            "group": "Master Data",
+            "title": "Approval Matrix Configuration",
+            "url": "/settings/approval-matrix"
+        },
+        "requisitions": {
+            "group": "Planning & Requisition",
+            "title": "Purchase Requisition (PR) List",
+            "url": "/requisitions"
+        },
+        "requisitions_new": {
+            "group": "Planning & Requisition",
+            "title": "New Requisition",
+            "url": "/requisitions/new"
+        },
+        "planning_mrp": {
+            "group": "Planning & Requisition",
+            "title": "MRP / Reorder Alerts",
+            "url": "/planning/mrp"
+        },
+        "requisitions_budget_check": {
+            "group": "Planning & Requisition",
+            "title": "Budget Availability Check",
+            "url": "/requisitions/budget-check"
+        },
+        "rfq": {
+            "group": "Sourcing",
+            "title": "RFQ List",
+            "url": "/rfq"
+        },
+        "rfq_new": {
+            "group": "Sourcing",
+            "title": "Create RFQ",
+            "url": "/rfq/new"
+        },
+        "rfq_compare": {
+            "group": "Sourcing",
+            "title": "Vendor Quotation Comparison",
+            "url": "/rfq/compare"
+        },
+        "tenders": {
+            "group": "Sourcing",
+            "title": "Tender / Bid Management",
+            "url": "/tenders"
+        },
+        "contracts": {
+            "group": "Contracts",
+            "title": "Contract / Agreement List",
+            "url": "/contracts"
+        },
+        "contracts_detail": {
+            "group": "Contracts",
+            "title": "Contract Detail",
+            "url": "/contracts/CTR-0091"
+        },
+        "contracts_renewals": {
+            "group": "Contracts",
+            "title": "Contract Renewal & Expiry Tracker",
+            "url": "/contracts/renewals"
+        },
+        "po": {
+            "group": "Purchase Orders",
+            "title": "Purchase Order List",
+            "url": "/po"
+        },
+        "po_new": {
+            "group": "Purchase Orders",
+            "title": "New Purchase Order",
+            "url": "/po/new"
+        },
+        "po_detail": {
+            "group": "Purchase Orders",
+            "title": "PO Detail View",
+            "url": "/po/PO-2026-00847"
+        },
+        "po_approval_queue": {
+            "group": "Purchase Orders",
+            "title": "PO Approval Queue",
+            "url": "/po/approval-queue"
+        },
+        "po_blanket": {
+            "group": "Purchase Orders",
+            "title": "Blanket PO / Release Orders",
+            "url": "/po/blanket"
+        },
+        "po_import": {
+            "group": "Purchase Orders",
+            "title": "Import PO (International)",
+            "url": "/po/import"
+        },
+        "grn": {
+            "group": "Receiving",
+            "title": "Goods Receipt (GRN) List",
+            "url": "/grn"
+        },
+        "grn_new": {
+            "group": "Receiving",
+            "title": "New Goods Receipt",
+            "url": "/grn/new"
+        },
+        "grn_qc_inspection": {
+            "group": "Receiving",
+            "title": "Quality Inspection / QC Check",
+            "url": "/grn/qc-inspection"
+        },
+        "grn_return_to_vendor": {
+            "group": "Receiving",
+            "title": "Return to Vendor (Debit Note)",
+            "url": "/grn/return-to-vendor"
+        },
+        "invoices": {
+            "group": "Invoice & Payment",
+            "title": "Vendor Invoice List",
+            "url": "/invoices"
+        },
+        "invoices_3_way_match": {
+            "group": "Invoice & Payment",
+            "title": "3-Way Match (PO\u2013GRN\u2013Invoice)",
+            "url": "/invoices/3-way-match"
+        },
+        "invoices_approval_queue": {
+            "group": "Invoice & Payment",
+            "title": "Invoice Approval Queue",
+            "url": "/invoices/approval-queue"
+        },
+        "payments_schedule": {
+            "group": "Invoice & Payment",
+            "title": "Payment Scheduling",
+            "url": "/payments/schedule"
+        },
+        "vendors_ledger": {
+            "group": "Invoice & Payment",
+            "title": "Vendor Ledger / Statement",
+            "url": "/vendors/V-00412/ledger"
+        },
+        "approvals_inbox": {
+            "group": "Approvals",
+            "title": "My Approvals Inbox",
+            "url": "/approvals/inbox"
+        },
+        "approvals_history": {
+            "group": "Approvals",
+            "title": "Approval History / Audit Trail",
+            "url": "/approvals/history"
+        },
+        "analytics_spend": {
+            "group": "Analytics & Reporting",
+            "title": "Spend Analytics Dashboard",
+            "url": "/analytics/spend"
+        },
+        "analytics_budget_vs_actual": {
+            "group": "Analytics & Reporting",
+            "title": "Budget vs Actual Report",
+            "url": "/analytics/budget-vs-actual"
+        },
+        "analytics_vendor_performance": {
+            "group": "Analytics & Reporting",
+            "title": "Vendor Performance Report",
+            "url": "/analytics/vendor-performance"
+        },
+        "analytics_po_aging": {
+            "group": "Analytics & Reporting",
+            "title": "PO Aging / Overdue Report",
+            "url": "/analytics/po-aging"
+        },
+        "analytics_savings": {
+            "group": "Analytics & Reporting",
+            "title": "Savings / Cost Reduction Report",
+            "url": "/analytics/savings"
+        },
+        "admin_roles": {
+            "group": "Administration",
+            "title": "User Roles & Permissions",
+            "url": "/admin/roles"
+        },
+        "admin_workflow_builder": {
+            "group": "Administration",
+            "title": "Approval Workflow Builder",
+            "url": "/admin/workflow-builder"
+        },
+        "admin_notifications": {
+            "group": "Administration",
+            "title": "Notification / Alert Settings",
+            "url": "/admin/notifications"
+        },
+        "admin_audit_log": {
+            "group": "Administration",
+            "title": "Audit Log",
+            "url": "/admin/audit-log"
+        }
+    }
+}

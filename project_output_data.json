@@ -1,0 +1,199 @@
+{
+    "config": {
+        "projects_master": {
+            "group": "Setup & Master Data",
+            "title": "Project Master List",
+            "url": "/projects"
+        },
+        "projects_templates": {
+            "group": "Setup & Master Data",
+            "title": "Project Templates",
+            "url": "/projects/templates"
+        },
+        "projects_resources_master": {
+            "group": "Setup & Master Data",
+            "title": "Resource / Team Member Master",
+            "url": "/projects/resources-master"
+        },
+        "projects_clients": {
+            "group": "Setup & Master Data",
+            "title": "Client / Stakeholder Master",
+            "url": "/projects/clients"
+        },
+        "projects_charter": {
+            "group": "Project Planning",
+            "title": "Project Charter",
+            "url": "/projects/PRJ-2026-014/charter"
+        },
+        "projects_wbs": {
+            "group": "Project Planning",
+            "title": "Work Breakdown Structure (WBS)",
+            "url": "/projects/PRJ-2026-014/wbs"
+        },
+        "projects_schedule": {
+            "group": "Project Planning",
+            "title": "Gantt / Schedule Planning",
+            "url": "/projects/PRJ-2026-014/schedule"
+        },
+        "projects_milestones": {
+            "group": "Project Planning",
+            "title": "Milestone Planning",
+            "url": "/projects/PRJ-2026-014/milestones"
+        },
+        "projects_dependencies": {
+            "group": "Project Planning",
+            "title": "Dependency Mapping",
+            "url": "/projects/PRJ-2026-014/dependencies"
+        },
+        "projects_kanban": {
+            "group": "Task Management",
+            "title": "Task Board (Kanban)",
+            "url": "/projects/PRJ-2026-014/board"
+        },
+        "projects_tasks_new": {
+            "group": "Task Management",
+            "title": "New Task Form",
+            "url": "/projects/tasks/new"
+        },
+        "projects_task_detail": {
+            "group": "Task Management",
+            "title": "Task Detail View",
+            "url": "/projects/tasks/TSK-4471"
+        },
+        "projects_my_tasks": {
+            "group": "Task Management",
+            "title": "My Tasks (Personal View)",
+            "url": "/my-tasks"
+        },
+        "projects_resource_allocation": {
+            "group": "Resource Management",
+            "title": "Resource Allocation",
+            "url": "/projects/PRJ-2026-014/allocation"
+        },
+        "projects_resource_utilization": {
+            "group": "Resource Management",
+            "title": "Resource Utilization Dashboard",
+            "url": "/projects/resource-utilization"
+        },
+        "projects_capacity_planning": {
+            "group": "Resource Management",
+            "title": "Capacity Planning",
+            "url": "/projects/capacity-planning"
+        },
+        "projects_timesheets": {
+            "group": "Resource Management",
+            "title": "Timesheet Entry",
+            "url": "/projects/timesheets"
+        },
+        "projects_budget": {
+            "group": "Budget & Cost",
+            "title": "Project Budget",
+            "url": "/projects/PRJ-2026-014/budget"
+        },
+        "projects_cost_tracking": {
+            "group": "Budget & Cost",
+            "title": "Cost Tracking / Actuals",
+            "url": "/projects/cost-tracking"
+        },
+        "projects_change_orders": {
+            "group": "Budget & Cost",
+            "title": "Change Order Management",
+            "url": "/projects/change-orders"
+        },
+        "projects_billing": {
+            "group": "Budget & Cost",
+            "title": "Project Billing / Invoicing",
+            "url": "/projects/billing"
+        },
+        "projects_discussions": {
+            "group": "Collaboration",
+            "title": "Project Discussion / Comments",
+            "url": "/projects/PRJ-2026-014/discussion"
+        },
+        "projects_documents": {
+            "group": "Collaboration",
+            "title": "File / Document Repository",
+            "url": "/projects/PRJ-2026-014/documents"
+        },
+        "projects_meeting_notes": {
+            "group": "Collaboration",
+            "title": "Meeting Notes / Action Log",
+            "url": "/projects/PRJ-2026-014/meeting-notes"
+        },
+        "projects_risk_register": {
+            "group": "Risk & Issues",
+            "title": "Risk Register",
+            "url": "/projects/risk-register"
+        },
+        "projects_issues": {
+            "group": "Risk & Issues",
+            "title": "Issue Tracker",
+            "url": "/projects/issues"
+        },
+        "projects_action_items": {
+            "group": "Risk & Issues",
+            "title": "Action Items List",
+            "url": "/projects/action-items"
+        },
+        "projects_purchase_requests": {
+            "group": "Project Procurement",
+            "title": "Project Purchase Requests",
+            "url": "/projects/purchase-requests"
+        },
+        "projects_contracts": {
+            "group": "Project Procurement",
+            "title": "Subcontractor / Vendor Contracts",
+            "url": "/projects/contracts"
+        },
+        "portfolio_dashboard": {
+            "group": "Portfolio Management",
+            "title": "Project Portfolio Dashboard",
+            "url": "/portfolio/dashboard"
+        },
+        "portfolio_programs": {
+            "group": "Portfolio Management",
+            "title": "Program / Portfolio View",
+            "url": "/portfolio/programs"
+        },
+        "portfolio_prioritization": {
+            "group": "Portfolio Management",
+            "title": "Project Prioritization Matrix",
+            "url": "/portfolio/prioritization"
+        },
+        "projects_status_report": {
+            "group": "Reporting & Analytics",
+            "title": "Project Status Report",
+            "url": "/projects/PRJ-2026-014/status-report"
+        },
+        "projects_evm": {
+            "group": "Reporting & Analytics",
+            "title": "Earned Value Management (EVM)",
+            "url": "/projects/evm"
+        },
+        "projects_time_cost_variance": {
+            "group": "Reporting & Analytics",
+            "title": "Time & Cost Variance Report",
+            "url": "/projects/time-cost-variance"
+        },
+        "projects_resource_utilization_report": {
+            "group": "Reporting & Analytics",
+            "title": "Resource Utilization Report",
+            "url": "/projects/resource-utilization-report"
+        },
+        "projects_executive_dashboard": {
+            "group": "Reporting & Analytics",
+            "title": "Executive Portfolio Dashboard",
+            "url": "/projects/executive-dashboard"
+        },
+        "projects_roles": {
+            "group": "Administration",
+            "title": "Roles & Permissions",
+            "url": "/projects/roles"
+        },
+        "projects_audit_log": {
+            "group": "Administration",
+            "title": "Project Audit Log",
+            "url": "/projects/audit-log"
+        }
+    }
+}

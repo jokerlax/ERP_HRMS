@@ -1,0 +1,224 @@
+{
+    "config": {
+        "inventory_items": {
+            "group": "Master Data",
+            "title": "Item / Product Master",
+            "url": "/inventory/items"
+        },
+        "inventory_warehouses": {
+            "group": "Master Data",
+            "title": "Warehouse / Location Master",
+            "url": "/inventory/warehouses"
+        },
+        "inventory_bin_setup": {
+            "group": "Master Data",
+            "title": "Bin / Rack Location Setup",
+            "url": "/inventory/bin-setup"
+        },
+        "inventory_uom": {
+            "group": "Master Data",
+            "title": "UOM & Packaging Master",
+            "url": "/inventory/uom"
+        },
+        "inventory_categories": {
+            "group": "Master Data",
+            "title": "Item Categories & Attributes",
+            "url": "/inventory/categories"
+        },
+        "inventory_dashboard": {
+            "group": "Stock Overview",
+            "title": "Inventory Dashboard",
+            "url": "/inventory/dashboard"
+        },
+        "inventory_stock_balance": {
+            "group": "Stock Overview",
+            "title": "Stock Balance / On-Hand Inquiry",
+            "url": "/inventory/stock-balance"
+        },
+        "inventory_item_ledger": {
+            "group": "Stock Overview",
+            "title": "Item Ledger / Transaction History",
+            "url": "/inventory/item-ledger"
+        },
+        "inventory_grn": {
+            "group": "Receiving & Put-away",
+            "title": "Goods Receipt (GRN)",
+            "url": "/inventory/grn"
+        },
+        "inventory_putaway_tasks": {
+            "group": "Receiving & Put-away",
+            "title": "Put-away Task List",
+            "url": "/inventory/putaway-tasks"
+        },
+        "inventory_qc_inspection": {
+            "group": "Receiving & Put-away",
+            "title": "Inbound Quality Inspection",
+            "url": "/inventory/qc-inspection"
+        },
+        "inventory_dock_schedule": {
+            "group": "Receiving & Put-away",
+            "title": "Receiving Dock Schedule",
+            "url": "/inventory/dock-schedule"
+        },
+        "inventory_picking": {
+            "group": "Picking & Shipping",
+            "title": "Sales Order Picking",
+            "url": "/inventory/picking"
+        },
+        "inventory_wave_planning": {
+            "group": "Picking & Shipping",
+            "title": "Pick List / Wave Planning",
+            "url": "/inventory/wave-planning"
+        },
+        "inventory_packing_station": {
+            "group": "Picking & Shipping",
+            "title": "Packing Station",
+            "url": "/inventory/packing-station"
+        },
+        "inventory_dispatch": {
+            "group": "Picking & Shipping",
+            "title": "Shipping / Dispatch",
+            "url": "/inventory/dispatch"
+        },
+        "inventory_warehouse_map": {
+            "group": "Warehouse Operations",
+            "title": "Warehouse Layout / Bin Map",
+            "url": "/inventory/warehouse-map"
+        },
+        "inventory_putaway_rules": {
+            "group": "Warehouse Operations",
+            "title": "Put-away Rules Configuration",
+            "url": "/inventory/putaway-rules"
+        },
+        "inventory_pick_path": {
+            "group": "Warehouse Operations",
+            "title": "Pick Path Optimization",
+            "url": "/inventory/pick-path"
+        },
+        "inventory_task_board": {
+            "group": "Warehouse Operations",
+            "title": "Warehouse Task Board",
+            "url": "/inventory/task-board"
+        },
+        "inventory_transfers": {
+            "group": "Stock Transfers",
+            "title": "Inter-Warehouse Transfer",
+            "url": "/inventory/transfers"
+        },
+        "inventory_transfers_new": {
+            "group": "Stock Transfers",
+            "title": "Transfer Request / Approval",
+            "url": "/inventory/transfers/new"
+        },
+        "inventory_transfers_in_transit": {
+            "group": "Stock Transfers",
+            "title": "In-Transit Tracking",
+            "url": "/inventory/transfers/in-transit"
+        },
+        "inventory_adjustments": {
+            "group": "Adjustments & Counting",
+            "title": "Stock Adjustment Entry",
+            "url": "/inventory/adjustments"
+        },
+        "inventory_cycle_count_schedule": {
+            "group": "Adjustments & Counting",
+            "title": "Cycle Count Schedule",
+            "url": "/inventory/cycle-count-schedule"
+        },
+        "inventory_physical_count": {
+            "group": "Adjustments & Counting",
+            "title": "Physical Inventory Count",
+            "url": "/inventory/physical-count"
+        },
+        "inventory_count_variance": {
+            "group": "Adjustments & Counting",
+            "title": "Count Variance Report",
+            "url": "/inventory/count-variance"
+        },
+        "inventory_valuation": {
+            "group": "Valuation & Costing",
+            "title": "Inventory Valuation Report",
+            "url": "/inventory/valuation"
+        },
+        "inventory_landed_cost": {
+            "group": "Valuation & Costing",
+            "title": "Landed Cost Allocation",
+            "url": "/inventory/landed-cost"
+        },
+        "inventory_revaluation": {
+            "group": "Valuation & Costing",
+            "title": "Cost Revaluation",
+            "url": "/inventory/revaluation"
+        },
+        "inventory_batch_tracking": {
+            "group": "Batch & Serial Tracking",
+            "title": "Batch / Lot Tracking",
+            "url": "/inventory/batch-tracking"
+        },
+        "inventory_serial_tracking": {
+            "group": "Batch & Serial Tracking",
+            "title": "Serial Number Tracking",
+            "url": "/inventory/serial-tracking"
+        },
+        "inventory_expiry_monitor": {
+            "group": "Batch & Serial Tracking",
+            "title": "Expiry / Shelf-Life Monitor",
+            "url": "/inventory/expiry-monitor"
+        },
+        "inventory_reorder_dashboard": {
+            "group": "Replenishment & Planning",
+            "title": "Reorder Point / Min-Max Dashboard",
+            "url": "/inventory/reorder-dashboard"
+        },
+        "inventory_demand_forecast": {
+            "group": "Replenishment & Planning",
+            "title": "Demand Forecast",
+            "url": "/inventory/demand-forecast"
+        },
+        "inventory_replenishment_suggestions": {
+            "group": "Replenishment & Planning",
+            "title": "Replenishment Suggestions",
+            "url": "/inventory/replenishment-suggestions"
+        },
+        "inventory_returns_customer": {
+            "group": "Returns & Reverse Logistics",
+            "title": "Customer Return (RMA)",
+            "url": "/inventory/returns/customer"
+        },
+        "inventory_returns_vendor": {
+            "group": "Returns & Reverse Logistics",
+            "title": "Vendor Return / Debit Note",
+            "url": "/inventory/returns/vendor"
+        },
+        "inventory_aging_report": {
+            "group": "Analytics & Reporting",
+            "title": "Inventory Aging Report",
+            "url": "/inventory/aging-report"
+        },
+        "inventory_abc_analysis": {
+            "group": "Analytics & Reporting",
+            "title": "ABC Analysis",
+            "url": "/inventory/abc-analysis"
+        },
+        "inventory_turnover": {
+            "group": "Analytics & Reporting",
+            "title": "Stock Turnover Dashboard",
+            "url": "/inventory/turnover"
+        },
+        "inventory_dead_stock": {
+            "group": "Analytics & Reporting",
+            "title": "Slow-Moving / Dead Stock Report",
+            "url": "/inventory/dead-stock"
+        },
+        "inventory_roles": {
+            "group": "Administration",
+            "title": "Inventory Roles & Permissions",
+            "url": "/inventory/roles"
+        },
+        "inventory_audit_log": {
+            "group": "Administration",
+            "title": "Inventory Audit Log",
+            "url": "/inventory/audit-log"
+        }
+    }
+}

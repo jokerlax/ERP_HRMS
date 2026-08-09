@@ -1,0 +1,599 @@
+{
+    "config": {
+        "pp_production_planning_dashboard": {
+            "group": "Production Planning",
+            "title": "Production Planning Dashboard",
+            "url": "/mfg/pp/production-planning-dashboard"
+        },
+        "pp_production_plan": {
+            "group": "Production Planning",
+            "title": "Production Plan",
+            "url": "/mfg/pp/production-plan"
+        },
+        "pp_master_production_schedule_mps": {
+            "group": "Production Planning",
+            "title": "Master Production Schedule (MPS)",
+            "url": "/mfg/pp/master-production-schedule-mps"
+        },
+        "pp_material_requirement_planning_mrp": {
+            "group": "Production Planning",
+            "title": "Material Requirement Planning (MRP)",
+            "url": "/mfg/pp/material-requirement-planning-mrp"
+        },
+        "pp_capacity_planning": {
+            "group": "Production Planning",
+            "title": "Capacity Planning",
+            "url": "/mfg/pp/capacity-planning"
+        },
+        "pp_demand_forecast": {
+            "group": "Production Planning",
+            "title": "Demand Forecast",
+            "url": "/mfg/pp/demand-forecast"
+        },
+        "pp_production_calendar": {
+            "group": "Production Planning",
+            "title": "Production Calendar",
+            "url": "/mfg/pp/production-calendar"
+        },
+        "pp_resource_planning": {
+            "group": "Production Planning",
+            "title": "Resource Planning",
+            "url": "/mfg/pp/resource-planning"
+        },
+        "pp_shift_planning": {
+            "group": "Production Planning",
+            "title": "Shift Planning",
+            "url": "/mfg/pp/shift-planning"
+        },
+        "pp_production_plan_approval": {
+            "group": "Production Planning",
+            "title": "Production Plan Approval",
+            "url": "/mfg/pp/production-plan-approval"
+        },
+        "pp_production_plan_reports": {
+            "group": "Production Planning",
+            "title": "Production Plan Reports",
+            "url": "/mfg/pp/production-plan-reports"
+        },
+        "wo_work_order_dashboard": {
+            "group": "Work Orders",
+            "title": "Work Order Dashboard",
+            "url": "/mfg/wo/work-order-dashboard"
+        },
+        "wo_work_order_list": {
+            "group": "Work Orders",
+            "title": "Work Order List",
+            "url": "/mfg/wo/work-order-list"
+        },
+        "wo_create_work_order": {
+            "group": "Work Orders",
+            "title": "Create Work Order",
+            "url": "/mfg/wo/create-work-order"
+        },
+        "wo_edit_work_order": {
+            "group": "Work Orders",
+            "title": "Edit Work Order",
+            "url": "/mfg/wo/edit-work-order"
+        },
+        "wo_work_order_details": {
+            "group": "Work Orders",
+            "title": "Work Order Details",
+            "url": "/mfg/wo/work-order-details"
+        },
+        "wo_release_work_order": {
+            "group": "Work Orders",
+            "title": "Release Work Order",
+            "url": "/mfg/wo/release-work-order"
+        },
+        "wo_work_order_tracking": {
+            "group": "Work Orders",
+            "title": "Work Order Tracking",
+            "url": "/mfg/wo/work-order-tracking"
+        },
+        "wo_work_order_closure": {
+            "group": "Work Orders",
+            "title": "Work Order Closure",
+            "url": "/mfg/wo/work-order-closure"
+        },
+        "wo_work_order_history": {
+            "group": "Work Orders",
+            "title": "Work Order History",
+            "url": "/mfg/wo/work-order-history"
+        },
+        "wo_work_order_reports": {
+            "group": "Work Orders",
+            "title": "Work Order Reports",
+            "url": "/mfg/wo/work-order-reports"
+        },
+        "sfe_shop_floor_dashboard": {
+            "group": "Shop Floor Execution",
+            "title": "Shop Floor Dashboard",
+            "url": "/mfg/sfe/shop-floor-dashboard"
+        },
+        "sfe_production_monitoring": {
+            "group": "Shop Floor Execution",
+            "title": "Production Monitoring",
+            "url": "/mfg/sfe/production-monitoring"
+        },
+        "sfe_operator_dashboard": {
+            "group": "Shop Floor Execution",
+            "title": "Operator Dashboard",
+            "url": "/mfg/sfe/operator-dashboard"
+        },
+        "sfe_machine_status": {
+            "group": "Shop Floor Execution",
+            "title": "Machine Status",
+            "url": "/mfg/sfe/machine-status"
+        },
+        "sfe_job_assignment": {
+            "group": "Shop Floor Execution",
+            "title": "Job Assignment",
+            "url": "/mfg/sfe/job-assignment"
+        },
+        "sfe_production_entry": {
+            "group": "Shop Floor Execution",
+            "title": "Production Entry",
+            "url": "/mfg/sfe/production-entry"
+        },
+        "sfe_downtime_recording": {
+            "group": "Shop Floor Execution",
+            "title": "Downtime Recording",
+            "url": "/mfg/sfe/downtime-recording"
+        },
+        "sfe_labor_time_entry": {
+            "group": "Shop Floor Execution",
+            "title": "Labor Time Entry",
+            "url": "/mfg/sfe/labor-time-entry"
+        },
+        "sfe_shift_monitoring": {
+            "group": "Shop Floor Execution",
+            "title": "Shift Monitoring",
+            "url": "/mfg/sfe/shift-monitoring"
+        },
+        "sfe_wip_tracking": {
+            "group": "Shop Floor Execution",
+            "title": "WIP Tracking",
+            "url": "/mfg/sfe/wip-tracking"
+        },
+        "sfe_production_completion": {
+            "group": "Shop Floor Execution",
+            "title": "Production Completion",
+            "url": "/mfg/sfe/production-completion"
+        },
+        "sfe_shop_floor_reports": {
+            "group": "Shop Floor Execution",
+            "title": "Shop Floor Reports",
+            "url": "/mfg/sfe/shop-floor-reports"
+        },
+        "mm_material_dashboard": {
+            "group": "Material Management",
+            "title": "Material Dashboard",
+            "url": "/mfg/mm/material-dashboard"
+        },
+        "mm_item_master": {
+            "group": "Material Management",
+            "title": "Item Master",
+            "url": "/mfg/mm/item-master"
+        },
+        "mm_warehouse_master": {
+            "group": "Material Management",
+            "title": "Warehouse Master",
+            "url": "/mfg/mm/warehouse-master"
+        },
+        "mm_bin_location_master": {
+            "group": "Material Management",
+            "title": "Bin Location Master",
+            "url": "/mfg/mm/bin-location-master"
+        },
+        "mm_material_request": {
+            "group": "Material Management",
+            "title": "Material Request",
+            "url": "/mfg/mm/material-request"
+        },
+        "mm_material_issue": {
+            "group": "Material Management",
+            "title": "Material Issue",
+            "url": "/mfg/mm/material-issue"
+        },
+        "mm_material_receipt": {
+            "group": "Material Management",
+            "title": "Material Receipt",
+            "url": "/mfg/mm/material-receipt"
+        },
+        "mm_material_transfer": {
+            "group": "Material Management",
+            "title": "Material Transfer",
+            "url": "/mfg/mm/material-transfer"
+        },
+        "mm_inventory_adjustment": {
+            "group": "Material Management",
+            "title": "Inventory Adjustment",
+            "url": "/mfg/mm/inventory-adjustment"
+        },
+        "mm_stock_availability": {
+            "group": "Material Management",
+            "title": "Stock Availability",
+            "url": "/mfg/mm/stock-availability"
+        },
+        "mm_batch_management": {
+            "group": "Material Management",
+            "title": "Batch Management",
+            "url": "/mfg/mm/batch-management"
+        },
+        "mm_serial_number_tracking": {
+            "group": "Material Management",
+            "title": "Serial Number Tracking",
+            "url": "/mfg/mm/serial-number-tracking"
+        },
+        "mm_cycle_count": {
+            "group": "Material Management",
+            "title": "Cycle Count",
+            "url": "/mfg/mm/cycle-count"
+        },
+        "mm_physical_inventory": {
+            "group": "Material Management",
+            "title": "Physical Inventory",
+            "url": "/mfg/mm/physical-inventory"
+        },
+        "mm_inventory_reports": {
+            "group": "Material Management",
+            "title": "Inventory Reports",
+            "url": "/mfg/mm/inventory-reports"
+        },
+        "qm_quality_dashboard": {
+            "group": "Quality Management",
+            "title": "Quality Dashboard",
+            "url": "/mfg/qm/quality-dashboard"
+        },
+        "qm_inspection_plan": {
+            "group": "Quality Management",
+            "title": "Inspection Plan",
+            "url": "/mfg/qm/inspection-plan"
+        },
+        "qm_inspection_lot": {
+            "group": "Quality Management",
+            "title": "Inspection Lot",
+            "url": "/mfg/qm/inspection-lot"
+        },
+        "qm_incoming_quality_inspection": {
+            "group": "Quality Management",
+            "title": "Incoming Quality Inspection",
+            "url": "/mfg/qm/incoming-quality-inspection"
+        },
+        "qm_in_process_inspection": {
+            "group": "Quality Management",
+            "title": "In-Process Inspection",
+            "url": "/mfg/qm/in-process-inspection"
+        },
+        "qm_final_inspection": {
+            "group": "Quality Management",
+            "title": "Final Inspection",
+            "url": "/mfg/qm/final-inspection"
+        },
+        "qm_non_conformance_report_ncr": {
+            "group": "Quality Management",
+            "title": "Non-Conformance Report (NCR)",
+            "url": "/mfg/qm/non-conformance-report-ncr"
+        },
+        "qm_capa": {
+            "group": "Quality Management",
+            "title": "CAPA",
+            "url": "/mfg/qm/capa"
+        },
+        "qm_defect_recording": {
+            "group": "Quality Management",
+            "title": "Defect Recording",
+            "url": "/mfg/qm/defect-recording"
+        },
+        "qm_quality_certificates": {
+            "group": "Quality Management",
+            "title": "Quality Certificates",
+            "url": "/mfg/qm/quality-certificates"
+        },
+        "qm_quality_reports": {
+            "group": "Quality Management",
+            "title": "Quality Reports",
+            "url": "/mfg/qm/quality-reports"
+        },
+        "mnt_maintenance_dashboard": {
+            "group": "Maintenance",
+            "title": "Maintenance Dashboard",
+            "url": "/mfg/mnt/maintenance-dashboard"
+        },
+        "mnt_asset_master": {
+            "group": "Maintenance",
+            "title": "Asset Master",
+            "url": "/mfg/mnt/asset-master"
+        },
+        "mnt_equipment_master": {
+            "group": "Maintenance",
+            "title": "Equipment Master",
+            "url": "/mfg/mnt/equipment-master"
+        },
+        "mnt_preventive_maintenance": {
+            "group": "Maintenance",
+            "title": "Preventive Maintenance",
+            "url": "/mfg/mnt/preventive-maintenance"
+        },
+        "mnt_breakdown_maintenance": {
+            "group": "Maintenance",
+            "title": "Breakdown Maintenance",
+            "url": "/mfg/mnt/breakdown-maintenance"
+        },
+        "mnt_maintenance_work_orders": {
+            "group": "Maintenance",
+            "title": "Maintenance Work Orders",
+            "url": "/mfg/mnt/maintenance-work-orders"
+        },
+        "mnt_maintenance_schedule": {
+            "group": "Maintenance",
+            "title": "Maintenance Schedule",
+            "url": "/mfg/mnt/maintenance-schedule"
+        },
+        "mnt_spare_parts_management": {
+            "group": "Maintenance",
+            "title": "Spare Parts Management",
+            "url": "/mfg/mnt/spare-parts-management"
+        },
+        "mnt_technician_assignment": {
+            "group": "Maintenance",
+            "title": "Technician Assignment",
+            "url": "/mfg/mnt/technician-assignment"
+        },
+        "mnt_maintenance_history": {
+            "group": "Maintenance",
+            "title": "Maintenance History",
+            "url": "/mfg/mnt/maintenance-history"
+        },
+        "mnt_calibration_schedule": {
+            "group": "Maintenance",
+            "title": "Calibration Schedule",
+            "url": "/mfg/mnt/calibration-schedule"
+        },
+        "mnt_maintenance_reports": {
+            "group": "Maintenance",
+            "title": "Maintenance Reports",
+            "url": "/mfg/mnt/maintenance-reports"
+        },
+        "sub_subcontract_dashboard": {
+            "group": "Subcontracting",
+            "title": "Subcontract Dashboard",
+            "url": "/mfg/sub/subcontract-dashboard"
+        },
+        "sub_vendor_assignment": {
+            "group": "Subcontracting",
+            "title": "Vendor Assignment",
+            "url": "/mfg/sub/vendor-assignment"
+        },
+        "sub_subcontract_order": {
+            "group": "Subcontracting",
+            "title": "Subcontract Order",
+            "url": "/mfg/sub/subcontract-order"
+        },
+        "sub_material_issue_to_vendor": {
+            "group": "Subcontracting",
+            "title": "Material Issue to Vendor",
+            "url": "/mfg/sub/material-issue-to-vendor"
+        },
+        "sub_material_receipt_from_vendor": {
+            "group": "Subcontracting",
+            "title": "Material Receipt from Vendor",
+            "url": "/mfg/sub/material-receipt-from-vendor"
+        },
+        "sub_vendor_performance": {
+            "group": "Subcontracting",
+            "title": "Vendor Performance",
+            "url": "/mfg/sub/vendor-performance"
+        },
+        "sub_job_tracking": {
+            "group": "Subcontracting",
+            "title": "Job Tracking",
+            "url": "/mfg/sub/job-tracking"
+        },
+        "sub_cost_analysis": {
+            "group": "Subcontracting",
+            "title": "Cost Analysis",
+            "url": "/mfg/sub/cost-analysis"
+        },
+        "sub_subcontract_reports": {
+            "group": "Subcontracting",
+            "title": "Subcontract Reports",
+            "url": "/mfg/sub/subcontract-reports"
+        },
+        "pc_costing_dashboard": {
+            "group": "Production Costing",
+            "title": "Costing Dashboard",
+            "url": "/mfg/pc/costing-dashboard"
+        },
+        "pc_bom_costing": {
+            "group": "Production Costing",
+            "title": "BOM Costing",
+            "url": "/mfg/pc/bom-costing"
+        },
+        "pc_routing_cost": {
+            "group": "Production Costing",
+            "title": "Routing Cost",
+            "url": "/mfg/pc/routing-cost"
+        },
+        "pc_standard_cost": {
+            "group": "Production Costing",
+            "title": "Standard Cost",
+            "url": "/mfg/pc/standard-cost"
+        },
+        "pc_actual_cost": {
+            "group": "Production Costing",
+            "title": "Actual Cost",
+            "url": "/mfg/pc/actual-cost"
+        },
+        "pc_variance_analysis": {
+            "group": "Production Costing",
+            "title": "Variance Analysis",
+            "url": "/mfg/pc/variance-analysis"
+        },
+        "pc_labor_cost": {
+            "group": "Production Costing",
+            "title": "Labor Cost",
+            "url": "/mfg/pc/labor-cost"
+        },
+        "pc_machine_cost": {
+            "group": "Production Costing",
+            "title": "Machine Cost",
+            "url": "/mfg/pc/machine-cost"
+        },
+        "pc_overhead_cost": {
+            "group": "Production Costing",
+            "title": "Overhead Cost",
+            "url": "/mfg/pc/overhead-cost"
+        },
+        "pc_cost_rollup": {
+            "group": "Production Costing",
+            "title": "Cost Rollup",
+            "url": "/mfg/pc/cost-rollup"
+        },
+        "pc_cost_reports": {
+            "group": "Production Costing",
+            "title": "Cost Reports",
+            "url": "/mfg/pc/cost-reports"
+        },
+        "ar_executive_dashboard": {
+            "group": "Analytics & Reporting",
+            "title": "Executive Dashboard",
+            "url": "/mfg/ar/executive-dashboard"
+        },
+        "ar_production_kpi_dashboard": {
+            "group": "Analytics & Reporting",
+            "title": "Production KPI Dashboard",
+            "url": "/mfg/ar/production-kpi-dashboard"
+        },
+        "ar_inventory_dashboard": {
+            "group": "Analytics & Reporting",
+            "title": "Inventory Dashboard",
+            "url": "/mfg/ar/inventory-dashboard"
+        },
+        "ar_oee_dashboard": {
+            "group": "Analytics & Reporting",
+            "title": "OEE Dashboard",
+            "url": "/mfg/ar/oee-dashboard"
+        },
+        "ar_quality_dashboard": {
+            "group": "Analytics & Reporting",
+            "title": "Quality Dashboard",
+            "url": "/mfg/ar/quality-dashboard"
+        },
+        "ar_maintenance_dashboard": {
+            "group": "Analytics & Reporting",
+            "title": "Maintenance Dashboard",
+            "url": "/mfg/ar/maintenance-dashboard"
+        },
+        "ar_cost_dashboard": {
+            "group": "Analytics & Reporting",
+            "title": "Cost Dashboard",
+            "url": "/mfg/ar/cost-dashboard"
+        },
+        "ar_custom_reports": {
+            "group": "Analytics & Reporting",
+            "title": "Custom Reports",
+            "url": "/mfg/ar/custom-reports"
+        },
+        "ar_scheduled_reports": {
+            "group": "Analytics & Reporting",
+            "title": "Scheduled Reports",
+            "url": "/mfg/ar/scheduled-reports"
+        },
+        "ar_export_center": {
+            "group": "Analytics & Reporting",
+            "title": "Export Center",
+            "url": "/mfg/ar/export-center"
+        },
+        "admin_user_management": {
+            "group": "Administration",
+            "title": "User Management",
+            "url": "/mfg/admin/user-management"
+        },
+        "admin_role_management": {
+            "group": "Administration",
+            "title": "Role Management",
+            "url": "/mfg/admin/role-management"
+        },
+        "admin_permission_management": {
+            "group": "Administration",
+            "title": "Permission Management",
+            "url": "/mfg/admin/permission-management"
+        },
+        "admin_company_setup": {
+            "group": "Administration",
+            "title": "Company Setup",
+            "url": "/mfg/admin/company-setup"
+        },
+        "admin_plant_setup": {
+            "group": "Administration",
+            "title": "Plant Setup",
+            "url": "/mfg/admin/plant-setup"
+        },
+        "admin_department_master": {
+            "group": "Administration",
+            "title": "Department Master",
+            "url": "/mfg/admin/department-master"
+        },
+        "admin_work_center_master": {
+            "group": "Administration",
+            "title": "Work Center Master",
+            "url": "/mfg/admin/work-center-master"
+        },
+        "admin_machine_master": {
+            "group": "Administration",
+            "title": "Machine Master",
+            "url": "/mfg/admin/machine-master"
+        },
+        "admin_shift_master": {
+            "group": "Administration",
+            "title": "Shift Master",
+            "url": "/mfg/admin/shift-master"
+        },
+        "admin_calendar_master": {
+            "group": "Administration",
+            "title": "Calendar Master",
+            "url": "/mfg/admin/calendar-master"
+        },
+        "admin_number_series": {
+            "group": "Administration",
+            "title": "Number Series",
+            "url": "/mfg/admin/number-series"
+        },
+        "admin_workflow_setup": {
+            "group": "Administration",
+            "title": "Workflow Setup",
+            "url": "/mfg/admin/workflow-setup"
+        },
+        "admin_approval_setup": {
+            "group": "Administration",
+            "title": "Approval Setup",
+            "url": "/mfg/admin/approval-setup"
+        },
+        "admin_notification_setup": {
+            "group": "Administration",
+            "title": "Notification Setup",
+            "url": "/mfg/admin/notification-setup"
+        },
+        "admin_audit_log": {
+            "group": "Administration",
+            "title": "Audit Log",
+            "url": "/mfg/admin/audit-log"
+        },
+        "admin_system_configuration": {
+            "group": "Administration",
+            "title": "System Configuration",
+            "url": "/mfg/admin/system-configuration"
+        },
+        "admin_backup_restore": {
+            "group": "Administration",
+            "title": "Backup & Restore",
+            "url": "/mfg/admin/backup-restore"
+        },
+        "admin_integration_settings": {
+            "group": "Administration",
+            "title": "Integration Settings",
+            "url": "/mfg/admin/integration-settings"
+        }
+    }
+}

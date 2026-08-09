@@ -1,0 +1,174 @@
+{
+    "config": {
+        "servicedesk_catalog": {
+            "group": "Setup & Master Data",
+            "title": "Service Catalog",
+            "url": "/servicedesk/catalog"
+        },
+        "servicedesk_sla_policies": {
+            "group": "Setup & Master Data",
+            "title": "SLA Policy Master",
+            "url": "/servicedesk/sla-policies"
+        },
+        "servicedesk_categories": {
+            "group": "Setup & Master Data",
+            "title": "Category / Priority Master",
+            "url": "/servicedesk/categories"
+        },
+        "servicedesk_teams": {
+            "group": "Setup & Master Data",
+            "title": "Team / Group Master",
+            "url": "/servicedesk/teams"
+        },
+        "servicedesk_customers": {
+            "group": "Setup & Master Data",
+            "title": "Customer / Contact Master",
+            "url": "/servicedesk/customers"
+        },
+        "servicedesk_tickets": {
+            "group": "Ticket Management",
+            "title": "Ticket List (All Tickets)",
+            "url": "/servicedesk/tickets"
+        },
+        "servicedesk_tickets_new": {
+            "group": "Ticket Management",
+            "title": "New Ticket Form",
+            "url": "/servicedesk/tickets/new"
+        },
+        "servicedesk_ticket_detail": {
+            "group": "Ticket Management",
+            "title": "Ticket Detail View",
+            "url": "/servicedesk/tickets/TCK-88213"
+        },
+        "servicedesk_my_tickets": {
+            "group": "Ticket Management",
+            "title": "My Tickets (Agent View)",
+            "url": "/servicedesk/my-tickets"
+        },
+        "servicedesk_triage_queue": {
+            "group": "Ticket Management",
+            "title": "Ticket Queue / Triage",
+            "url": "/servicedesk/triage-queue"
+        },
+        "portal_home": {
+            "group": "Self-Service Portal",
+            "title": "Customer Portal Home",
+            "url": "/portal/home"
+        },
+        "portal_kb_article": {
+            "group": "Self-Service Portal",
+            "title": "Knowledge Base Article (Public)",
+            "url": "/portal/kb/how-to-reset-password"
+        },
+        "portal_submit_request": {
+            "group": "Self-Service Portal",
+            "title": "Submit Request Form",
+            "url": "/portal/submit-request"
+        },
+        "servicedesk_kb_articles": {
+            "group": "Knowledge Base",
+            "title": "KB Article List",
+            "url": "/servicedesk/kb/articles"
+        },
+        "servicedesk_kb_editor": {
+            "group": "Knowledge Base",
+            "title": "New Article Editor",
+            "url": "/servicedesk/kb/editor"
+        },
+        "servicedesk_kb_analytics": {
+            "group": "Knowledge Base",
+            "title": "KB Analytics",
+            "url": "/servicedesk/kb/analytics"
+        },
+        "servicedesk_sla_compliance": {
+            "group": "SLA & Escalation",
+            "title": "SLA Compliance Dashboard",
+            "url": "/servicedesk/sla-compliance"
+        },
+        "servicedesk_escalation_rules": {
+            "group": "SLA & Escalation",
+            "title": "Escalation Rules Configuration",
+            "url": "/servicedesk/escalation-rules"
+        },
+        "servicedesk_breach_alerts": {
+            "group": "SLA & Escalation",
+            "title": "SLA Breach Alerts",
+            "url": "/servicedesk/breach-alerts"
+        },
+        "servicedesk_automation_builder": {
+            "group": "Automation & Workflow",
+            "title": "Workflow / Automation Builder",
+            "url": "/servicedesk/automation-builder"
+        },
+        "servicedesk_canned_responses": {
+            "group": "Automation & Workflow",
+            "title": "Canned Responses / Macros",
+            "url": "/servicedesk/canned-responses"
+        },
+        "servicedesk_routing_rules": {
+            "group": "Automation & Workflow",
+            "title": "Ticket Routing Rules",
+            "url": "/servicedesk/routing-rules"
+        },
+        "servicedesk_live_chat": {
+            "group": "Communication & Collaboration",
+            "title": "Live Chat Console",
+            "url": "/servicedesk/live-chat"
+        },
+        "servicedesk_email_to_ticket": {
+            "group": "Communication & Collaboration",
+            "title": "Email-to-Ticket Mapping",
+            "url": "/servicedesk/email-to-ticket"
+        },
+        "servicedesk_internal_notes": {
+            "group": "Communication & Collaboration",
+            "title": "Internal Notes / Collaboration",
+            "url": "/servicedesk/tickets/TCK-88213/notes"
+        },
+        "servicedesk_linked_assets": {
+            "group": "Assets & Change Mgmt",
+            "title": "Linked Assets (CMDB)",
+            "url": "/servicedesk/linked-assets"
+        },
+        "servicedesk_change_requests": {
+            "group": "Assets & Change Mgmt",
+            "title": "Change Management Requests",
+            "url": "/servicedesk/change-requests"
+        },
+        "servicedesk_agent_performance": {
+            "group": "Reporting & Analytics",
+            "title": "Agent Performance Dashboard",
+            "url": "/servicedesk/agent-performance"
+        },
+        "servicedesk_ticket_volume": {
+            "group": "Reporting & Analytics",
+            "title": "Ticket Volume Trends",
+            "url": "/servicedesk/ticket-volume"
+        },
+        "servicedesk_csat": {
+            "group": "Reporting & Analytics",
+            "title": "CSAT / Survey Results",
+            "url": "/servicedesk/csat"
+        },
+        "servicedesk_response_time": {
+            "group": "Reporting & Analytics",
+            "title": "First Response / Resolution Time",
+            "url": "/servicedesk/response-time"
+        },
+        "servicedesk_executive_dashboard": {
+            "group": "Reporting & Analytics",
+            "title": "Executive Service Dashboard",
+            "url": "/servicedesk/executive-dashboard"
+        },
+        "servicedesk_roles": {
+            "group": "Administration",
+            "title": "Roles & Permissions",
+            "url": "/servicedesk/roles"
+        },
+        "servicedesk_audit_log": {
+            "group": "Administration",
+            "title": "Service Desk Audit Log",
+            "url": "/servicedesk/audit-log"
+        }
+    }
+}
