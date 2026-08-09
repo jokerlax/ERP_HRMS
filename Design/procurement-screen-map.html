@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procurement ERP — Full Screen Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#132238; --navy-800:#1b3050;
+    --canvas:#f4f6f9; --card:#ffffff; --border:#e2e6ec; --border-soft:#eceff3;
+    --text-900:#111a2c; --text-700:#334159; --text-500:#64748b; --text-400:#94a3b8;
+    --indigo:#2f5eff; --indigo-dark:#1f42c9; --indigo-soft:#eaefff;
+    --amber:#b7791f; --amber-soft:#fdf3df;
+    --green:#1f8a56; --green-soft:#e6f6ee;
+    --red:#c0362c; --red-soft:#fdeceb;
+    --slate-soft:#eef1f5;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--canvas);color:var(--text-900);}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* ===== PAGE HEADER ===== */
+  .hero{background:var(--navy-900);color:#fff;padding:34px 40px 28px;}
+  .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8ea1c2;margin-bottom:8px;}
+  .hero h1{font-size:26px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em;}
+  .hero p{font-size:13.5px;color:#aebdd6;margin:0 0 18px;max-width:640px;line-height:1.5;}
+  .hero-stats{display:flex;gap:22px;flex-wrap:wrap;}
+  .hero-stat{}
+  .hero-stat .n{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .hero-stat .l{font-size:10.5px;color:#8ea1c2;text-transform:uppercase;letter-spacing:0.04em;margin-top:1px;}
+
+  /* ===== NAV PILL BAR ===== */
+  .toc{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--border);padding:12px 40px;display:flex;gap:8px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(15,23,42,0.04);}
+  .toc a{font-size:11.8px;font-weight:600;color:var(--text-700);background:var(--slate-soft);padding:6px 12px;border-radius:20px;white-space:nowrap;}
+  .toc a:hover{background:var(--indigo-soft);color:var(--indigo-dark);}
+
+  /* ===== SECTIONS ===== */
+  .wrap{padding:36px 40px 80px;max-width:1680px;margin:0 auto;}
+  .section{margin-bottom:44px;scroll-margin-top:64px;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .section-num{font-size:11px;font-weight:800;color:#fff;background:var(--indigo);width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .section-head h2{font-size:16px;font-weight:800;margin:0;letter-spacing:-0.01em;}
+  .section-head .count{font-size:11.5px;color:var(--text-400);font-weight:600;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+
+  /* ===== SCREEN CARD (browser-frame thumbnail) ===== */
+  .screen-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,0.05);transition:box-shadow .15s ease, transform .15s ease;}
+  .screen-card:hover{box-shadow:0 8px 22px rgba(15,23,42,0.1);transform:translateY(-2px);}
+  .chrome{background:var(--slate-soft);padding:7px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);}
+  .chrome .dot{width:6px;height:6px;border-radius:50%;background:#cbd3de;}
+  .chrome .url{margin-left:6px;font-size:9.5px;color:var(--text-400);font-family:'JetBrains Mono',monospace;background:#fff;border-radius:4px;padding:2px 7px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .thumb{padding:10px 12px 12px;background:#fbfcfd;min-height:150px;display:flex;flex-direction:column;gap:6px;}
+  .card-foot{padding:10px 12px;border-top:1px solid var(--border-soft);}
+  .card-title{font-size:12.6px;font-weight:700;color:var(--text-900);}
+  .card-tag{font-size:10px;font-weight:700;color:var(--indigo-dark);background:var(--indigo-soft);padding:1.5px 7px;border-radius:10px;display:inline-block;margin-top:5px;}
+
+  /* mini content bits */
+  .mbar{height:6px;border-radius:3px;background:var(--border);}
+  .mbar.dark{background:#c7ceda;}
+  .mtitlebar{height:8px;width:40%;border-radius:3px;background:#d3d9e3;margin-bottom:4px;}
+
+  .mkpis{display:flex;gap:6px;}
+  .mkpi{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:6px 7px;}
+  .mkpi .mv{font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .mkpi .ml{height:4px;width:70%;background:var(--border);border-radius:2px;margin-top:4px;}
+
+  .mtable{display:flex;flex-direction:column;gap:5px;flex:1;}
+  .mrow{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border-soft);border-radius:5px;padding:5px 7px;}
+  .mrow .c1{width:14px;height:14px;border-radius:4px;background:var(--slate-soft);flex-shrink:0;}
+  .mrow .c2{flex:1;height:6px;border-radius:3px;background:var(--border);}
+  .mrow .c3{width:32px;height:6px;border-radius:3px;background:var(--border);}
+  .mpill{font-size:8px;font-weight:800;padding:2px 6px;border-radius:8px;flex-shrink:0;}
+  .mpill.g{background:var(--green-soft);color:var(--green);}
+  .mpill.a{background:var(--amber-soft);color:var(--amber);}
+  .mpill.r{background:var(--red-soft);color:var(--red);}
+  .mpill.b{background:var(--indigo-soft);color:var(--indigo-dark);}
+  .mpill.n{background:var(--slate-soft);color:var(--text-400);}
+
+  .mform{display:flex;flex-direction:column;gap:8px;}
+  .mfield .flbl{height:5px;width:34%;background:var(--border);border-radius:2px;margin-bottom:4px;}
+  .mfield .finput{height:16px;border:1px solid var(--border-soft);border-radius:5px;background:#fff;}
+
+  .mchart{flex:1;display:flex;align-items:flex-end;gap:5px;padding:4px 2px;}
+  .mchart .bar{flex:1;border-radius:3px 3px 0 0;background:var(--indigo);opacity:0.85;}
+  .mchart .bar.alt{background:#9fb4ff;}
+
+  .mprofile{display:flex;gap:8px;align-items:flex-start;}
+  .mavatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),#7c93ff);flex-shrink:0;}
+  .mprofile-lines{flex:1;display:flex;flex-direction:column;gap:5px;padding-top:3px;}
+
+  .mkanban{display:flex;gap:6px;flex:1;}
+  .mkcol{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:5px;display:flex;flex-direction:column;gap:5px;}
+  .mkcard{height:16px;border-radius:4px;background:var(--slate-soft);}
+  .mkcard.b{background:var(--indigo-soft);}
+  .mkcard.g{background:var(--green-soft);}
+
+  .mflow{display:flex;align-items:center;flex:1;}
+  .mfnode{width:20px;height:20px;border-radius:50%;background:var(--indigo-soft);border:2px solid var(--indigo);flex-shrink:0;}
+  .mfnode.done{background:var(--green);border-color:var(--green);}
+  .mfline{flex:1;height:2px;background:var(--border);}
+  .mfline.done{background:var(--green);}
+
+  .mtoggle-row{display:flex;gap:6px;}
+  .mtoggle{flex:1;height:20px;border-radius:5px;background:var(--slate-soft);border:1px solid var(--border-soft);}
+  .mtoggle.on{background:var(--indigo-soft);border-color:#c7d5ff;}
+
+  .built-badge{position:absolute;top:8px;right:8px;background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:0.02em;}
+  .screen-card{position:relative;}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Exeon ERP · Procurement Suite</div>
+    <h1>Full Screen Map</h1>
+    <p>Every screen required to run the complete Purchase / Procurement module, from requisition through payment — grouped by process stage so you can see the whole system at a glance.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">41</div><div class="l">Total Screens</div></div>
+      <div class="hero-stat"><div class="n">10</div><div class="l">Process Areas</div></div>
+      <div class="hero-stat"><div class="n">2</div><div class="l">Built in Full Detail</div></div>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <a href="#master">Master Data</a>
+    <a href="#planning">Planning &amp; Requisition</a>
+    <a href="#sourcing">Sourcing</a>
+    <a href="#contracts">Contracts</a>
+    <a href="#po">Purchase Orders</a>
+    <a href="#receiving">Receiving</a>
+    <a href="#invoice">Invoice &amp; Payment</a>
+    <a href="#approvals">Approvals</a>
+    <a href="#analytics">Analytics &amp; Reporting</a>
+    <a href="#admin">Administration</a>
+  </nav>
+
+  <div class="wrap">
+
+    <!-- 1 MASTER DATA -->
+    <section class="section" id="master">
+      <div class="section-head"><div class="section-num">1</div><h2>Master Data</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/procurement/vendors</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Active</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Active</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Pending</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Blocked</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Vendor / Supplier Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/vendors/onboarding</span></div>
+          <div class="thumb">
+            <div class="mform">
+              <div class="mfield"><div class="flbl"></div><div class="finput"></div></div>
+              <div class="mfield"><div class="flbl"></div><div class="finput"></div></div>
+              <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div><div class="mtoggle"></div></div>
+              <div class="mfield"><div class="flbl"></div><div class="finput"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Vendor Onboarding / KYC</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/catalog/items</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Item / Catalog Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/budget/cost-centers</span></div>
+          <div class="thumb">
+            <div class="mkpis">
+              <div class="mkpi"><div class="mv">68%</div><div class="ml"></div></div>
+              <div class="mkpi"><div class="mv">92%</div><div class="ml"></div></div>
+              <div class="mkpi"><div class="mv">41%</div><div class="ml"></div></div>
+            </div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Cost Center / Budget Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/settings/approval-matrix</span></div>
+          <div class="thumb">
+            <div class="mflow">
+              <div class="mfnode done"></div><div class="mfline done"></div>
+              <div class="mfnode done"></div><div class="mfline"></div>
+              <div class="mfnode"></div><div class="mfline"></div>
+              <div class="mfnode"></div>
+            </div>
+            <div class="mform" style="margin-top:6px;">
+              <div class="mfield"><div class="flbl"></div><div class="finput"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Approval Matrix Configuration</div><span class="card-tag">Form / Builder</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2 PLANNING -->
+    <section class="section" id="planning">
+      <div class="section-head"><div class="section-num">2</div><h2>Planning &amp; Requisition</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/requisitions</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Pending</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Approved</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Converted</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Purchase Requisition (PR) List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/requisitions/new</span></div>
+          <div class="thumb">
+            <div class="mform">
+              <div class="mfield"><div class="flbl"></div><div class="finput"></div></div>
+              <div class="mfield"><div class="flbl"></div><div class="finput"></div></div>
+            </div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Requisition</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/planning/mrp</span></div>
+          <div class="thumb">
+            <div class="mkpis">
+              <div class="mkpi"><div class="mv">14</div><div class="ml"></div></div>
+              <div class="mkpi"><div class="mv">3</div><div class="ml"></div></div>
+            </div>
+            <div class="mchart">
+              <div class="bar" style="height:40%;"></div><div class="bar alt" style="height:70%;"></div><div class="bar" style="height:55%;"></div><div class="bar alt" style="height:85%;"></div><div class="bar" style="height:30%;"></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">MRP / Reorder Alerts</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/requisitions/budget-check</span></div>
+          <div class="thumb">
+            <div class="mkpi" style="width:100%;"><div class="mv">JOD 184K / 250K</div><div class="ml" style="width:74%;"></div></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">OK</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Over</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Budget Availability Check</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3 SOURCING -->
+    <section class="section" id="sourcing">
+      <div class="section-head"><div class="section-num">3</div><h2>Sourcing</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/rfq</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Open</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Draft</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Closed</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">RFQ List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/rfq/new</span></div>
+          <div class="thumb">
+            <div class="mform">
+              <div class="mfield"><div class="flbl"></div><div class="finput"></div></div>
+              <div class="mfield"><div class="flbl"></div><div class="finput"></div></div>
+            </div>
+            <div class="mkanban" style="flex:none;height:40px;"><div class="mkcol"></div><div class="mkcol"></div><div class="mkcol"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Create RFQ</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/rfq/compare</span></div>
+          <div class="thumb">
+            <div class="mkanban">
+              <div class="mkcol"><div class="mkcard b"></div><div class="mkcard"></div><div class="mkcard"></div></div>
+              <div class="mkcol"><div class="mkcard"></div><div class="mkcard g"></div><div class="mkcard"></div></div>
+              <div class="mkcol"><div class="mkcard"></div><div class="mkcard"></div><div class="mkcard b"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Vendor Quotation Comparison</div><span class="card-tag">Comparison</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/tenders</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Bidding</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Awarded</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Tender / Bid Management</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4 CONTRACTS -->
+    <section class="section" id="contracts">
+      <div class="section-head"><div class="section-num">4</div><h2>Contracts</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/contracts</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Active</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Expiring</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Contract / Agreement List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/contracts/CTR-0091</span></div>
+          <div class="thumb">
+            <div class="mprofile">
+              <div class="mavatar"></div>
+              <div class="mprofile-lines"><div class="mbar dark" style="width:70%;"></div><div class="mbar" style="width:50%;"></div><div class="mbar" style="width:60%;"></div></div>
+            </div>
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Contract Detail</div><span class="card-tag">Profile View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/contracts/renewals</span></div>
+          <div class="thumb">
+            <div class="mkpis">
+              <div class="mkpi"><div class="mv">6</div><div class="ml"></div></div>
+              <div class="mkpi"><div class="mv">2</div><div class="ml"></div></div>
+            </div>
+            <div class="mchart"><div class="bar" style="height:50%;"></div><div class="bar alt" style="height:75%;"></div><div class="bar" style="height:35%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Contract Renewal &amp; Expiry Tracker</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5 PURCHASE ORDERS -->
+    <section class="section" id="po">
+      <div class="section-head"><div class="section-num">5</div><h2>Purchase Orders</h2><span class="count">6 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <span class="built-badge">Built ✓</span>
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/po</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">42</div><div class="ml"></div></div><div class="mkpi"><div class="mv">5</div><div class="ml"></div></div><div class="mkpi"><div class="mv">3</div><div class="ml"></div></div></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Pending</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Received</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Purchase Order List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <span class="built-badge">Built ✓</span>
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/po/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Purchase Order</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/po/PO-2026-00847</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode done"></div><div class="mfline"></div><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mprofile" style="margin-top:6px;"><div class="mavatar" style="width:24px;height:24px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:60%;"></div><div class="mbar" style="width:40%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">PO Detail View</div><span class="card-tag">Detail + Tracker</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/po/approval-queue</span></div>
+          <div class="thumb">
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Awaiting You</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Awaiting You</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Queued</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">PO Approval Queue</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/po/blanket</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Blanket PO / Release Orders</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/po/import</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Import PO (International)</div><span class="card-tag">Form</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6 RECEIVING -->
+    <section class="section" id="receiving">
+      <div class="section-head"><div class="section-num">6</div><h2>Receiving</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/grn</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Complete</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Partial</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Goods Receipt (GRN) List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/grn/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Goods Receipt</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/grn/qc-inspection</span></div>
+          <div class="thumb">
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Quality Inspection / QC Check</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/grn/return-to-vendor</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Return to Vendor (Debit Note)</div><span class="card-tag">Form</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7 INVOICE & PAYMENT -->
+    <section class="section" id="invoice">
+      <div class="section-head"><div class="section-num">7</div><h2>Invoice &amp; Payment</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/invoices</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Pending</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Cleared</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Vendor Invoice List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/invoices/3-way-match</span></div>
+          <div class="thumb">
+            <div class="mkanban"><div class="mkcol"><div class="mkcard b"></div></div><div class="mkcol"><div class="mkcard g"></div></div><div class="mkcol"><div class="mkcard"></div></div></div>
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">3-Way Match (PO–GRN–Invoice)</div><span class="card-tag">Comparison</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/invoices/approval-queue</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Awaiting You</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Exception</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Invoice Approval Queue</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/payments/schedule</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:40%;"></div><div class="bar alt" style="height:60%;"></div><div class="bar" style="height:80%;"></div><div class="bar alt" style="height:50%;"></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Payment Scheduling</div><span class="card-tag">List / Calendar</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/vendors/V-00412/ledger</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar" style="width:24px;height:24px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:55%;"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Vendor Ledger / Statement</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 8 APPROVALS -->
+    <section class="section" id="approvals">
+      <div class="section-head"><div class="section-num">8</div><h2>Approvals</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/approvals/inbox</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">5</div><div class="ml"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">PO</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Invoice</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">My Approvals Inbox</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/approvals/history</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Approved</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Rejected</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Approved</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Approval History / Audit Trail</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 9 ANALYTICS -->
+    <section class="section" id="analytics">
+      <div class="section-head"><div class="section-num">9</div><h2>Analytics &amp; Reporting</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/analytics/spend</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">2.1M</div><div class="ml"></div></div><div class="mkpi"><div class="mv">12%</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:30%;"></div><div class="bar alt" style="height:60%;"></div><div class="bar" style="height:45%;"></div><div class="bar alt" style="height:90%;"></div><div class="bar" style="height:70%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Spend Analytics Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/analytics/budget-vs-actual</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:80%;"></div><div class="bar alt" style="height:65%;"></div><div class="bar" style="height:55%;"></div><div class="bar alt" style="height:70%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Budget vs Actual Report</div><span class="card-tag">Chart / Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/analytics/vendor-performance</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar" style="width:24px;height:24px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:50%;"></div></div></div>
+            <div class="mkpis"><div class="mkpi"><div class="mv">96%</div><div class="ml"></div></div><div class="mkpi"><div class="mv">4.6</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Vendor Performance Report</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/analytics/po-aging</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">14d late</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">3d left</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">PO Aging / Overdue Report</div><span class="card-tag">List / Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/analytics/savings</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:20%;"></div><div class="bar alt" style="height:35%;"></div><div class="bar" style="height:55%;"></div><div class="bar alt" style="height:75%;"></div><div class="bar" style="height:95%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Savings / Cost Reduction Report</div><span class="card-tag">Chart / Report</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 10 ADMIN -->
+    <section class="section" id="admin">
+      <div class="section-head"><div class="section-num">10</div><h2>Administration</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/admin/roles</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div><div class="mtoggle on"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">User Roles &amp; Permissions</div><span class="card-tag">List / Matrix</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/admin/workflow-builder</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mkanban" style="flex:none;height:36px;"><div class="mkcol"></div><div class="mkcol"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Approval Workflow Builder</div><span class="card-tag">Visual Builder</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/admin/notifications</span></div>
+          <div class="thumb">
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Notification / Alert Settings</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/admin/audit-log</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Audit Log</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales &amp; Distribution ERP — Full Screen Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#132238; --navy-800:#1b3050;
+    --canvas:#f4f6f9; --card:#ffffff; --border:#e2e6ec; --border-soft:#eceff3;
+    --text-900:#111a2c; --text-700:#334159; --text-500:#64748b; --text-400:#94a3b8;
+    --indigo:#2f5eff; --indigo-dark:#1f42c9; --indigo-soft:#eaefff;
+    --amber:#b7791f; --amber-soft:#fdf3df;
+    --green:#1f8a56; --green-soft:#e6f6ee;
+    --red:#c0362c; --red-soft:#fdeceb;
+    --slate-soft:#eef1f5;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--canvas);color:var(--text-900);}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .hero{background:var(--navy-900);color:#fff;padding:34px 40px 28px;}
+  .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8ea1c2;margin-bottom:8px;}
+  .hero h1{font-size:26px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em;}
+  .hero p{font-size:13.5px;color:#aebdd6;margin:0 0 18px;max-width:660px;line-height:1.5;}
+  .hero-stats{display:flex;gap:22px;flex-wrap:wrap;}
+  .hero-stat .n{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .hero-stat .l{font-size:10.5px;color:#8ea1c2;text-transform:uppercase;letter-spacing:0.04em;margin-top:1px;}
+
+  .toc{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--border);padding:12px 40px;display:flex;gap:8px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(15,23,42,0.04);}
+  .toc a{font-size:11.8px;font-weight:600;color:var(--text-700);background:var(--slate-soft);padding:6px 12px;border-radius:20px;white-space:nowrap;}
+  .toc a:hover{background:var(--indigo-soft);color:var(--indigo-dark);}
+
+  .wrap{padding:36px 40px 80px;max-width:1680px;margin:0 auto;}
+  .section{margin-bottom:44px;scroll-margin-top:64px;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .section-num{font-size:11px;font-weight:800;color:#fff;background:var(--indigo);width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .section-head h2{font-size:16px;font-weight:800;margin:0;letter-spacing:-0.01em;}
+  .section-head .count{font-size:11.5px;color:var(--text-400);font-weight:600;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+
+  .screen-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,0.05);transition:box-shadow .15s ease, transform .15s ease;position:relative;}
+  .screen-card:hover{box-shadow:0 8px 22px rgba(15,23,42,0.1);transform:translateY(-2px);}
+  .chrome{background:var(--slate-soft);padding:7px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);}
+  .chrome .dot{width:6px;height:6px;border-radius:50%;background:#cbd3de;}
+  .chrome .url{margin-left:6px;font-size:9.5px;color:var(--text-400);font-family:'JetBrains Mono',monospace;background:#fff;border-radius:4px;padding:2px 7px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .thumb{padding:10px 12px 12px;background:#fbfcfd;min-height:150px;display:flex;flex-direction:column;gap:6px;}
+  .card-foot{padding:10px 12px;border-top:1px solid var(--border-soft);}
+  .card-title{font-size:12.6px;font-weight:700;color:var(--text-900);}
+  .card-tag{font-size:10px;font-weight:700;color:var(--indigo-dark);background:var(--indigo-soft);padding:1.5px 7px;border-radius:10px;display:inline-block;margin-top:5px;}
+
+  .mbar{height:6px;border-radius:3px;background:var(--border);}
+  .mbar.dark{background:#c7ceda;}
+  .mtitlebar{height:8px;width:40%;border-radius:3px;background:#d3d9e3;margin-bottom:4px;}
+
+  .mkpis{display:flex;gap:6px;}
+  .mkpi{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:6px 7px;}
+  .mkpi .mv{font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .mkpi .ml{height:4px;width:70%;background:var(--border);border-radius:2px;margin-top:4px;}
+
+  .mtable{display:flex;flex-direction:column;gap:5px;flex:1;}
+  .mrow{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border-soft);border-radius:5px;padding:5px 7px;}
+  .mrow .c1{width:14px;height:14px;border-radius:4px;background:var(--slate-soft);flex-shrink:0;}
+  .mrow .c2{flex:1;height:6px;border-radius:3px;background:var(--border);}
+  .mrow .c3{width:32px;height:6px;border-radius:3px;background:var(--border);}
+  .mpill{font-size:8px;font-weight:800;padding:2px 6px;border-radius:8px;flex-shrink:0;}
+  .mpill.g{background:var(--green-soft);color:var(--green);}
+  .mpill.a{background:var(--amber-soft);color:var(--amber);}
+  .mpill.r{background:var(--red-soft);color:var(--red);}
+  .mpill.b{background:var(--indigo-soft);color:var(--indigo-dark);}
+  .mpill.n{background:var(--slate-soft);color:var(--text-400);}
+
+  .mform{display:flex;flex-direction:column;gap:8px;}
+  .mfield .flbl{height:5px;width:34%;background:var(--border);border-radius:2px;margin-bottom:4px;}
+  .mfield .finput{height:16px;border:1px solid var(--border-soft);border-radius:5px;background:#fff;}
+
+  .mchart{flex:1;display:flex;align-items:flex-end;gap:5px;padding:4px 2px;}
+  .mchart .bar{flex:1;border-radius:3px 3px 0 0;background:var(--indigo);opacity:0.85;}
+  .mchart .bar.alt{background:#9fb4ff;}
+  .mchart .bar.neg{background:var(--red);opacity:0.7;}
+  .mchart .bar.warn{background:var(--amber);opacity:0.85;}
+  .mchart .bar.good{background:var(--green);opacity:0.85;}
+
+  .mprofile{display:flex;gap:8px;align-items:flex-start;}
+  .mavatar{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--indigo),#7c93ff);flex-shrink:0;}
+  .mavatar.round{border-radius:50%;}
+  .mprofile-lines{flex:1;display:flex;flex-direction:column;gap:5px;padding-top:3px;}
+
+  .mkanban{display:flex;gap:6px;flex:1;}
+  .mkcol{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:5px;display:flex;flex-direction:column;gap:5px;}
+  .mkcard{height:16px;border-radius:4px;background:var(--slate-soft);}
+  .mkcard.b{background:var(--indigo-soft);}
+  .mkcard.g{background:var(--green-soft);}
+  .mkcard.a{background:var(--amber-soft);}
+  .mkcard.r{background:var(--red-soft);}
+
+  .mflow{display:flex;align-items:center;flex:1;}
+  .mfnode{width:20px;height:20px;border-radius:50%;background:var(--indigo-soft);border:2px solid var(--indigo);flex-shrink:0;}
+  .mfnode.done{background:var(--green);border-color:var(--green);}
+  .mfnode.cur{background:#fff;}
+  .mfline{flex:1;height:2px;background:var(--border);}
+  .mfline.done{background:var(--green);}
+
+  .mtoggle-row{display:flex;gap:6px;}
+  .mtoggle{flex:1;height:20px;border-radius:5px;background:var(--slate-soft);border:1px solid var(--border-soft);}
+  .mtoggle.on{background:var(--indigo-soft);border-color:#c7d5ff;}
+
+  .mgauge{display:flex;align-items:center;justify-content:center;flex:1;}
+  .mgauge-ring{width:56px;height:56px;border-radius:50%;background:conic-gradient(var(--green) 0% 78%, var(--slate-soft) 78% 100%);display:flex;align-items:center;justify-content:center;}
+  .mgauge-inner{width:38px;height:38px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text-900);}
+
+  .mtree{display:flex;flex-direction:column;gap:5px;flex:1;padding-left:4px;}
+  .mtree-row{display:flex;align-items:center;gap:6px;}
+  .mtree-row.l2{padding-left:14px;}
+  .mtree-dot{width:6px;height:6px;border-radius:50%;background:var(--indigo);flex-shrink:0;}
+  .mtree-bar{flex:1;height:6px;border-radius:3px;background:var(--border);}
+
+  .mfunnel{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;justify-content:center;}
+  .mfunnel-seg{height:12px;border-radius:2px;background:var(--indigo);opacity:0.85;}
+
+  /* map pin cluster for delivery/shipment tracking */
+  .mmap{position:relative;flex:1;background:var(--slate-soft);border-radius:8px;min-height:70px;}
+  .mpin{position:absolute;width:10px;height:10px;border-radius:50% 50% 50% 0;background:var(--indigo);transform:rotate(-45deg);}
+  .mpin.g{background:var(--green);}
+  .mpin.r{background:var(--red);}
+  .mroute{position:absolute;border-top:2px dashed var(--indigo);opacity:0.5;}
+
+  /* checklist */
+  .mcheck-row{display:flex;align-items:center;gap:6px;}
+  .mcheck-box{width:11px;height:11px;border-radius:3px;border:1.5px solid var(--border);flex-shrink:0;}
+  .mcheck-box.done{background:var(--green);border-color:var(--green);}
+
+  .built-badge{position:absolute;top:8px;right:8px;background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:0.02em;}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Exeon ERP · Sales &amp; Distribution Suite</div>
+    <h1>Full Screen Map</h1>
+    <p>Every screen required to run the complete Sales &amp; Distribution module — from quotation and order entry through pricing, credit control, delivery, shipping, returns, and billing — grouped by function so you can see the whole order-to-cash flow at a glance.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">38</div><div class="l">Total Screens</div></div>
+      <div class="hero-stat"><div class="n">10</div><div class="l">Functional Areas</div></div>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <a href="#master">Setup &amp; Master Data</a>
+    <a href="#quotes">Quotation Management</a>
+    <a href="#orders">Sales Order Management</a>
+    <a href="#pricing">Pricing &amp; Credit</a>
+    <a href="#delivery">Delivery &amp; Shipping</a>
+    <a href="#returns">Returns &amp; Claims</a>
+    <a href="#billing">Billing &amp; Invoicing</a>
+    <a href="#logistics">Logistics Coordination</a>
+    <a href="#analytics">Reporting &amp; Analytics</a>
+    <a href="#admin">Administration</a>
+  </nav>
+
+  <div class="wrap">
+
+    <!-- 1 SETUP -->
+    <section class="section" id="master">
+      <div class="section-head"><div class="section-num">1</div><h2>Setup &amp; Master Data</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/customers</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Active</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">On Hold</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Customer Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/items</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Product / Item Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/price-lists</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Tier A</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Tier B</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Price List &amp; Discount Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/territories</span></div>
+          <div class="thumb">
+            <div class="mtree">
+              <div class="mtree-row"><div class="mtree-dot"></div><div class="mtree-bar" style="width:70%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:50%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:55%;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Area / Territory Master</div><span class="card-tag">Tree / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/terms-conditions</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Terms &amp; Conditions Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2 QUOTATION -->
+    <section class="section" id="quotes">
+      <div class="section-head"><div class="section-num">2</div><h2>Quotation Management</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <span class="built-badge">Related ✓</span>
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/quotations</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">62</div><div class="ml"></div></div><div class="mkpi"><div class="mv">18</div><div class="ml"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Pending</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Accepted</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Quotation List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/quotations/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Quotation Form</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/quotations/QT-2026-0412</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mkpis" style="margin-top:6px;"><div class="mkpi"><div class="mv">18.4K</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Quotation Detail / Approval</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/quotations/convert</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div></div>
+            <div class="mform" style="margin-top:8px;"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Quotation-to-Order Conversion</div><span class="card-tag">Wizard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3 SALES ORDER -->
+    <section class="section" id="orders">
+      <div class="section-head"><div class="section-num">3</div><h2>Sales Order Management</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <span class="built-badge">Related ✓</span>
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/orders</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">96</div><div class="ml"></div></div><div class="mkpi"><div class="mv">12</div><div class="ml"></div></div><div class="mkpi"><div class="mv">4</div><div class="ml"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">In Progress</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Delivered</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Order List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <span class="built-badge">Related ✓</span>
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/orders/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Sales Order Form</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/orders/SO-2026-3387</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode done"></div><div class="mfline"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div><div class="mfline"></div><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mkpis" style="margin-top:6px;"><div class="mkpi"><div class="mv">42K</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Order Detail / Tracker</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/orders/amendment</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Order Amendment</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/orders/approval-queue</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Awaiting You</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Credit Hold</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Order Approval Queue</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4 PRICING & CREDIT -->
+    <section class="section" id="pricing">
+      <div class="section-head"><div class="section-num">4</div><h2>Pricing &amp; Credit</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/pricing-config</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mform" style="margin-top:6px;"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Pricing Configuration</div><span class="card-tag">Form / Builder</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/credit-check</span></div>
+          <div class="thumb">
+            <div class="mgauge"><div class="mgauge-ring" style="background:conic-gradient(var(--amber) 0% 85%, var(--slate-soft) 85% 100%);"><div class="mgauge-inner">85%</div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Credit Limit Check</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/credit-hold</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">On Hold</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Review</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Credit Hold Management</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5 DELIVERY & SHIPPING -->
+    <section class="section" id="delivery">
+      <div class="section-head"><div class="section-num">5</div><h2>Delivery &amp; Shipping</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <span class="built-badge">Related ✓</span>
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/deliveries</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Pending</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Delivered</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Delivery Note List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/deliveries/create</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mcheck-row"><div class="mcheck-box done"></div><div class="mbar" style="width:55%;"></div></div>
+            <div class="mcheck-row"><div class="mcheck-box"></div><div class="mbar" style="width:40%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Create Delivery / Picking</div><span class="card-tag">Form / Checklist</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/deliveries/packing-dispatch</span></div>
+          <div class="thumb">
+            <div class="mkanban"><div class="mkcol"><div class="mkcard"></div></div><div class="mkcol"><div class="mkcard a"></div></div><div class="mkcol"><div class="mkcard g"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Packing &amp; Dispatch</div><span class="card-tag">Kanban / Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/shipment-tracking</span></div>
+          <div class="thumb">
+            <div class="mmap">
+              <div class="mpin" style="top:20%; left:25%;"></div>
+              <div class="mpin g" style="top:55%; left:65%;"></div>
+              <div class="mpin r" style="top:70%; left:30%;"></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Shipment Tracking</div><span class="card-tag">Map View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/delivery-schedule</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Route A</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Route B</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Delivery Schedule / Route Planning</div><span class="card-tag">Calendar / Map</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6 RETURNS -->
+    <section class="section" id="returns">
+      <div class="section-head"><div class="section-num">6</div><h2>Returns &amp; Claims</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/returns</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Pending QC</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Return (RMA)</div><span class="card-tag">Form / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/returns/approval</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mtable" style="margin-top:6px;"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Review</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Return Approval</div><span class="card-tag">Tracker / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/claims</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Open</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Resolved</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Claims / Complaints Management</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7 BILLING -->
+    <section class="section" id="billing">
+      <div class="section-head"><div class="section-num">7</div><h2>Billing &amp; Invoicing</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/invoices</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Unpaid</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Paid</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Invoice List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/invoices/create</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div></div>
+            <div class="mform" style="margin-top:8px;"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Create Invoice (from Delivery)</div><span class="card-tag">Wizard / Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/invoices/print-send</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Invoice Print / Send</div><span class="card-tag">Form / Preview</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/credit-debit-memo</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Credit</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Debit</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Credit / Debit Memo</div><span class="card-tag">Form / List</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 8 LOGISTICS -->
+    <section class="section" id="logistics">
+      <div class="section-head"><div class="section-num">8</div><h2>Logistics Coordination</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/warehouse-allocation</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Warehouse Allocation</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/carriers</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Active</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Inactive</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Carrier / Transporter Management</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 9 ANALYTICS -->
+    <section class="section" id="analytics">
+      <div class="section-head"><div class="section-num">9</div><h2>Reporting &amp; Analytics</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/order-status-dashboard</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">96</div><div class="ml"></div></div><div class="mkpi"><div class="mv">12</div><div class="ml"></div></div><div class="mkpi"><div class="mv">4</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:50%;"></div><div class="bar alt" style="height:70%;"></div><div class="bar good" style="height:85%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Order Status Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/order-to-cash</span></div>
+          <div class="thumb">
+            <div class="mfunnel">
+              <div class="mfunnel-seg" style="width:90%;"></div>
+              <div class="mfunnel-seg" style="width:70%; background:#9fb4ff;"></div>
+              <div class="mfunnel-seg" style="width:50%; background:var(--amber);"></div>
+              <div class="mfunnel-seg" style="width:30%; background:var(--green);"></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Order-to-Cash Cycle Report</div><span class="card-tag">Funnel / Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/sales-by-region</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:40%;"></div><div class="bar alt" style="height:60%;"></div><div class="bar good" style="height:80%;"></div><div class="bar" style="height:35%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales by Customer / Region</div><span class="card-tag">Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/backorder-report</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Backordered</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Partial</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Backorder Report</div><span class="card-tag">Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/executive-dashboard</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">2.4M</div><div class="ml"></div></div><div class="mkpi"><div class="mv">96</div><div class="ml"></div></div><div class="mkpi"><div class="mv">94%</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:45%;"></div><div class="bar alt" style="height:65%;"></div><div class="bar good" style="height:80%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Executive Sales Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 10 ADMIN -->
+    <section class="section" id="admin">
+      <div class="section-head"><div class="section-num">10</div><h2>Administration</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/roles</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Roles &amp; Permissions</div><span class="card-tag">List / Matrix</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/sd/audit-log</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales &amp; Distribution Audit Log</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

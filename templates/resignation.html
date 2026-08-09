@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AureliaHRMS · Resignation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/payroll.css') }}">
+  <style>
+    /* Specific styles for the placeholder */
+    .placeholder-card {
+      padding: 60px 24px;
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      background-color: var(--white);
+    }
+    .placeholder-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .placeholder-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="login.html" class="sidebar-brand" style="text-decoration: none; color: inherit;">
+      <div class="logo-mark"><div class="diamond"></div></div>
+      <span>AureliaHRMS</span>
+    </a>
+    <div class="sidebar-menu">
+      <div class="menu-label">EXIT</div>
+      <a href="#" class="menu-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Submit resignation
+      </a>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        Resignations
+      </a>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Exit clearance
+      </a>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Final settlement
+      </a>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <!-- TOP NAVIGATION -->
+    <header class="top-nav">
+      <nav class="nav-links">
+        <a href="#">Dashboard</a>
+        <a href="employees.html">Employees</a>`n        <a href="/">Payroll</a>
+        <a href="/leaves">Leaves</a>
+        <a href="/documents">Documents</a>
+        <a href="/flight">Flight</a>
+        <a href="/resignation" class="active">Resignation</a>
+        <a href="/reports">Reports</a>
+        <a href="/settings">Settings</a>
+      </nav>
+      <div class="top-right">
+        <span class="datetime" id="currentDateTime">09 Jul 2026 · 18:52</span>
+        <div class="user-avatar">SR</div>
+        <button class="btn-signout">Sign out</button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <div class="breadcrumbs">
+        <span class="crumb" style="color: var(--brand-yellow); font-weight: 500;">Resignation</span>
+      </div>
+
+      <h1 class="page-title">Submit resignation</h1>
+
+      <div class="card">
+        <div class="placeholder-card">
+          <div class="placeholder-title">Submit resignation</div>
+          <div class="placeholder-desc">This screen loads here. Wire it to your Flask route and render the module inside this card.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

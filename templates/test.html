@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aurelia ERP · Security &amp; Permission Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/payroll.css') }}">
+  <style>
+    /* ── RESET & VARIABLES ── */
+    :root {
+      --font-primary: 'Plus Jakarta Sans', sans-serif;
+      --font-display: 'Outfit', sans-serif;
+
+      /* Dark Mode (Default) */
+      --bg-base: #0b0f19;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #1f2937;
+      --border-color: #374151;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-rgb: 99, 102, 241;
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      --accent-danger: #ef4444;
+      --accent-override: #f59e0b;
+      --accent-info: #3b82f6;
+      --sidebar-width: 320px;
+    }
+
+    .light-theme {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --accent-success: #10b981;
+      --accent-warning: #d97706;
+      --accent-danger: #dc2626;
+      --accent-override: #d97706;
+      --accent-info: #2563eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* ── HEADER ── */
+    .header-bar {
+      height: 70px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items:center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .app-branding {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .app-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-family: var(--font-display);
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+    }
+
+    .app-title-container h1 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .app-title-container span {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: block;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .theme-toggle-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle-btn:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+    }
+
+    /* ── MAIN WORKSPACE ── */
+    .main-workspace {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 70px);
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .control-sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .sidebar-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-section-title {
+      font-family: var(--font-display);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .sidebar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .sidebar-item:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+    }
+
+    .sidebar-item.active {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary);
+      border-color: rgba(99, 102, 241, 0.3);
+      font-weight: 600;
+    }
+
+    .sidebar-item-level {
+      font-size: 10.5px;
+      padding: 2px 6px;
+      background: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .sidebar-item.active .sidebar-item-level {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Search controls */
+    .search-input-wrapper {
+      position: relative;
+    }
+
+    .search-input-wrapper input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Audit logs in sidebar */
+    .audit-logs-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 20px;
+    }
+
+    .audit-log-card {
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--bg-surface-elevated);
+      border-left: 3px solid var(--primary);
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .audit-log-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    /* ── CONTENT CONTAINER ── */
+    .content-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+
+    /* Stats Banner */
+    .stats-banner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 20px 24px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .stat-icon {
+      font-size: 20px;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--bg-surface-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+
+    .stat-info strong {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      display: block;
+      color: var(--text-main);
+    }
+
+    .stat-info span {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Action bar */
+    .actions-bar {
+      padding: 14px 24px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .actions-left, .actions-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-outline {
+      background: var(--bg-surface);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--text-muted);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+    }
+
+    .btn-success {
+      background: var(--accent-success);
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      filter: brightness(1.08);
+    }
+
+    .btn-danger {
+      background: var(--accent-danger);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      filter: brightness(1.08);
+    }
+
+    /* Filter tag badges */
+    .mode-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .mode-badge.role-mode {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .mode-badge.override-mode {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    /* ── TREE VIEW CONTAINER ── */
+    .tree-scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    /* Module Accordion card */
+    .module-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .module-header {
+      padding: 16px 20px;
+      background: var(--bg-surface-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .module-header:hover {
+      filter: brightness(1.04);
+    }
+
+    .module-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .module-icon {
+      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      background: var(--bg-surface);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .module-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14.5px;
+    }
+
+    .module-page-count {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 2px 6px;
+      background: var(--bg-base);
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .module-header-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .module-toggle-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    /* Chevron rotation */
+    .expand-chevron {
+      transition: transform 0.2s;
+      color: var(--text-muted);
+    }
+
+    .module-card.expanded .expand-chevron {
+      transform: rotate(90deg);
+    }
+
+    .module-card.expanded .module-header {
+      border-bottom-color: var(--border-color);
+    }
+
+    /* Module body */
+    .module-body {
+      display: none;
+      position: relative;
+    }
+
+    .module-card.expanded .module-body {
+      display: block;
+    }
+
+    /* Virtual Scroll Grid Mock styling */
+    .virtual-grid-container {
+      max-height: 480px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .sticky-grid-header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: var(--bg-surface-elevated);
+      border-bottom: 2px solid var(--border-color);
+      display: grid;
+      grid-template-columns: 240px repeat(7, 1fr);
+      padding: 10px 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .grid-row {
+      display: grid;
+      grid-template-columns: 240px repeat(7, 1fr);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-color);
+      align-items: center;
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+
+    .grid-row:hover {
+      background: var(--bg-surface-elevated);
+    }
+
+    .grid-cell-page {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .grid-cell-page span.override-badge {
+      font-size: 9px;
+      padding: 1px 4px;
+      background: var(--accent-override);
+      color: #fff;
+      border-radius: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .checkbox-cell {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Custom Checkbox styles */
+    .perm-checkbox {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--bg-base);
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .perm-checkbox:checked {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+    }
+
+    .perm-checkbox:checked::after {
+      content: '✔';
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* Deny state for override overrides */
+    .perm-checkbox.override-deny {
+      background: var(--accent-danger);
+      border-color: var(--accent-danger);
+    }
+
+    .perm-checkbox.override-deny::after {
+      content: '✖';
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    /* Override grant state */
+    .perm-checkbox.override-grant {
+      background: var(--accent-warning);
+      border-color: var(--accent-warning);
+    }
+
+    .perm-checkbox.override-grant::after {
+      content: '✔';
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* Disabled State (Super Admin lock) */
+    .perm-checkbox:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      background: var(--bg-surface-elevated) !important;
+      border-color: var(--border-color) !important;
+    }
+
+    .perm-checkbox:disabled:checked::after {
+      color: var(--text-muted);
+    }
+
+    /* Tooltip styling */
+    .perm-tooltip {
+      position: relative;
+    }
+
+    .perm-tooltip::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      background: #0f172a;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      white-space: nowrap;
+      z-index: 100;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      pointer-events: none;
+      transition: transform 0.15s ease-out;
+      transform-origin: bottom center;
+      border: 1px solid var(--border-color);
+    }
+
+    .perm-tooltip:hover::before {
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* Lazy Loader Spinners */
+    .lazy-loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      color: var(--text-muted);
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-color);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── MODALS ── */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 600px;
+      max-width: 90vw;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.92);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.show .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: var(--bg-surface-elevated);
+    }
+
+    /* Comparison matrix */
+    .compare-matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      margin-top: 10px;
+    }
+
+    .compare-matrix-table th {
+      background: var(--bg-surface-elevated);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .compare-matrix-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .diff-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .diff-badge.match {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-success);
+    }
+
+    .diff-badge.conflict {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--accent-danger);
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header-bar">
+    <div class="app-branding">
+      <div class="app-logo">AG</div>
+      <div class="app-title-container">
+        <h1>Security &amp; Permissions</h1>
+        <span>Enterprise Console</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Switch Light/Dark Mode">🌓</button>
+      <a href="payroll.html" class="btn btn-outline" style="text-decoration:none;">&larr; Exit Console</a>
+    </div>
+  </header>
+
+  <!-- WORKSPACE -->
+  <div class="main-workspace">
+    <!-- LEFT SIDEBAR -->
+    <aside class="control-sidebar">
+      <!-- Search & Filters -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Directory Search</div>
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="sidebar-search" oninput="filterSidebarList()" placeholder="Search Roles or Users...">
+        </div>
+      </div>
+
+      <!-- Scope Switcher tabs -->
+      <div class="sidebar-section" style="padding: 12px 20px;">
+        <div style="display:flex; background:var(--bg-surface-elevated); border-radius:8px; padding:3px; gap:4px;">
+          <button id="tab-roles-btn" onclick="setSidebarScope('roles')" style="flex:1; padding:8px; font-size:12.5px; border-radius:6px; cursor:pointer; font-weight:600; border:none; background:var(--bg-surface); color:var(--text-main);">Roles &amp; Levels</button>
+          <button id="tab-users-btn" onclick="setSidebarScope('users')" style="flex:1; padding:8px; font-size:12.5px; border-radius:6px; cursor:pointer; font-weight:600; border:none; background:transparent; color:var(--text-muted);">User Overrides</button>
+        </div>
+      </div>
+
+      <!-- Scope Lists -->
+      <div class="sidebar-section" style="flex: 1; display:flex; flex-direction:column; overflow:hidden;">
+        <!-- Roles List -->
+        <div id="roles-scope-container" style="display:flex; flex-direction:column; gap:12px; height:100%; overflow:hidden;">
+          <div>
+            <div class="sidebar-section-title" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>Role Profiles</span>
+              <button onclick="openCreateLevelModal()" style="background:none; border:none; color:var(--primary); font-weight:700; cursor:pointer; font-size:11px;">+ Custom Level</button>
+            </div>
+            <div class="sidebar-list" id="roles-list-ul"></div>
+          </div>
+        </div>
+
+        <!-- Users list (Overrides) -->
+        <div id="users-scope-container" style="display:none; flex-direction:column; gap:12px; height:100%; overflow:hidden;">
+          <div style="display:flex; flex-direction:column; height:100%; overflow:hidden;">
+            <div class="sidebar-section-title">Select User for Overrides</div>
+            <div class="sidebar-list" id="users-list-ul" style="max-height:unset; flex:1;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit log footer in sidebar -->
+      <div class="sidebar-section" style="height:220px; display:flex; flex-direction:column; overflow:hidden; border-top:1px solid var(--border-color);">
+        <div class="sidebar-section-title">Live Audit Log</div>
+        <div class="audit-logs-container" id="audit-log-container">
+          <div class="audit-log-card">
+            <span class="audit-log-time">System initialized console</span>
+            Loaded 1,050 pages across 6 ERP modules. Ready.
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT PANEL CONTENT -->
+    <div class="content-container">
+      <!-- STATS BANNER -->
+      <section class="stats-banner">
+        <div class="stat-card">
+          <div class="stat-icon">📄</div>
+          <div class="stat-info">
+            <strong id="stat-total-pages">1,050</strong>
+            <span>Active ERP Pages</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛡</div>
+          <div class="stat-info">
+            <strong id="stat-scope-title">Administrator</strong>
+            <span>Current Context Target</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-info">
+            <strong id="stat-overrides-count">0 Active</strong>
+            <span>Target User Overrides</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔐</div>
+          <div class="stat-info">
+            <strong id="stat-user-level">Level 2</strong>
+            <span>Permission Rank Priority</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- BULK ACTIONS & GRID FILTERS -->
+      <section class="actions-bar">
+        <div class="actions-left">
+          <span class="mode-badge role-mode" id="console-mode-indicator">Role Profile Mode</span>
+          <div class="search-input-wrapper" style="width:200px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="page-search-input" oninput="triggerPageSearch()" placeholder="Search pages dynamically...">
+          </div>
+          <button class="btn btn-outline" onclick="toggleExpandAllModules()">Expand/Collapse All</button>
+        </div>
+        <div class="actions-right">
+          <button class="btn btn-outline" onclick="openCompareModal()">Compare Roles</button>
+          <button class="btn btn-outline" onclick="openImportExportModal()">Import/Export</button>
+          <button class="btn btn-outline" onclick="triggerReset()">Reset to Default</button>
+          <button class="btn btn-primary" onclick="triggerSaveChanges()">Save Changes</button>
+        </div>
+      </section>
+
+      <!-- Tree Filter Toolbar -->
+      <div style="background:var(--bg-surface); padding:10px 24px; border-bottom:1px solid var(--border-color); display:flex; gap:12px; align-items:center; flex-shrink:0; font-size:12.5px;">
+        <span style="font-weight:600; color:var(--text-muted);">Quick Actions (All Pages):</span>
+        <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="bulkActionAll('check')">Select All</button>
+        <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="bulkActionAll('uncheck')">Deselect All</button>
+        <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="bulkActionAll('view-only')">Grant View Only</button>
+        <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="bulkActionAll('full-control')">Grant Full Control</button>
+        <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="triggerCopyFromRole()">Copy From Role</button>
+      </div>
+
+      <!-- COLLAPSIBLE PERMISSION TREE -->
+      <div class="tree-scroll-container" id="permission-tree-container">
+        <!-- Generated dynamically in JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: CREATE LEVEL ── -->
+  <div class="modal-overlay" id="create-level-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Create Custom Level / Role Profile</h3>
+        <button class="close-modal-btn" onclick="closeModal('create-level-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Level Name</label>
+            <input type="text" id="new-level-name" placeholder="e.g. Level 8 - Contractor Lead" style="width:100%; padding:10px; border:1px solid var(--border-color); background:var(--bg-surface-elevated); color:var(--text-main); border-radius:6px; outline:none;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Inherit Permissions From Template</label>
+            <select id="new-level-inherit-role" style="width:100%; padding:10px; border:1px solid var(--border-color); background:var(--bg-surface-elevated); color:var(--text-main); border-radius:6px; outline:none;">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('create-level-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitCreateLevel()">Create Level</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: COMPARISON VIEW ── -->
+  <div class="modal-overlay" id="compare-modal">
+    <div class="modal-card" style="width:800px;">
+      <div class="modal-header">
+        <h3>Role &amp; Level Side-by-Side Comparison</h3>
+        <button class="close-modal-btn" onclick="closeModal('compare-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Compare Role / Level A</label>
+            <select id="compare-select-a" onchange="renderComparison()" style="width:100%; padding:10px; border:1px solid var(--border-color); background:var(--bg-surface-elevated); color:var(--text-main); border-radius:6px;"></select>
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">Compare Role / Level B</label>
+            <select id="compare-select-b" onchange="renderComparison()" style="width:100%; padding:10px; border:1px solid var(--border-color); background:var(--bg-surface-elevated); color:var(--text-main); border-radius:6px;"></select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="compare-matrix-table">
+            <thead>
+              <tr>
+                <th>Page Route / Key</th>
+                <th>A's Permission Actions</th>
+                <th>B's Permission Actions</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="compare-matrix-tbody">
+              <!-- populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal('compare-modal')">Close Comparison</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: IMPORT / EXPORT ── -->
+  <div class="modal-overlay" id="import-export-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Import / Export Permission Template</h3>
+        <button class="close-modal-btn" onclick="closeModal('import-export-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Copy JSON schema to export or paste a valid permission schema configuration to import config instantly.</p>
+        <textarea id="import-export-textarea" rows="12" style="width:100%; padding:12px; font-family:monospace; font-size:12px; border:1px solid var(--border-color); background:var(--bg-surface-elevated); color:var(--text-main); border-radius:8px; outline:none; resize:vertical;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('import-export-modal')">Close</button>
+        <button class="btn btn-success" onclick="submitImportPermissions()">Import Schema</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: COPY FROM ROLE ── -->
+  <div class="modal-overlay" id="copy-role-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Copy Permissions from Role Template</h3>
+        <button class="close-modal-btn" onclick="closeModal('copy-role-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">This will overwrite the current changes in the tree panel with another role profile.</p>
+        <select id="copy-role-source-select" style="width:100%; padding:10px; border:1px solid var(--border-color); background:var(--bg-surface-elevated); color:var(--text-main); border-radius:6px;"></select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('copy-role-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitCopyRole()">Copy Overwrite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── JAVASCRIPT LOGIC ── -->
+  <script>
+    // ────────────────────────────────────────────────────────
+    // DATABASE INITIALIZATION (1,050 Pages & 6 ERP Modules)
+    // ────────────────────────────────────────────────────────
+    const MODULES = [
+      { id: "dashboard", name: "Dashboard", icon: "📊", defaultPages: ["Dashboard Home", "Operational Analytics", "Executive Reports"] },
+      { id: "crm", name: "CRM Client Relationship", icon: "🤝", defaultPages: ["Customers", "Leads", "Opportunities", "Activities", "Campaigns", "Contacts", "Tasks Queue", "Client Notes", "Files Repository", "CRM Settings"] },
+      { id: "sales", name: "Sales Department", icon: "💰", defaultPages: ["Quotations Draft", "Sales Orders Master", "Delivery Orders Triage", "Invoices billing", "Returns", "Price Lists", "Discounts", "Payments Triage", "Sales Reports", "Sales Settings"] },
+      { id: "inventory", name: "Inventory Control", icon: "📦", defaultPages: ["Products Catalog", "Categories Management", "Brands Master", "Warehouses", "Stock Transfer", "Stock Adjustment", "Purchase Requests", "Barcodes Scanner Integration", "Batches", "Reports"] },
+      { id: "hr", name: "HR Management", icon: "👥", defaultPages: ["Employees Directory", "Attendance Tracker", "Leave Management", "Payroll Dashboard", "Recruitment Pipe", "Performance Goals", "Documents Cloud", "Training Classes", "Assets Assignment", "Reports"] },
+      { id: "finance", name: "Finance Accounts", icon: "💳", defaultPages: ["Chart of Accounts", "Journal Entries", "Expenses Claims", "Income Ledger", "Budget Master", "Taxes Compliance", "Payments Gateways", "Bank Accounts", "Financial Reports"] }
+    ];
+
+    // Generate 50 pages for Dashboard, and 200 pages for all other modules to total 1,050 pages.
+    const DB_PAGES = {};
+    const ALL_ACTIONS = ["View", "Create", "Edit", "Delete", "Approve", "Export", "Full Control"];
+
+    MODULES.forEach(m => {
+      DB_PAGES[m.id] = [];
+      // add default pages first
+      m.defaultPages.forEach(p => {
+        DB_PAGES[m.id].push({ name: p, custom: false });
+      });
+      // pad with generated pages to demonstrate virtual scroll & performance scaling
+      const targetCount = m.id === "dashboard" ? 50 : 200;
+      let padIndex = 1;
+      while (DB_PAGES[m.id].length < targetCount) {
+        DB_PAGES[m.id].push({ name: `Subpage Module Action ${padIndex}`, custom: true });
+        padIndex++;
+      }
+    });
+
+    // ────────────────────────────────────────────────────────
+    // DEFAULT ROLES, CUSTOM PERMISSIONS & STATE STORAGE
+    // ────────────────────────────────────────────────────────
+    let ROLES = {
+      "super_admin": { name: "Level 1 - Super Admin (Full)", level: 1, department: "Executive", branch: "Riyadh HQ" },
+      "administrator": { name: "Level 2 - Administrator", level: 2, department: "Operations", branch: "Riyadh HQ" },
+      "dept_manager": { name: "Level 3 - Department Manager", level: 3, department: "Business Systems", branch: "Jeddah Branch" },
+      "team_leader": { name: "Level 4 - Team Leader", level: 4, department: "Engineering", branch: "Al-Khobar" },
+      "senior_staff": { name: "Level 5 - Senior Staff", level: 5, department: "R&D", branch: "Jeddah Branch" },
+      "staff": { name: "Level 6 - Staff Member", level: 6, department: "HR Operations", branch: "Riyadh HQ" },
+      "read_only": { name: "Level 7 - Read Only Profile", level: 7, department: "Finance", branch: "Riyadh HQ" }
+    };
+
+    let USERS = {
+      "fahad": { name: "Fahad Al-Sulaiman", role: "dept_manager", department: "Engineering", branch: "Riyadh HQ", level: 3, overrides: {} },
+      "tariq": { name: "Tariq Harbi", role: "staff", department: "Sales", branch: "Jeddah Branch", level: 6, overrides: {} },
+      "youssef": { name: "Youssef Nabil", role: "senior_staff", department: "Finance", branch: "Al-Khobar", level: 5, overrides: {} },
+      "huda": { name: "Huda Otaibi", role: "super_admin", department: "Executive", branch: "Riyadh HQ", level: 1, overrides: {} }
+    };
+
+    // Permission matrix state object
+    // Structure: PERMISSION_MATRIX[target_id][page_key][action] = true / false (target_id can be role_key or user_key)
+    let PERMISSION_MATRIX = {};
+
+    // Initialize default permissions configurations
+    Object.keys(ROLES).forEach(r => {
+      PERMISSION_MATRIX[r] = {};
+      MODULES.forEach(m => {
+        DB_PAGES[m.id].forEach(p => {
+          const key = `${m.id}:${p.name}`;
+          PERMISSION_MATRIX[r][key] = {};
+          ALL_ACTIONS.forEach(action => {
+            // Level 1 Super admin always inherits true for all
+            if (r === "super_admin") {
+              PERMISSION_MATRIX[r][key][action] = true;
+            } else if (r === "read_only") {
+              PERMISSION_MATRIX[r][key][action] = (action === "View");
+            } else if (r === "staff") {
+              PERMISSION_MATRIX[r][key][action] = (action === "View" || action === "Create");
+            } else {
+              // Standard defaults
+              PERMISSION_MATRIX[r][key][action] = (action === "View" || action === "Create" || action === "Edit" || action === "Export");
+            }
+          });
+        });
+      });
+    });
+
+    // ────────────────────────────────────────────────────────
+    // ACTIVE WORKSPACE STATES
+    // ────────────────────────────────────────────────────────
+    let currentScopeType = "roles"; // "roles" or "users"
+    let currentScopeId = "administrator"; // active target id (e.g. "administrator" or "fahad")
+    let expandedModules = {}; // tracking accordion states
+    let lazyLoadedModules = {}; // simulation of lazy load loading delays
+    let sidebarFilterQuery = "";
+    let pageFilterQuery = "";
+
+    // ────────────────────────────────────────────────────────
+    // INITIALIZATION & TAB SWITCHER
+    // ────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      // expand dashboard and sales by default
+      expandedModules["dashboard"] = true;
+      expandedModules["sales"] = true;
+      lazyLoadedModules["dashboard"] = true;
+      lazyLoadedModules["sales"] = true;
+
+      renderSidebarLists();
+      renderActiveGridContext();
+      populateSelectionModals();
+    });
+
+    function setSidebarScope(scope) {
+      currentScopeType = scope;
+      document.getElementById('tab-roles-btn').style.background = scope === 'roles' ? 'var(--bg-surface)' : 'transparent';
+      document.getElementById('tab-roles-btn').style.color = scope === 'roles' ? 'var(--text-main)' : 'var(--text-muted)';
+      document.getElementById('tab-users-btn').style.background = scope === 'users' ? 'var(--bg-surface)' : 'transparent';
+      document.getElementById('tab-users-btn').style.color = scope === 'users' ? 'var(--text-main)' : 'var(--text-muted)';
+
+      document.getElementById('roles-scope-container').style.display = scope === 'roles' ? 'flex' : 'none';
+      document.getElementById('users-scope-container').style.display = scope === 'users' ? 'flex' : 'none';
+
+      // reset target selection based on scope
+      if (scope === 'roles') {
+        setScopeTarget('administrator');
+      } else {
+        setScopeTarget('fahad');
+      }
+    }
+
+    function setScopeTarget(id) {
+      currentScopeId = id;
+      renderSidebarLists();
+      renderActiveGridContext();
+    }
+
+    // ────────────────────────────────────────────────────────
+    // RENDER SIDEBAR LISTS
+    // ────────────────────────────────────────────────────────
+    function renderSidebarLists() {
+      // Roles list
+      const rolesContainer = document.getElementById('roles-list-ul');
+      rolesContainer.innerHTML = '';
+      Object.keys(ROLES).forEach(r => {
+        const item = ROLES[r];
+        if (sidebarFilterQuery && !item.name.toLowerCase().includes(sidebarFilterQuery.toLowerCase())) return;
+
+        const activeClass = (currentScopeType === 'roles' && currentScopeId === r) ? 'active' : '';
+        rolesContainer.innerHTML += `
+          <div class="sidebar-item ${activeClass}" onclick="setScopeTarget('${r}')">
+            <span>${item.name}</span>
+            <span class="sidebar-item-level">Lvl ${item.level}</span>
+          </div>
+        `;
+      });
+
+      // Users List
+      const usersContainer = document.getElementById('users-list-ul');
+      usersContainer.innerHTML = '';
+      Object.keys(USERS).forEach(u => {
+        const item = USERS[u];
+        if (sidebarFilterQuery && !item.name.toLowerCase().includes(sidebarFilterQuery.toLowerCase())) return;
+
+        const activeClass = (currentScopeType === 'users' && currentScopeId === u) ? 'active' : '';
+        const roleLabel = ROLES[item.role] ? ROLES[item.role].name.split('-')[1].trim() : item.role;
+        const overridesCount = Object.keys(item.overrides).length;
+        const overrideBadge = overridesCount > 0 ? `<span style="font-size:10px; background:var(--accent-override); color:#fff; padding:1px 5px; border-radius:4px; font-weight:700;">${overridesCount}</span>` : '';
+
+        usersContainer.innerHTML += `
+          <div class="sidebar-item ${activeClass}" onclick="setScopeTarget('${u}')">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-weight:600; color:var(--text-main);">${item.name}</span>
+              <span style="font-size:11px; color:var(--text-muted);">${roleLabel} (${item.department})</span>
+            </div>
+            ${overrideBadge}
+          </div>
+        `;
+      });
+    }
+
+    function filterSidebarList() {
+      sidebarFilterQuery = document.getElementById('sidebar-search').value;
+      renderSidebarLists();
+    }
+
+    // ────────────────────────────────────────────────────────
+    // ACTIVE WORKSPACE PERMISSION GRID BUILDER
+    // ────────────────────────────────────────────────────────
+    function renderActiveGridContext() {
+      // Update stats header labels
+      const scopeTitle = document.getElementById('stat-scope-title');
+      const overridesCount = document.getElementById('stat-overrides-count');
+      const userLevel = document.getElementById('stat-user-level');
+      const modeIndicator = document.getElementById('console-mode-indicator');
+
+      if (currentScopeType === 'roles') {
+        const role = ROLES[currentScopeId];
+        scopeTitle.innerText = role.name.split('-')[1].trim();
+        overridesCount.innerText = "N/A (Role Mode)";
+        userLevel.innerText = `Level ${role.level}`;
+        modeIndicator.innerText = "Role Profile Mode";
+        modeIndicator.className = "mode-badge role-mode";
+      } else {
+        const user = USERS[currentScopeId];
+        const role = ROLES[user.role];
+        scopeTitle.innerText = user.name;
+        const overrideKeys = Object.keys(user.overrides).length;
+        overridesCount.innerText = `${overrideKeys} Active`;
+        userLevel.innerText = `Level ${user.level}`;
+        modeIndicator.innerText = "User Overrides Active";
+        modeIndicator.className = "mode-badge override-mode";
+      }
+
+      // Build main tree layout structure
+      const treeContainer = document.getElementById('permission-tree-container');
+      treeContainer.innerHTML = '';
+
+      MODULES.forEach(m => {
+        const isExpanded = expandedModules[m.id];
+        const isLoaded = lazyLoadedModules[m.id];
+        const expandedClass = isExpanded ? 'expanded' : '';
+
+        // Calculate count of pages in module
+        const totalPageCount = DB_PAGES[m.id].length;
+
+        // Render accordion item
+        let bodyContentHTML = '';
+        if (isExpanded) {
+          if (!isLoaded) {
+            bodyContentHTML = `
+              <div class="lazy-loader" id="loader-${m.id}">
+                <div class="spinner"></div>
+                <span>Lazy loading pages securely from database...</span>
+              </div>
+            `;
+            // Trigger simulated lazy load callback
+            setTimeout(() => {
+              lazyLoadedModules[m.id] = true;
+              renderActiveGridContext();
+              logAudit(`Lazy loaded ${totalPageCount} pages for module '${m.name}' successfully.`);
+            }, 250);
+          } else {
+            bodyContentHTML = buildVirtualGridHTML(m.id);
+          }
+        }
+
+        treeContainer.innerHTML += `
+          <div class="module-card ${expandedClass}" id="module-card-${m.id}">
+            <div class="module-header" onclick="toggleModule('${m.id}')">
+              <div class="module-info">
+                <span class="expand-chevron">▶</span>
+                <div class="module-icon">${m.icon}</div>
+                <span class="module-name">${m.name}</span>
+                <span class="module-page-count">${totalPageCount} pages</span>
+              </div>
+              <div class="module-header-controls" onclick="event.stopPropagation()">
+                <div class="module-toggle-wrapper" onclick="toggleModuleLevelAccess('${m.id}')">
+                  <input type="checkbox" id="module-chk-${m.id}" ${isModuleFullyEnabled(m.id) ? 'checked' : ''} style="cursor:pointer;">
+                  <span>Select Module</span>
+                </div>
+              </div>
+            </div>
+            <div class="module-body" id="module-body-${m.id}">
+              ${bodyContentHTML}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function toggleModule(moduleId) {
+      expandedModules[moduleId] = !expandedModules[moduleId];
+      renderActiveGridContext();
+    }
+
+    function toggleExpandAllModules() {
+      const allExpanded = MODULES.every(m => expandedModules[m.id]);
+      MODULES.forEach(m => {
+        expandedModules[m.id] = !allExpanded;
+        if (!allExpanded) lazyLoadedModules[m.id] = true; // fast loading during bulk expand
+      });
+      renderActiveGridContext();
+      logAudit(`${allExpanded ? 'Collapsed' : 'Expanded'} all modules in the tree view.`);
+    }
+
+    // ────────────────────────────────────────────────────────
+    // LAZY LOADED VIRTUAL ROW GENERATOR WITH PAGINATION / BUFFER
+    // ────────────────────────────────────────────────────────
+    function buildVirtualGridHTML(moduleId) {
+      let rowsHTML = '';
+      const pages = DB_PAGES[moduleId];
+
+      // Filters & Search
+      const searchVal = document.getElementById('page-search-input')?.value || "";
+
+      // Sticky Headers row
+      let headerCells = `<div class="sticky-grid-header"><div>Page Name</div>`;
+      ALL_ACTIONS.forEach(action => {
+        headerCells += `<div style="text-align:center;">${action}</div>`;
+      });
+      headerCells += `</div>`;
+
+      // We only render matching pages. If user searches, we display matched items.
+      let visiblePagesCount = 0;
+      pages.forEach(p => {
+        if (searchVal && !p.name.toLowerCase().includes(searchVal.toLowerCase())) return;
+        visiblePagesCount++;
+
+        const key = `${moduleId}:${p.name}`;
+        let rowCells = `<div class="grid-cell-page">${p.name} ${hasUserOverride(key) ? '<span class="override-badge">override</span>' : ''}</div>`;
+
+        ALL_ACTIONS.forEach(action => {
+          const permState = getPermissionState(key, action);
+          const isLocked = isPermissionLocked(key, action);
+
+          let stateClass = '';
+          if (permState === 'override-grant') stateClass = 'override-grant';
+          else if (permState === 'override-deny') stateClass = 'override-deny';
+
+          rowCells += `
+            <div class="checkbox-cell">
+              <input type="checkbox" 
+                     class="perm-checkbox ${stateClass} perm-tooltip" 
+                     data-tooltip="${getTooltipText(key, action)}" 
+                     ${permState === true || permState === 'override-grant' ? 'checked' : ''} 
+                     ${isLocked ? 'disabled' : ''} 
+                     onclick="togglePermissionCheckbox(event, '${key}', '${action}')">
+            </div>
+          `;
+        });
+
+        rowsHTML += `<div class="grid-row">${rowCells}</div>`;
+      });
+
+      if (visiblePagesCount === 0) {
+        return `
+          <div style="padding:30px; text-align:center; color:var(--text-muted); font-size:13px;">
+            No pages matched search filters.
+          </div>
+        `;
+      }
+
+      return `
+        <div class="virtual-grid-container">
+          ${headerCells}
+          ${rowsHTML}
+        </div>
+      `;
+    }
+
+    function triggerPageSearch() {
+      // Instant fast search across all open lazy grids
+      MODULES.forEach(m => {
+        if (expandedModules[m.id] && lazyLoadedModules[m.id]) {
+          const bodyEl = document.getElementById(`module-body-${m.id}`);
+          if (bodyEl) {
+            bodyEl.innerHTML = buildVirtualGridHTML(m.id);
+          }
+        }
+      });
+    }
+
+    // ────────────────────────────────────────────────────────
+    // INHERITANCE RESOLVER & STATE ACCESSORS
+    // ────────────────────────────────────────────────────────
+    function getPermissionState(pageKey, action) {
+      // 1. User specific overrides (Highest priority)
+      if (currentScopeType === 'users') {
+        const user = USERS[currentScopeId];
+        if (user.overrides[pageKey] && user.overrides[pageKey][action] !== undefined) {
+          return user.overrides[pageKey][action] ? 'override-grant' : 'override-deny';
+        }
+        // Fall back to User's Role settings
+        const userRole = user.role;
+        // Super Admin gets direct pass
+        if (userRole === 'super_admin') return true;
+        return PERMISSION_MATRIX[userRole][pageKey] && PERMISSION_MATRIX[userRole][pageKey][action];
+      }
+
+      // 2. Role Settings Mode
+      if (currentScopeId === 'super_admin') return true; // Super admin level 1 unrestricted
+      return PERMISSION_MATRIX[currentScopeId][pageKey] && PERMISSION_MATRIX[currentScopeId][pageKey][action];
+    }
+
+    function isPermissionLocked(pageKey, action) {
+      // Super admin properties are locked/unrestricted
+      if (currentScopeType === 'roles' && currentScopeId === 'super_admin') return true;
+      if (currentScopeType === 'users') {
+        const user = USERS[currentScopeId];
+        if (user.role === 'super_admin') return true; // user role is super_admin (locked)
+      }
+      return false;
+    }
+
+    function hasUserOverride(pageKey) {
+      if (currentScopeType !== 'users') return false;
+      const user = USERS[currentScopeId];
+      return user.overrides[pageKey] !== undefined;
+    }
+
+    function getTooltipText(pageKey, action) {
+      if (currentScopeType === 'users') {
+        const user = USERS[currentScopeId];
+        if (user.overrides[pageKey] && user.overrides[pageKey][action] !== undefined) {
+          return `User Override: ${user.overrides[pageKey][action] ? 'Granted' : 'Denied'}`;
+        }
+        return `Inherited from Role: ${ROLES[user.role].name.split('-')[1]}`;
+      }
+      if (currentScopeId === 'super_admin') return "Level 1 System Override (Locked)";
+      return `Role Setting: ${PERMISSION_MATRIX[currentScopeId][pageKey][action] ? 'Granted' : 'Denied'}`;
+    }
+
+    function isModuleFullyEnabled(moduleId) {
+      // check if all pages in module have View permission enabled
+      const pages = DB_PAGES[moduleId];
+      return pages.every(p => {
+        const key = `${moduleId}:${p.name}`;
+        const state = getPermissionState(key, 'View');
+        return state === true || state === 'override-grant';
+      });
+    }
+
+    // ────────────────────────────────────────────────────────
+    // TOGGLE PERMISSIONS EVENTS
+    // ────────────────────────────────────────────────────────
+    function togglePermissionCheckbox(event, pageKey, action) {
+      const checked = event.target.checked;
+      logAudit(`Toggle: '${pageKey}' Action: '${action}' -> Value: ${checked}`);
+
+      if (currentScopeType === 'users') {
+        // User override mode
+        const user = USERS[currentScopeId];
+        if (!user.overrides[pageKey]) user.overrides[pageKey] = {};
+        
+        // Toggle override state: unchecked -> checked -> clear override
+        if (user.overrides[pageKey][action] === undefined) {
+          user.overrides[pageKey][action] = checked;
+        } else if (user.overrides[pageKey][action] === checked) {
+          delete user.overrides[pageKey][action];
+          if (Object.keys(user.overrides[pageKey]).length === 0) {
+            delete user.overrides[pageKey];
+          }
+        } else {
+          user.overrides[pageKey][action] = checked;
+        }
+        logAudit(`User Override update: overrides keys count for '${user.name}' is ${Object.keys(user.overrides).length}`);
+      } else {
+        // Role mode
+        PERMISSION_MATRIX[currentScopeId][pageKey][action] = checked;
+
+        // If Full Control is selected, check/uncheck all actions on this page
+        if (action === 'Full Control') {
+          ALL_ACTIONS.forEach(act => {
+            PERMISSION_MATRIX[currentScopeId][pageKey][act] = checked;
+          });
+        }
+      }
+
+      // Re-render
+      renderActiveGridContext();
+      renderSidebarLists();
+    }
+
+    function toggleModuleLevelAccess(moduleId) {
+      // If module toggle is clicked, check/uncheck all pages in this module
+      const isCurrentlyEnabled = isModuleFullyEnabled(moduleId);
+      const targetState = !isCurrentlyEnabled;
+
+      const pages = DB_PAGES[moduleId];
+      pages.forEach(p => {
+        const key = `${moduleId}:${p.name}`;
+        ALL_ACTIONS.forEach(action => {
+          if (currentScopeType === 'users') {
+            const user = USERS[currentScopeId];
+            if (!user.overrides[key]) user.overrides[key] = {};
+            user.overrides[key][action] = targetState;
+          } else {
+            PERMISSION_MATRIX[currentScopeId][key][action] = targetState;
+          }
+        });
+      });
+
+      logAudit(`Module Toggled: '${moduleId}' -> Target State: ${targetState ? 'Grant All' : 'Deselect All'}`);
+      renderActiveGridContext();
+      renderSidebarLists();
+    }
+
+    // ────────────────────────────────────────────────────────
+    // BULK ACTIONS HANDLERS
+    // ────────────────────────────────────────────────────────
+    function bulkActionAll(type) {
+      MODULES.forEach(m => {
+        // Bulk apply to loaded/active modules only to preserve memory speed
+        if (expandedModules[m.id]) {
+          const pages = DB_PAGES[m.id];
+          pages.forEach(p => {
+            const key = `${m.id}:${p.name}`;
+            ALL_ACTIONS.forEach(action => {
+              if (currentScopeType === 'users') {
+                const user = USERS[currentScopeId];
+                if (!user.overrides[key]) user.overrides[key] = {};
+                if (type === 'check') user.overrides[key][action] = true;
+                else if (type === 'uncheck') user.overrides[key][action] = false;
+                else if (type === 'view-only') user.overrides[key][action] = (action === 'View');
+                else if (type === 'full-control') user.overrides[key][action] = true;
+              } else {
+                if (type === 'check') PERMISSION_MATRIX[currentScopeId][key][action] = true;
+                else if (type === 'uncheck') PERMISSION_MATRIX[currentScopeId][key][action] = false;
+                else if (type === 'view-only') PERMISSION_MATRIX[currentScopeId][key][action] = (action === 'View');
+                else if (type === 'full-control') PERMISSION_MATRIX[currentScopeId][key][action] = true;
+              }
+            });
+          });
+        }
+      });
+
+      logAudit(`Bulk action executed: '${type}' on active grid pages.`);
+      renderActiveGridContext();
+      renderSidebarLists();
+    }
+
+    // ────────────────────────────────────────────────────────
+    // MODALS TRIGGERS
+    // ────────────────────────────────────────────────────────
+    function openModal(id) {
+      document.getElementById(id).classList.add('show');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    function populateSelectionModals() {
+      // Inherit templates selects
+      const inheritSelect = document.getElementById('new-level-inherit-role');
+      inheritSelect.innerHTML = '';
+      Object.keys(ROLES).forEach(r => {
+        inheritSelect.innerHTML += `<option value="${r}">${ROLES[r].name}</option>`;
+      });
+
+      // Comparison Selects
+      const compA = document.getElementById('compare-select-a');
+      const compB = document.getElementById('compare-select-b');
+      compA.innerHTML = '';
+      compB.innerHTML = '';
+      Object.keys(ROLES).forEach(r => {
+        compA.innerHTML += `<option value="${r}">${ROLES[r].name}</option>`;
+        compB.innerHTML += `<option value="${r}">${ROLES[r].name}</option>`;
+      });
+      // set defaults
+      compA.value = 'administrator';
+      compB.value = 'read_only';
+    }
+
+    // Custom level creator
+    function openCreateLevelModal() {
+      populateSelectionModals();
+      openModal('create-level-modal');
+    }
+
+    function submitCreateLevel() {
+      const name = document.getElementById('new-level-name').value.trim();
+      const inheritFrom = document.getElementById('new-level-inherit-role').value;
+      if (!name) {
+        alert('Please specify a level profile name.');
+        return;
+      }
+
+      const key = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      const newLvl = Object.keys(ROLES).length + 1;
+
+      // Add to ROLES
+      ROLES[key] = {
+        name: `Level ${newLvl} - ${name}`,
+        level: newLvl,
+        department: "Custom Group",
+        branch: "Riyadh HQ"
+      };
+
+      // Copy Permissions matrix values
+      PERMISSION_MATRIX[key] = JSON.parse(JSON.stringify(PERMISSION_MATRIX[inheritFrom]));
+
+      logAudit(`Custom Level created: '${ROLES[key].name}' inheriting from '${inheritFrom}' template.`);
+      closeModal('create-level-modal');
+      renderSidebarLists();
+      setScopeTarget(key);
+    }
+
+    // Copy permissions modal
+    function triggerCopyFromRole() {
+      const select = document.getElementById('copy-role-source-select');
+      select.innerHTML = '';
+      Object.keys(ROLES).forEach(r => {
+        if (r !== currentScopeId) {
+          select.innerHTML += `<option value="${r}">${ROLES[r].name}</option>`;
+        }
+      });
+      openModal('copy-role-modal');
+    }
+
+    function submitCopyRole() {
+      const srcRole = document.getElementById('copy-role-source-select').value;
+      if (currentScopeType === 'users') {
+        // copy permissions as overrides
+        const user = USERS[currentScopeId];
+        user.overrides = {};
+        MODULES.forEach(m => {
+          DB_PAGES[m.id].forEach(p => {
+            const key = `${m.id}:${p.name}`;
+            user.overrides[key] = JSON.parse(JSON.stringify(PERMISSION_MATRIX[srcRole][key]));
+          });
+        });
+      } else {
+        PERMISSION_MATRIX[currentScopeId] = JSON.parse(JSON.stringify(PERMISSION_MATRIX[srcRole]));
+      }
+
+      logAudit(`Copied permissions database configuration from source role template: '${srcRole}'`);
+      closeModal('copy-role-modal');
+      renderActiveGridContext();
+      renderSidebarLists();
+    }
+
+    // ────────────────────────────────────────────────────────
+    // ROLE COMPARISON VIEW MATRIX
+    // ────────────────────────────────────────────────────────
+    function openCompareModal() {
+      populateSelectionModals();
+      renderComparison();
+      openModal('compare-modal');
+    }
+
+    function renderComparison() {
+      const roleA = document.getElementById('compare-select-a').value;
+      const roleB = document.getElementById('compare-select-b').value;
+      const tbody = document.getElementById('compare-matrix-tbody');
+      tbody.innerHTML = '';
+
+      // list first 10 pages for quick rendering context comparison
+      let comparedCount = 0;
+      MODULES.forEach(m => {
+        DB_PAGES[m.id].forEach(p => {
+          if (comparedCount >= 10) return; // render first 10 for review diff
+          comparedCount++;
+          const key = `${m.id}:${p.name}`;
+
+          const permsA = [];
+          const permsB = [];
+          ALL_ACTIONS.forEach(act => {
+            if (PERMISSION_MATRIX[roleA][key] && PERMISSION_MATRIX[roleA][key][act]) permsA.push(act);
+            if (PERMISSION_MATRIX[roleB][key] && PERMISSION_MATRIX[roleB][key][act]) permsB.push(act);
+          });
+
+          const match = permsA.join(',') === permsB.join(',');
+          const badge = match ? '<span class="diff-badge match">Matching</span>' : '<span class="diff-badge conflict">Diff Conflict</span>';
+
+          tbody.innerHTML += `
+            <tr>
+              <td><strong>${p.name}</strong><br><span style="font-size:10px; color:var(--text-muted);">${m.name}</span></td>
+              <td><span style="color:var(--accent-success); font-weight:600;">${permsA.join(', ') || 'None'}</span></td>
+              <td><span style="color:var(--accent-info); font-weight:600;">${permsB.join(', ') || 'None'}</span></td>
+              <td>${badge}</td>
+            </tr>
+          `;
+        });
+      });
+    }
+
+    // ────────────────────────────────────────────────────────
+    // IMPORT / EXPORT CONTROLS
+    // ────────────────────────────────────────────────────────
+    function openImportExportModal() {
+      const textarea = document.getElementById('import-export-textarea');
+      // Export current active context configuration
+      let data = {};
+      if (currentScopeType === 'users') {
+        data = USERS[currentScopeId].overrides;
+      } else {
+        data = PERMISSION_MATRIX[currentScopeId];
+      }
+      textarea.value = JSON.stringify(data, null, 2);
+      openModal('import-export-modal');
+    }
+
+    function submitImportPermissions() {
+      const textarea = document.getElementById('import-export-textarea');
+      try {
+        const parsed = JSON.parse(textarea.value);
+        if (currentScopeType === 'users') {
+          USERS[currentScopeId].overrides = parsed;
+        } else {
+          PERMISSION_MATRIX[currentScopeId] = parsed;
+        }
+        logAudit(`Successfully imported JSON permission template schema layout for active target '${currentScopeId}'`);
+        closeModal('import-export-modal');
+        renderActiveGridContext();
+        renderSidebarLists();
+      } catch (e) {
+        alert('Invalid JSON formatting configuration. Please check the schema syntax.');
+      }
+    }
+
+    // ────────────────────────────────────────────────────────
+    // RESET & CONFIRM SAVE CHANGES
+    // ────────────────────────────────────────────────────────
+    function triggerReset() {
+      if (confirm("Reset current permissions context back to system profile default? All custom changes will be discarded.")) {
+        if (currentScopeType === 'users') {
+          USERS[currentScopeId].overrides = {};
+        } else {
+          // restore standard defaults
+          MODULES.forEach(m => {
+            DB_PAGES[m.id].forEach(p => {
+              const key = `${m.id}:${p.name}`;
+              ALL_ACTIONS.forEach(act => {
+                PERMISSION_MATRIX[currentScopeId][key][act] = (act === "View");
+              });
+            });
+          });
+        }
+        logAudit(`Permissions reset back to factory template defaults.`);
+        renderActiveGridContext();
+        renderSidebarLists();
+      }
+    }
+
+    function triggerSaveChanges() {
+      if (confirm("Verify and save all modified security and role overrides settings? All access constraints will be updated instantly.")) {
+        alert("Success: Security & access credentials configuration updated in ERP registry!");
+        logAudit(`Permissions changes saved and pushed to active ERP gateways.`);
+      }
+    }
+
+    // ────────────────────────────────────────────────────────
+    // THEME SWITCHER
+    // ────────────────────────────────────────────────────────
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      logAudit(`Aesthetics theme switched.`);
+    }
+
+    // ────────────────────────────────────────────────────────
+    // AUDIT LOG RECORDER
+    // ────────────────────────────────────────────────────────
+    function logAudit(msg) {
+      const container = document.getElementById('audit-log-container');
+      const time = new Date().toLocaleTimeString();
+      container.innerHTML = `
+        <div class="audit-log-card" style="animation: slideUp 0.2s ease-out;">
+          <span class="audit-log-time">${time}</span>
+          ${msg}
+        </div>
+      ` + container.innerHTML;
+    }
+  </script>
+</body>
+</html>

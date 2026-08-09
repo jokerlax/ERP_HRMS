@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AureliaHRMS · Documents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/payroll.css') }}">
+  <style>
+    /* Specific styles for the placeholder */
+    .placeholder-card {
+      padding: 60px 24px;
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      background-color: var(--white);
+    }
+    .placeholder-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .placeholder-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .badge {
+      background-color: #c53030;
+      color: white;
+      border-radius: 10px;
+      padding: 2px 7px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="login.html" class="sidebar-brand" style="text-decoration: none; color: inherit;">
+      <div class="logo-mark"><div class="diamond"></div></div>
+      <span>AureliaHRMS</span>
+    </a>
+    <div class="sidebar-menu">
+      <div class="menu-label">DOCUMENTS</div>
+      <a href="#" class="menu-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        Upload document
+      </a>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        Document library
+      </a>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/></svg>
+        Expiry alerts
+        <span class="badge">4</span>
+      </a>
+
+      <div class="menu-label" style="margin-top: 24px;">SETUP</div>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Document types
+      </a>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <!-- TOP NAVIGATION -->
+    <header class="top-nav">
+      <nav class="nav-links">
+        <a href="#">Dashboard</a>
+        <a href="employees.html">Employees</a>`n        <a href="/">Payroll</a>
+        <a href="/leaves">Leaves</a>
+        <a href="/documents" class="active">Documents</a>
+        <a href="#">Flight</a>
+        <a href="#">Resignation</a>
+        <a href="#">Reports</a>
+        <a href="#">Settings</a>
+      </nav>
+      <div class="top-right">
+        <span class="datetime" id="currentDateTime">09 Jul 2026 · 18:52</span>
+        <div class="user-avatar">SR</div>
+        <button class="btn-signout">Sign out</button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <div class="breadcrumbs">
+        <span class="crumb" style="color: var(--brand-yellow); font-weight: 500;">Documents</span>
+      </div>
+
+      <h1 class="page-title">Upload document</h1>
+
+      <div class="card">
+        <div class="placeholder-card">
+          <div class="placeholder-title">Upload document</div>
+          <div class="placeholder-desc">This screen loads here. Wire it to your Flask route and render the module inside this card.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
