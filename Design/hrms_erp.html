@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRMS — Aurelia Trading Co.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#101a2b;
+    --navy-2:#16223a;
+    --navy-3:#1e2c47;
+    --navy-line:#28344c;
+    --gold:#c98f28;
+    --gold-soft:#e0a840;
+
+    --canvas:#f4f5f7;
+    --card:#ffffff;
+    --ink:#1b2430;
+    --muted:#6a7583;
+    --faint:#95a0ad;
+    --border:#e2e6eb;
+    --border-strong:#cfd5dd;
+    --field:#eef1f6;
+
+    --green:#0c7a52;
+    --rust:#b04a2f;
+    --amber:#a86a12;
+    --blue:#215d9c;
+
+    --side-w:250px;
+    --top-h:74px;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;font-family:'Inter',system-ui,sans-serif;font-size:14px;color:var(--ink);
+    background:var(--canvas);height:100vh;overflow:hidden;
+    display:grid;grid-template-columns:var(--side-w) 1fr;grid-template-rows:var(--top-h) 1fr;
+    grid-template-areas:"brand topbar" "sidebar main";
+    -webkit-font-smoothing:antialiased;
+  }
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* ============ brand block (top-left) ============ */
+  .brand{
+    grid-area:brand;background:var(--navy);display:flex;align-items:center;gap:12px;padding:0 20px;
+  }
+  .brand .logo{
+    width:34px;height:34px;border-radius:8px;border:2px solid var(--gold);
+    display:grid;place-items:center;flex:0 0 auto;
+  }
+  .brand .logo i{display:block;width:11px;height:11px;background:var(--gold);transform:rotate(45deg)}
+  .brand .nm{font-size:19px;font-weight:700;color:#fff;letter-spacing:-.2px}
+  .brand .nm b{color:var(--gold);font-weight:700}
+
+  /* ============ top bar (main menu) ============ */
+  .topbar{
+    grid-area:topbar;background:var(--navy);display:flex;align-items:center;gap:6px;
+    padding:0 20px 0 14px;border-left:1px solid var(--navy-line);
+  }
+  .mainmenu{display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none}
+  .mainmenu::-webkit-scrollbar{display:none}
+  .mm{
+    padding:9px 16px;border-radius:8px;font-size:14.5px;font-weight:500;color:#c2cbd8;
+    cursor:pointer;white-space:nowrap;border:0;background:transparent;font-family:inherit;
+    transition:background .12s,color .12s;
+  }
+  .mm:hover{background:var(--navy-3);color:#fff}
+  .mm.active{background:#fff;color:var(--navy);font-weight:600}
+  .topbar .spacer{flex:1}
+  .tr{display:flex;align-items:center;gap:14px}
+  .tr .when{font-size:13px;color:#93a0b3;white-space:nowrap}
+  .tr .av{
+    width:40px;height:40px;border-radius:50%;background:var(--gold);color:#231703;
+    display:grid;place-items:center;font-weight:700;font-size:13px;flex:0 0 auto;
+  }
+  .signout{
+    background:#fff;color:var(--navy);border:0;border-radius:8px;padding:9px 15px;
+    font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;
+  }
+  .signout:hover{background:#e9edf2}
+
+  /* ============ sidebar (sub menu) ============ */
+  .sidebar{
+    grid-area:sidebar;background:var(--navy);overflow-y:auto;padding:22px 0 30px;
+  }
+  .sidebar::-webkit-scrollbar{width:8px}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--navy-3);border-radius:4px}
+  .sgroup{margin-bottom:26px}
+  .slabel{
+    font-size:11.5px;letter-spacing:1.3px;color:#75839a;font-weight:600;
+    padding:0 20px 12px;
+  }
+  .sitem{
+    display:flex;align-items:center;gap:13px;padding:11px 20px;color:#c2cbd8;
+    cursor:pointer;border-left:3px solid transparent;font-size:14.5px;line-height:1.35;
+    transition:background .12s,color .12s;
+  }
+  .sitem:hover{background:var(--navy-2);color:#fff}
+  .sitem.active{background:var(--navy-2);color:#fff;border-left-color:var(--gold);font-weight:500}
+  .sitem .si{width:17px;height:17px;flex:0 0 auto;color:#7d8ba0;display:grid;place-items:center}
+  .sitem.active .si,.sitem:hover .si{color:var(--gold)}
+  .sitem .si svg{width:16px;height:16px}
+  .sitem.accent{color:#fff}
+  .sitem.accent .si{color:var(--gold)}
+  .sitem .cnt{
+    margin-left:auto;background:var(--rust);color:#fff;font-size:11px;font-weight:600;
+    border-radius:9px;padding:1px 7px;
+  }
+
+  /* ============ main canvas ============ */
+  .main{grid-area:main;overflow-y:auto;padding:26px 30px 40px}
+  .crumb{font-size:14px;color:var(--muted);margin-bottom:8px}
+  .crumb b{color:var(--gold);font-weight:600}
+  .page-title{margin:0 0 22px;font-size:29px;font-weight:700;letter-spacing:-.4px}
+
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:24px 26px 28px;box-shadow:0 1px 2px rgba(20,30,45,.03);
+  }
+
+  /* tab pills inside the card */
+  .tabs{
+    display:inline-flex;gap:2px;background:var(--field);border-radius:9px;padding:4px;margin-bottom:24px;
+    flex-wrap:wrap;
+  }
+  .tp{
+    padding:9px 18px;border-radius:7px;font-size:14px;font-weight:600;color:var(--muted);
+    cursor:pointer;border:0;background:transparent;font-family:inherit;white-space:nowrap;
+  }
+  .tp:hover{color:var(--ink)}
+  .tp.active{background:var(--navy);color:#fff}
+
+  /* form row */
+  .frow{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:26px}
+  .fld{display:flex;flex-direction:column;gap:7px;min-width:0}
+  .fld label{font-size:13.5px;color:var(--muted)}
+  .inp{
+    height:44px;border:0;background:var(--field);border-radius:8px;padding:0 13px;
+    font:inherit;font-size:14.5px;color:var(--ink);min-width:0;
+  }
+  .inp::placeholder{color:var(--faint)}
+  .inp:focus{outline:2px solid var(--navy);outline-offset:0}
+  select.inp{cursor:pointer;padding-right:34px;appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%236a7583' stroke-width='2.4'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat:no-repeat;background-position:right 12px center}
+  .fld.grow{flex:1}
+  .with-btn{display:flex;gap:8px}
+  .iconbtn{
+    width:44px;height:44px;border:1px solid var(--border-strong);background:#fff;border-radius:8px;
+    display:grid;place-items:center;cursor:pointer;color:var(--muted);flex:0 0 auto;
+  }
+  .iconbtn:hover{background:var(--field);color:var(--ink)}
+  .iconbtn svg{width:17px;height:17px}
+
+  .sect-h{font-size:20px;font-weight:700;margin:0 0 14px;letter-spacing:-.2px}
+  .sect-h .sub{font-size:14px;font-weight:400;color:var(--muted);letter-spacing:0}
+
+  /* data table */
+  table.grid{width:100%;border-collapse:collapse;margin-bottom:8px}
+  table.grid th{
+    text-align:left;font-size:14.5px;font-weight:700;color:var(--ink);
+    padding:0 12px 12px;border-bottom:1px solid var(--border-strong);white-space:nowrap;
+  }
+  table.grid th.r{text-align:right}
+  table.grid td{
+    padding:13px 12px;border-bottom:1px solid var(--border);font-size:14px;
+  }
+  table.grid td.r{text-align:right}
+  table.grid td.money{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  table.grid td.net{font-weight:600;color:var(--green)}
+  table.grid td.ded{color:var(--rust)}
+  .emptyrow td{color:var(--muted);padding:16px 12px}
+  .cellinp{
+    width:88px;height:36px;border:1px solid var(--border-strong);border-radius:6px;background:#fff;
+    padding:0 9px;font-family:var(--mono);font-size:13.5px;text-align:right;color:var(--ink);
+  }
+  .cellinp:focus{outline:2px solid var(--navy);outline-offset:0}
+  .emp{display:flex;align-items:center;gap:11px}
+  .emp .ini{
+    width:32px;height:32px;border-radius:50%;background:var(--field);color:var(--navy);
+    display:grid;place-items:center;font-weight:600;font-size:11.5px;flex:0 0 auto;
+  }
+  .emp .nm{font-weight:600}
+  .emp .cd{font-size:11.5px;color:var(--faint);font-family:var(--mono)}
+
+  .addline{
+    display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;margin-top:14px;
+    border:1px solid var(--border-strong);background:#fff;border-radius:9px;
+    font:inherit;font-size:14.5px;font-weight:600;color:var(--navy);cursor:pointer;
+  }
+  .addline:hover{background:var(--field)}
+
+  /* total + save */
+  .footrow{display:flex;align-items:stretch;gap:16px;margin-top:26px;flex-wrap:wrap}
+  .totalbox{
+    background:var(--field);border-radius:9px;padding:14px 20px;min-width:210px;
+  }
+  .totalbox .k{font-size:12px;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:5px}
+  .totalbox .v{font-size:25px;font-weight:700;font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .totalbox .v span{font-size:14px;color:var(--muted);font-weight:500;margin-left:5px}
+  .savebtn{
+    background:var(--navy);color:#fff;border:0;border-radius:9px;padding:0 30px;
+    font:inherit;font-size:15px;font-weight:600;cursor:pointer;
+  }
+  .savebtn:hover{background:var(--navy-3)}
+  .savebtn:disabled{background:#8a94a1;cursor:not-allowed}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:999px;
+        font-size:12px;font-weight:600}
+  .pill .d{width:7px;height:7px;border-radius:50%}
+  .p-draft{background:#eceff3;color:#5c6672} .p-draft .d{background:#5c6672}
+  .p-paid{background:#e7f5ee;color:var(--green)} .p-paid .d{background:var(--green)}
+
+  /* stat cards for dashboard */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+  .stat{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+  .stat .k{font-size:13px;color:var(--muted);margin-bottom:7px}
+  .stat .v{font-size:26px;font-weight:700;font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .stat .d{font-size:12px;color:var(--faint);margin-top:4px}
+
+  .placeholder{
+    border:1px dashed var(--border-strong);border-radius:10px;padding:52px;text-align:center;
+    color:var(--muted);font-size:14px;background:#fbfcfd;
+  }
+  .placeholder b{display:block;color:var(--ink);font-size:16px;font-weight:600;margin-bottom:6px}
+
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(16px);
+    background:var(--navy);color:#fff;padding:12px 18px;border-radius:9px;font-size:14px;
+    box-shadow:0 8px 26px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.2s;z-index:80;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (max-width:1000px){
+    body{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;
+         grid-template-areas:"brand" "topbar" "main"}
+    .sidebar{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ============ BRAND ============ -->
+<div class="brand">
+  <span class="logo"><i></i></span>
+  <span class="nm">Aurelia<b>HRMS</b></span>
+</div>
+
+<!-- ============ TOP MAIN MENU ============ -->
+<div class="topbar">
+  <nav class="mainmenu" id="mainmenu" role="tablist" aria-label="Main menu"></nav>
+  <div class="spacer"></div>
+  <div class="tr">
+    <span class="when" id="when">09 Jul 2026 · 16:48</span>
+    <span class="av">SR</span>
+    <button class="signout">Sign out</button>
+  </div>
+</div>
+
+<!-- ============ LEFT SUB MENU ============ -->
+<aside class="sidebar" id="sidebar" aria-label="Section menu"></aside>
+
+<!-- ============ MAIN ============ -->
+<main class="main">
+  <div class="crumb" id="crumb"></div>
+  <h1 class="page-title" id="pageTitle"></h1>
+  <div id="content"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   One structure drives the top menu, the left sub-menu, and the pages.
+   ===================================================================== */
+const IC = {
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+  grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
+  slip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>',
+  money:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>',
+  ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M7 17L17 7M7 7h10v10"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 6L9 17l-5-5"/></svg>',
+  doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg>',
+  up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>',
+  alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  plane:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M17.8 19.8L16 14l-4 2-1 5 1.5 1 2-2.5 3.3.3zM2 9l5 1 2-4 5 1-2 4 5 1"/><path d="M21 3L11 13"/></svg>',
+  exit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>',
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+};
+
+/* Top main menu → each has a left sub-menu of grouped sections */
+const NAV = [
+  {id:'dashboard', label:'Dashboard', groups:[
+    {label:'OVERVIEW', items:[
+      {id:'dash.home',  label:'Company summary', icon:IC.grid, accent:true},
+      {id:'dash.head',  label:'Headcount',       icon:IC.users},
+      {id:'dash.cost',  label:'Payroll cost',    icon:IC.chart},
+    ]},
+  ]},
+
+  {id:'payroll', label:'Payroll', groups:[
+    {label:'PAYROLL', items:[
+      {id:'pay.new',    label:'New payroll run', icon:IC.plus, accent:true},
+      {id:'pay.process',label:'Process payroll', icon:IC.money},
+      {id:'pay.slips',  label:'Payslips',        icon:IC.slip},
+      {id:'pay.struct', label:'Salary structures', icon:IC.users},
+      {id:'pay.loans',  label:'Loans & advances',  icon:IC.money},
+    ]},
+    {label:'REPORTS', items:[
+      {id:'pay.reports', label:'Pay register, bank list, tax…', icon:IC.ext},
+    ]},
+  ]},
+
+  {id:'leaves', label:'Leaves', groups:[
+    {label:'LEAVE', items:[
+      {id:'lv.apply',   label:'Apply for leave', icon:IC.plus, accent:true},
+      {id:'lv.requests',label:'Leave requests',  icon:IC.list},
+      {id:'lv.approve', label:'Approvals',       icon:IC.check},
+      {id:'lv.balance', label:'Leave balances',  icon:IC.chart},
+    ]},
+    {label:'SETUP', items:[
+      {id:'lv.types',   label:'Leave types',      icon:IC.gear},
+      {id:'lv.holidays',label:'Holiday calendar', icon:IC.cal},
+    ]},
+  ]},
+
+  {id:'documents', label:'Documents', groups:[
+    {label:'DOCUMENTS', items:[
+      {id:'doc.upload', label:'Upload document', icon:IC.up, accent:true},
+      {id:'doc.library',label:'Document library',icon:IC.doc},
+      {id:'doc.expiry', label:'Expiry alerts',   icon:IC.alert, count:4},
+    ]},
+    {label:'SETUP', items:[
+      {id:'doc.types',  label:'Document types',  icon:IC.gear},
+    ]},
+  ]},
+
+  {id:'flight', label:'Flight', groups:[
+    {label:'TICKETS', items:[
+      {id:'fl.new',      label:'New ticket request', icon:IC.plus, accent:true},
+      {id:'fl.requests', label:'Flight requests',    icon:IC.plane},
+      {id:'fl.approve',  label:'Approvals',          icon:IC.check},
+    ]},
+    {label:'SETUP', items:[
+      {id:'fl.entitle',  label:'Ticket entitlements', icon:IC.gear},
+    ]},
+  ]},
+
+  {id:'resignation', label:'Resignation', groups:[
+    {label:'EXIT', items:[
+      {id:'rs.new',      label:'Submit resignation', icon:IC.plus, accent:true},
+      {id:'rs.list',     label:'Resignations',       icon:IC.exit},
+      {id:'rs.clearance',label:'Exit clearance',     icon:IC.check},
+      {id:'rs.settle',   label:'Final settlement',   icon:IC.money},
+    ]},
+  ]},
+
+  {id:'reports', label:'Reports', groups:[
+    {label:'REPORTS', items:[
+      {id:'rp.register', label:'Pay register',      icon:IC.chart, accent:true},
+      {id:'rp.bank',     label:'Bank transfer list',icon:IC.money},
+      {id:'rp.ss',       label:'Social security',   icon:IC.chart},
+      {id:'rp.tax',      label:'Income tax summary',icon:IC.chart},
+    ]},
+  ]},
+
+  {id:'settings', label:'Settings', groups:[
+    {label:'ORGANISATION', items:[
+      {id:'st.emp',   label:'Employee master', icon:IC.users, accent:true},
+      {id:'st.dept',  label:'Departments',     icon:IC.grid},
+      {id:'st.comp',  label:'Salary components', icon:IC.money},
+    ]},
+    {label:'SYSTEM', items:[
+      {id:'st.users', label:'Users & roles', icon:IC.users},
+      {id:'st.audit', label:'Audit log',     icon:IC.list},
+      {id:'st.opts',  label:'Options',       icon:IC.gear},
+    ]},
+  ]},
+];
+
+/* page metadata: crumb tail + title */
+const PAGES = {
+  'dash.home':  {crumb:'overview',    title:'Company summary'},
+  'dash.head':  {crumb:'overview',    title:'Headcount'},
+  'dash.cost':  {crumb:'overview',    title:'Payroll cost'},
+  'pay.new':    {crumb:'payroll run', title:'New Payroll Run'},
+  'pay.process':{crumb:'monthly',     title:'Process Payroll'},
+  'pay.slips':  {crumb:'monthly',     title:'Payslips'},
+  'pay.struct': {crumb:'setup',       title:'Salary Structures'},
+  'pay.loans':  {crumb:'setup',       title:'Loans & Advances'},
+  'pay.reports':{crumb:'reports',     title:'Payroll Reports'},
+  'doc.expiry': {crumb:'compliance',  title:'Expiry Alerts'},
+};
+
+const EMPLOYEES = [
+  {code:'EMP-0012',name:'Yousef Al-Masri',dept:'Sales',      basic:900,allow:350,tax:42,loan:0},
+  {code:'EMP-0031',name:'Lina Haddad',    dept:'Finance',    basic:800,allow:310,tax:28,loan:75},
+  {code:'EMP-0044',name:'Omar Khalil',    dept:'Production', basic:720,allow:260,tax:20,loan:0},
+  {code:'EMP-0057',name:'Rania Suleiman', dept:'HR',         basic:650,allow:240,tax:12,loan:0},
+  {code:'EMP-0063',name:'Tariq Nassar',   dept:'Sales',      basic:560,allow:210,tax:9, loan:0},
+  {code:'EMP-0075',name:'Dana Aburahma',  dept:'Administration',basic:520,allow:200,tax:7.5,loan:0},
+];
+const SS_RATE = 0.075;
+const r3 = n => Math.round(n*1000)/1000;
+const fmt = n => Number(n||0).toLocaleString('en-US',{minimumFractionDigits:3,maximumFractionDigits:3});
+const initials = n => n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+let state = {nav:'payroll', page:'pay.new', tab:'run', inputs:{}};
+EMPLOYEES.forEach(e => state.inputs[e.code] = {wd:22, pd:22, ot:0, comm:0, bonus:0});
+
+function calc(e, i){
+  const lop = Math.max(0, i.wd - i.pd);
+  const gross = e.basic + e.allow + Number(i.ot||0) + Number(i.comm||0) + Number(i.bonus||0);
+  const ss = r3((e.basic + e.allow) * SS_RATE);
+  const lopAmt = lop > 0 ? r3(e.basic / i.wd * lop) : 0;
+  const ded = r3(ss + e.tax + e.loan + lopAmt);
+  return {lop, gross:r3(gross), ded, net:r3(gross - ded)};
+}
+
+/* =========================== render chrome =========================== */
+const $ = id => document.getElementById(id);
+
+function renderTop(){
+  $('mainmenu').innerHTML = NAV.map(n =>
+    `<button class="mm ${n.id===state.nav?'active':''}" data-nav="${n.id}" role="tab"
+             aria-selected="${n.id===state.nav}">${n.label}</button>`).join('');
+  $('mainmenu').querySelectorAll('.mm').forEach(b =>
+    b.addEventListener('click', () => selectNav(b.dataset.nav)));
+}
+
+function renderSidebar(){
+  const nav = NAV.find(n => n.id === state.nav);
+  $('sidebar').innerHTML = nav.groups.map(g => `
+    <div class="sgroup">
+      <div class="slabel">${g.label}</div>
+      ${g.items.map(it => `
+        <div class="sitem ${it.id===state.page?'active':''} ${it.accent?'accent':''}"
+             data-page="${it.id}" role="button" tabindex="0">
+          <span class="si">${it.icon}</span>
+          <span>${it.label}</span>
+          ${it.count ? `<span class="cnt">${it.count}</span>` : ''}
+        </div>`).join('')}
+    </div>`).join('');
+  $('sidebar').querySelectorAll('.sitem').forEach(el => {
+    const go = () => selectPage(el.dataset.page);
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); go(); } });
+  });
+}
+
+function selectNav(id){
+  state.nav = id;
+  const nav = NAV.find(n => n.id === id);
+  state.page = nav.groups[0].items[0].id;   // first sub-menu item
+  renderTop(); renderSidebar(); renderPage();
+}
+function selectPage(id){
+  state.page = id;
+  renderSidebar(); renderPage();
+}
+
+/* =========================== pages =========================== */
+function renderPage(){
+  const nav = NAV.find(n => n.id === state.nav);
+  const item = nav.groups.flatMap(g => g.items).find(i => i.id === state.page);
+  const meta = PAGES[state.page] || {crumb:'', title:item.label};
+
+  $('crumb').innerHTML = `<b>${nav.label}</b>${meta.crumb ? ' · ' + meta.crumb : ''}`;
+  $('pageTitle').textContent = meta.title;
+
+  if (state.page === 'pay.new')      { $('content').innerHTML = payrollRunCard(); wireRun(); }
+  else if (state.page === 'pay.process') { $('content').innerHTML = processCard(); }
+  else if (state.page === 'dash.home')   { $('content').innerHTML = dashboardCard(); }
+  else {
+    $('content').innerHTML = `
+      <div class="card"><div class="placeholder">
+        <b>${meta.title}</b>
+        This screen loads here. Wire it to your Flask route and render the module inside this card.
+      </div></div>`;
+  }
+}
+
+/* ---- Payroll: New run (the form-heavy screen, like the reference) ---- */
+function payrollRunCard(){
+  return `
+  <div class="card">
+    <div class="tabs" role="tablist">
+      <button class="tp active" data-tab="run">Payroll Run</button>
+      <button class="tp" data-tab="adj">Adjustments</button>
+      <button class="tp" data-tab="rev">Review</button>
+    </div>
+
+    <div class="frow">
+      <div class="fld"><label>Period</label>
+        <select class="inp" id="fPeriod" style="width:190px">
+          <option>August 2026</option><option>September 2026</option><option>October 2026</option>
+        </select>
+      </div>
+      <div class="fld"><label>Pay date</label>
+        <input class="inp" type="date" id="fPayDate" value="2026-08-28" style="width:180px">
+      </div>
+      <div class="fld"><label>Department</label>
+        <select class="inp" id="fDept" style="width:200px">
+          <option value="">All departments</option>
+          <option>Sales</option><option>Finance</option><option>Production</option>
+          <option>HR</option><option>Administration</option>
+        </select>
+      </div>
+      <div class="fld grow"><label>Employee</label>
+        <div class="with-btn">
+          <input class="inp" id="fSearch" placeholder="tap to search" style="flex:1">
+          <button class="iconbtn" aria-label="Search">${IC.search}</button>
+        </div>
+      </div>
+      <div class="fld" style="min-width:230px"><label>Note</label>
+        <input class="inp" placeholder="reference / remarks">
+      </div>
+    </div>
+
+    <h2 class="sect-h">Employee inputs</h2>
+    <table class="grid">
+      <thead><tr>
+        <th style="width:240px">Employee</th>
+        <th class="r" style="width:100px">Basic</th>
+        <th class="r" style="width:110px">Allowances</th>
+        <th class="r" style="width:80px">W.Days</th>
+        <th class="r" style="width:80px">Paid</th>
+        <th class="r" style="width:100px">Overtime</th>
+        <th class="r" style="width:110px">Commission</th>
+        <th class="r" style="width:110px">Gross</th>
+        <th class="r" style="width:110px">Deductions</th>
+        <th class="r" style="width:120px">Net pay</th>
+      </tr></thead>
+      <tbody id="runBody"></tbody>
+    </table>
+
+    <h2 class="sect-h">Other amount <span class="sub">(no payslip reference — bonus, arrears, misc)</span></h2>
+    <table class="grid">
+      <thead><tr>
+        <th style="width:240px">Type</th><th>Component</th><th>Note</th><th class="r" style="width:140px">Amount</th>
+      </tr></thead>
+      <tbody id="otherBody">
+        <tr class="emptyrow"><td colspan="4">No additional lines.</td></tr>
+      </tbody>
+    </table>
+    <button class="addline" id="addLine">${IC.plus} Add line</button>
+
+    <div class="footrow">
+      <div class="totalbox">
+        <div class="k">TOTAL NET PAYABLE</div>
+        <div class="v" id="totNet">0.000<span>JOD</span></div>
+      </div>
+      <div class="totalbox">
+        <div class="k">EMPLOYEES</div>
+        <div class="v" id="totCount">0</div>
+      </div>
+      <button class="savebtn" id="saveRun">Save &amp; generate payslips</button>
+    </div>
+  </div>`;
+}
+
+function wireRun(){
+  const body = $('runBody');
+  function draw(){
+    const dept = $('fDept').value;
+    const q = ($('fSearch').value || '').trim().toLowerCase();
+    const list = EMPLOYEES.filter(e =>
+      (!dept || e.dept === dept) &&
+      (!q || e.name.toLowerCase().includes(q) || e.code.toLowerCase().includes(q)));
+
+    body.innerHTML = list.length ? list.map(e => {
+      const i = state.inputs[e.code], c = calc(e, i);
+      return `<tr data-code="${e.code}">
+        <td><div class="emp"><span class="ini">${initials(e.name)}</span>
+          <span><span class="nm">${e.name}</span><br><span class="cd">${e.code} · ${e.dept}</span></span></div></td>
+        <td class="r money">${fmt(e.basic)}</td>
+        <td class="r money">${fmt(e.allow)}</td>
+        <td class="r"><input class="cellinp" style="width:64px" data-f="wd" value="${i.wd}"></td>
+        <td class="r"><input class="cellinp" style="width:64px" data-f="pd" value="${i.pd}"></td>
+        <td class="r"><input class="cellinp" data-f="ot" value="${i.ot}"></td>
+        <td class="r"><input class="cellinp" data-f="comm" value="${i.comm}"></td>
+        <td class="r money" data-g>${fmt(c.gross)}</td>
+        <td class="r money ded" data-d>${fmt(c.ded)}</td>
+        <td class="r money net" data-n>${fmt(c.net)}</td>
+      </tr>`;
+    }).join('') : `<tr class="emptyrow"><td colspan="10">No employees match this filter.</td></tr>`;
+
+    body.querySelectorAll('tr[data-code]').forEach(tr => {
+      const code = tr.dataset.code;
+      tr.querySelectorAll('.cellinp').forEach(inp => {
+        inp.addEventListener('input', () => {
+          let v = parseFloat(inp.value); if (isNaN(v) || v < 0) v = 0;
+          state.inputs[code][inp.dataset.f] = v;
+          if (state.inputs[code].pd > state.inputs[code].wd) state.inputs[code].pd = state.inputs[code].wd;
+          const e = EMPLOYEES.find(x => x.code === code), c = calc(e, state.inputs[code]);
+          tr.querySelector('[data-g]').textContent = fmt(c.gross);
+          tr.querySelector('[data-d]').textContent = fmt(c.ded);
+          tr.querySelector('[data-n]').textContent = fmt(c.net);
+          totals(list);
+        });
+      });
+    });
+    totals(list);
+  }
+  function totals(list){
+    let net = 0;
+    list.forEach(e => net += calc(e, state.inputs[e.code]).net);
+    $('totNet').innerHTML = fmt(r3(net)) + '<span>JOD</span>';
+    $('totCount').textContent = list.length;
+  }
+  $('fDept').addEventListener('change', draw);
+  $('fSearch').addEventListener('input', draw);
+  $('addLine').addEventListener('click', () => toast('Add line — wire to your voucher lines'));
+  $('saveRun').addEventListener('click', () => toast('Payroll run saved — payslips generated'));
+  document.querySelectorAll('.tp').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tp').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    toast(`${t.textContent} tab`);
+  }));
+  draw();
+}
+
+/* ---- Payroll: Process (register view) ---- */
+function processCard(){
+  const rows = EMPLOYEES.map(e => {
+    const c = calc(e, state.inputs[e.code]);
+    return `<tr>
+      <td><div class="emp"><span class="ini">${initials(e.name)}</span>
+        <span><span class="nm">${e.name}</span><br><span class="cd">${e.code}</span></span></div></td>
+      <td>${e.dept}</td>
+      <td class="r money">${fmt(c.gross)}</td>
+      <td class="r money ded">${fmt(c.ded)}</td>
+      <td class="r money net">${fmt(c.net)}</td>
+      <td><span class="pill p-draft"><span class="d"></span>Draft</span></td>
+    </tr>`;
+  }).join('');
+  const net = EMPLOYEES.reduce((t,e) => t + calc(e, state.inputs[e.code]).net, 0);
+  return `
+  <div class="card">
+    <div class="tabs">
+      <button class="tp active">Register</button>
+      <button class="tp">Bank list</button>
+      <button class="tp">Summary</button>
+    </div>
+    <table class="grid">
+      <thead><tr>
+        <th style="width:250px">Employee</th><th>Department</th>
+        <th class="r">Gross</th><th class="r">Deductions</th><th class="r">Net pay</th><th>Status</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="footrow">
+      <div class="totalbox"><div class="k">TOTAL NET PAYABLE</div>
+        <div class="v">${fmt(r3(net))}<span>JOD</span></div></div>
+      <button class="savebtn">Approve payroll</button>
+    </div>
+  </div>`;
+}
+
+/* ---- Dashboard ---- */
+function dashboardCard(){
+  const net = EMPLOYEES.reduce((t,e) => t + calc(e, state.inputs[e.code]).net, 0);
+  return `
+  <div class="stats">
+    <div class="stat"><div class="k">Active employees</div><div class="v">${EMPLOYEES.length}</div><div class="d">across 5 departments</div></div>
+    <div class="stat"><div class="k">Net payable (Aug)</div><div class="v">${fmt(r3(net))}</div><div class="d">JOD</div></div>
+    <div class="stat"><div class="k">Pending leave requests</div><div class="v">3</div><div class="d">awaiting approval</div></div>
+    <div class="stat"><div class="k">Documents expiring</div><div class="v">4</div><div class="d">within 90 days</div></div>
+  </div>
+  <div class="card">
+    <h2 class="sect-h">Payroll status <span class="sub">July 2026</span></h2>
+    <table class="grid">
+      <thead><tr><th>Period</th><th>Employees</th><th class="r">Net payable</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>July 2026</td><td>8</td><td class="r money">6,361.000</td><td><span class="pill p-paid"><span class="d"></span>Paid</span></td></tr>
+        <tr><td>August 2026</td><td>${EMPLOYEES.length}</td><td class="r money">${fmt(r3(net))}</td><td><span class="pill p-draft"><span class="d"></span>Draft</span></td></tr>
+      </tbody>
+    </table>
+  </div>`;
+}
+
+/* =========================== misc =========================== */
+let tt;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2200);
+}
+(function clock(){
+  const d = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  $('when').textContent = `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()} · `
+    + `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+})();
+
+renderTop(); renderSidebar(); renderPage();
+</script>
+</body>
+</html>

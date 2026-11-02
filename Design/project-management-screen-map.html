@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Management ERP — Full Screen Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#132238; --navy-800:#1b3050;
+    --canvas:#f4f6f9; --card:#ffffff; --border:#e2e6ec; --border-soft:#eceff3;
+    --text-900:#111a2c; --text-700:#334159; --text-500:#64748b; --text-400:#94a3b8;
+    --indigo:#2f5eff; --indigo-dark:#1f42c9; --indigo-soft:#eaefff;
+    --amber:#b7791f; --amber-soft:#fdf3df;
+    --green:#1f8a56; --green-soft:#e6f6ee;
+    --red:#c0362c; --red-soft:#fdeceb;
+    --slate-soft:#eef1f5;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--canvas);color:var(--text-900);}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .hero{background:var(--navy-900);color:#fff;padding:34px 40px 28px;}
+  .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8ea1c2;margin-bottom:8px;}
+  .hero h1{font-size:26px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em;}
+  .hero p{font-size:13.5px;color:#aebdd6;margin:0 0 18px;max-width:660px;line-height:1.5;}
+  .hero-stats{display:flex;gap:22px;flex-wrap:wrap;}
+  .hero-stat .n{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .hero-stat .l{font-size:10.5px;color:#8ea1c2;text-transform:uppercase;letter-spacing:0.04em;margin-top:1px;}
+
+  .toc{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--border);padding:12px 40px;display:flex;gap:8px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(15,23,42,0.04);}
+  .toc a{font-size:11.8px;font-weight:600;color:var(--text-700);background:var(--slate-soft);padding:6px 12px;border-radius:20px;white-space:nowrap;}
+  .toc a:hover{background:var(--indigo-soft);color:var(--indigo-dark);}
+
+  .wrap{padding:36px 40px 80px;max-width:1680px;margin:0 auto;}
+  .section{margin-bottom:44px;scroll-margin-top:64px;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .section-num{font-size:11px;font-weight:800;color:#fff;background:var(--indigo);width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .section-head h2{font-size:16px;font-weight:800;margin:0;letter-spacing:-0.01em;}
+  .section-head .count{font-size:11.5px;color:var(--text-400);font-weight:600;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+
+  .screen-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,0.05);transition:box-shadow .15s ease, transform .15s ease;position:relative;}
+  .screen-card:hover{box-shadow:0 8px 22px rgba(15,23,42,0.1);transform:translateY(-2px);}
+  .chrome{background:var(--slate-soft);padding:7px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);}
+  .chrome .dot{width:6px;height:6px;border-radius:50%;background:#cbd3de;}
+  .chrome .url{margin-left:6px;font-size:9.5px;color:var(--text-400);font-family:'JetBrains Mono',monospace;background:#fff;border-radius:4px;padding:2px 7px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .thumb{padding:10px 12px 12px;background:#fbfcfd;min-height:150px;display:flex;flex-direction:column;gap:6px;}
+  .card-foot{padding:10px 12px;border-top:1px solid var(--border-soft);}
+  .card-title{font-size:12.6px;font-weight:700;color:var(--text-900);}
+  .card-tag{font-size:10px;font-weight:700;color:var(--indigo-dark);background:var(--indigo-soft);padding:1.5px 7px;border-radius:10px;display:inline-block;margin-top:5px;}
+
+  .mbar{height:6px;border-radius:3px;background:var(--border);}
+  .mbar.dark{background:#c7ceda;}
+  .mtitlebar{height:8px;width:40%;border-radius:3px;background:#d3d9e3;margin-bottom:4px;}
+
+  .mkpis{display:flex;gap:6px;}
+  .mkpi{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:6px 7px;}
+  .mkpi .mv{font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .mkpi .ml{height:4px;width:70%;background:var(--border);border-radius:2px;margin-top:4px;}
+
+  .mtable{display:flex;flex-direction:column;gap:5px;flex:1;}
+  .mrow{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border-soft);border-radius:5px;padding:5px 7px;}
+  .mrow .c1{width:14px;height:14px;border-radius:4px;background:var(--slate-soft);flex-shrink:0;}
+  .mrow .c2{flex:1;height:6px;border-radius:3px;background:var(--border);}
+  .mrow .c3{width:32px;height:6px;border-radius:3px;background:var(--border);}
+  .mpill{font-size:8px;font-weight:800;padding:2px 6px;border-radius:8px;flex-shrink:0;}
+  .mpill.g{background:var(--green-soft);color:var(--green);}
+  .mpill.a{background:var(--amber-soft);color:var(--amber);}
+  .mpill.r{background:var(--red-soft);color:var(--red);}
+  .mpill.b{background:var(--indigo-soft);color:var(--indigo-dark);}
+  .mpill.n{background:var(--slate-soft);color:var(--text-400);}
+
+  .mform{display:flex;flex-direction:column;gap:8px;}
+  .mfield .flbl{height:5px;width:34%;background:var(--border);border-radius:2px;margin-bottom:4px;}
+  .mfield .finput{height:16px;border:1px solid var(--border-soft);border-radius:5px;background:#fff;}
+
+  .mchart{flex:1;display:flex;align-items:flex-end;gap:5px;padding:4px 2px;}
+  .mchart .bar{flex:1;border-radius:3px 3px 0 0;background:var(--indigo);opacity:0.85;}
+  .mchart .bar.alt{background:#9fb4ff;}
+  .mchart .bar.neg{background:var(--red);opacity:0.7;}
+  .mchart .bar.warn{background:var(--amber);opacity:0.85;}
+  .mchart .bar.good{background:var(--green);opacity:0.85;}
+
+  .mprofile{display:flex;gap:8px;align-items:flex-start;}
+  .mavatar{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--indigo),#7c93ff);flex-shrink:0;}
+  .mavatar.round{border-radius:50%;}
+  .mprofile-lines{flex:1;display:flex;flex-direction:column;gap:5px;padding-top:3px;}
+
+  .mkanban{display:flex;gap:6px;flex:1;}
+  .mkcol{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:5px;display:flex;flex-direction:column;gap:5px;}
+  .mkcard{height:16px;border-radius:4px;background:var(--slate-soft);}
+  .mkcard.b{background:var(--indigo-soft);}
+  .mkcard.g{background:var(--green-soft);}
+  .mkcard.a{background:var(--amber-soft);}
+  .mkcard.r{background:var(--red-soft);}
+
+  .mflow{display:flex;align-items:center;flex:1;}
+  .mfnode{width:20px;height:20px;border-radius:50%;background:var(--indigo-soft);border:2px solid var(--indigo);flex-shrink:0;}
+  .mfnode.done{background:var(--green);border-color:var(--green);}
+  .mfnode.cur{background:#fff;}
+  .mfline{flex:1;height:2px;background:var(--border);}
+  .mfline.done{background:var(--green);}
+
+  .mtoggle-row{display:flex;gap:6px;}
+  .mtoggle{flex:1;height:20px;border-radius:5px;background:var(--slate-soft);border:1px solid var(--border-soft);}
+  .mtoggle.on{background:var(--indigo-soft);border-color:#c7d5ff;}
+
+  .mgantt{display:flex;flex-direction:column;gap:5px;flex:1;justify-content:center;}
+  .mgantt-row{display:flex;align-items:center;gap:0;height:8px;}
+  .mgantt-bar{height:8px;border-radius:3px;background:var(--indigo);opacity:0.85;}
+
+  .mgauge{display:flex;align-items:center;justify-content:center;flex:1;}
+  .mgauge-ring{width:56px;height:56px;border-radius:50%;background:conic-gradient(var(--green) 0% 78%, var(--slate-soft) 78% 100%);display:flex;align-items:center;justify-content:center;}
+  .mgauge-inner{width:38px;height:38px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text-900);}
+
+  .mtree{display:flex;flex-direction:column;gap:5px;flex:1;padding-left:4px;}
+  .mtree-row{display:flex;align-items:center;gap:6px;}
+  .mtree-row.l2{padding-left:14px;}
+  .mtree-row.l3{padding-left:28px;}
+  .mtree-dot{width:6px;height:6px;border-radius:50%;background:var(--indigo);flex-shrink:0;}
+  .mtree-bar{flex:1;height:6px;border-radius:3px;background:var(--border);}
+
+  /* avatar stack for team/resource views */
+  .mavatar-stack{display:flex;}
+  .mavatar-stack .mavatar{width:22px;height:22px;margin-left:-6px;border:2px solid #fff;}
+  .mavatar-stack .mavatar:first-child{margin-left:0;}
+
+  /* progress ring/checklist */
+  .mchecklist{display:flex;flex-direction:column;gap:5px;flex:1;}
+  .mcheck-row{display:flex;align-items:center;gap:6px;}
+  .mcheck-box{width:11px;height:11px;border-radius:3px;border:1.5px solid var(--border);flex-shrink:0;}
+  .mcheck-box.done{background:var(--green);border-color:var(--green);}
+
+  .built-badge{position:absolute;top:8px;right:8px;background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:0.02em;}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Exeon ERP · Project Management Suite</div>
+    <h1>Full Screen Map</h1>
+    <p>Every screen required to run the complete Project Management module — from project setup and WBS planning through task execution, resourcing, budgeting, risk tracking, and portfolio-level reporting — grouped by function so you can see the whole system at a glance.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">39</div><div class="l">Total Screens</div></div>
+      <div class="hero-stat"><div class="n">11</div><div class="l">Functional Areas</div></div>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <a href="#master">Setup &amp; Master Data</a>
+    <a href="#planning">Project Planning</a>
+    <a href="#tasks">Task Management</a>
+    <a href="#resources">Resource Management</a>
+    <a href="#budget">Budget &amp; Cost</a>
+    <a href="#collab">Collaboration</a>
+    <a href="#risk">Risk &amp; Issues</a>
+    <a href="#procurement">Project Procurement</a>
+    <a href="#portfolio">Portfolio Management</a>
+    <a href="#analytics">Reporting &amp; Analytics</a>
+    <a href="#admin">Administration</a>
+  </nav>
+
+  <div class="wrap">
+
+    <!-- 1 SETUP -->
+    <section class="section" id="master">
+      <div class="section-head"><div class="section-num">1</div><h2>Setup &amp; Master Data</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable">
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">On Track</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">At Risk</span></div>
+              <div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Delayed</span></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Master List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/templates</span></div>
+          <div class="thumb">
+            <div class="mkanban"><div class="mkcol"><div class="mkcard"></div></div><div class="mkcol"><div class="mkcard b"></div></div><div class="mkcol"><div class="mkcard"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Templates</div><span class="card-tag">Gallery / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/resources-master</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Resource / Team Member Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/clients</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar"></div><div class="mprofile-lines"><div class="mbar dark" style="width:60%;"></div><div class="mbar" style="width:45%;"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Client / Stakeholder Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2 PROJECT PLANNING -->
+    <section class="section" id="planning">
+      <div class="section-head"><div class="section-num">2</div><h2>Project Planning</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/charter</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mkpis"><div class="mkpi"><div class="mv">6mo</div><div class="ml"></div></div><div class="mkpi"><div class="mv">240K</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Charter</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/wbs</span></div>
+          <div class="thumb">
+            <div class="mtree">
+              <div class="mtree-row"><div class="mtree-dot"></div><div class="mtree-bar" style="width:75%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:55%;"></div></div>
+              <div class="mtree-row l3"><div class="mtree-dot"></div><div class="mtree-bar" style="width:40%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:50%;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Work Breakdown Structure (WBS)</div><span class="card-tag">Tree View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/schedule</span></div>
+          <div class="thumb">
+            <div class="mgantt">
+              <div class="mgantt-row"><div class="mgantt-bar" style="width:35%; margin-left:5%;"></div></div>
+              <div class="mgantt-row"><div class="mgantt-bar" style="width:50%; margin-left:20%; background:#9fb4ff;"></div></div>
+              <div class="mgantt-row"><div class="mgantt-bar" style="width:25%; margin-left:45%; background:var(--amber);"></div></div>
+              <div class="mgantt-row"><div class="mgantt-bar" style="width:20%; margin-left:70%;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Gantt / Schedule Planning</div><span class="card-tag">Gantt View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/milestones</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode done"></div><div class="mfline"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mkpis" style="margin-top:6px;"><div class="mkpi"><div class="mv">4/7</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Milestone Planning</div><span class="card-tag">Tracker</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/dependencies</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div></div>
+            <div class="mflow" style="margin-top:8px;"><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Dependency Mapping</div><span class="card-tag">Network Diagram</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3 TASK MANAGEMENT -->
+    <section class="section" id="tasks">
+      <div class="section-head"><div class="section-num">3</div><h2>Task Management</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/board</span></div>
+          <div class="thumb">
+            <div class="mkanban"><div class="mkcol"><div class="mkcard"></div><div class="mkcard"></div></div><div class="mkcol"><div class="mkcard a"></div><div class="mkcard a"></div></div><div class="mkcol"><div class="mkcard g"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Task Board (Kanban)</div><span class="card-tag">Kanban View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/tasks/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Task Form</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/tasks/TSK-4471</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar round" style="width:24px;height:24px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:60%;"></div></div></div>
+            <div class="mchecklist"><div class="mcheck-row"><div class="mcheck-box done"></div><div class="mbar" style="width:60%;"></div></div><div class="mcheck-row"><div class="mcheck-box"></div><div class="mbar" style="width:45%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Task Detail View</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/my-tasks</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">8</div><div class="ml"></div></div><div class="mkpi"><div class="mv">2</div><div class="ml"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Due Today</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">This Week</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">My Tasks (Personal View)</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4 RESOURCE MANAGEMENT -->
+    <section class="section" id="resources">
+      <div class="section-head"><div class="section-num">4</div><h2>Resource Management</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/allocation</span></div>
+          <div class="thumb">
+            <div class="mavatar-stack"><div class="mavatar round"></div><div class="mavatar round"></div><div class="mavatar round"></div><div class="mavatar round"></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Resource Allocation</div><span class="card-tag">List / Grid</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/resource-utilization</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:60%;"></div><div class="bar warn" style="height:95%;"></div><div class="bar" style="height:45%;"></div><div class="bar alt" style="height:70%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Resource Utilization Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/capacity-planning</span></div>
+          <div class="thumb">
+            <div class="mgantt">
+              <div class="mgantt-row"><div class="mgantt-bar" style="width:80%;"></div></div>
+              <div class="mgantt-row"><div class="mgantt-bar" style="width:50%; background:var(--amber);"></div></div>
+              <div class="mgantt-row"><div class="mgantt-bar" style="width:65%; background:#9fb4ff;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Capacity Planning</div><span class="card-tag">Timeline View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/timesheets</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Timesheet Entry</div><span class="card-tag">Form / Grid</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5 BUDGET & COST -->
+    <section class="section" id="budget">
+      <div class="section-head"><div class="section-num">5</div><h2>Budget &amp; Cost Management</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/budget</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">240K</div><div class="ml"></div></div><div class="mkpi"><div class="mv">68%</div><div class="ml"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Budget</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/cost-tracking</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:50%;"></div><div class="bar neg" style="height:70%;"></div><div class="bar good" style="height:35%;"></div><div class="bar" style="height:55%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Cost Tracking / Actuals</div><span class="card-tag">Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/change-orders</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Pending</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Approved</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Change Order Management</div><span class="card-tag">List / Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/billing</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Invoiced</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Billing / Invoicing</div><span class="card-tag">Form / List</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6 COLLABORATION -->
+    <section class="section" id="collab">
+      <div class="section-head"><div class="section-num">6</div><h2>Collaboration</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/discussion</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar round" style="width:22px;height:22px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:65%;"></div><div class="mbar" style="width:40%;"></div></div></div>
+            <div class="mprofile"><div class="mavatar round" style="width:22px;height:22px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:50%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Discussion / Comments</div><span class="card-tag">Thread View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/documents</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">File / Document Repository</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/meeting-notes</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mchecklist"><div class="mcheck-row"><div class="mcheck-box done"></div><div class="mbar" style="width:55%;"></div></div><div class="mcheck-row"><div class="mcheck-box"></div><div class="mbar" style="width:40%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Meeting Notes / Action Log</div><span class="card-tag">Form / List</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7 RISK & ISSUES -->
+    <section class="section" id="risk">
+      <div class="section-head"><div class="section-num">7</div><h2>Risk &amp; Issue Management</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/risk-register</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">High</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Medium</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Low</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Risk Register</div><span class="card-tag">List / Matrix</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/issues</span></div>
+          <div class="thumb">
+            <div class="mkanban"><div class="mkcol"><div class="mkcard r"></div><div class="mkcard"></div></div><div class="mkcol"><div class="mkcard a"></div></div><div class="mkcol"><div class="mkcard g"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Issue Tracker</div><span class="card-tag">Kanban / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/action-items</span></div>
+          <div class="thumb">
+            <div class="mchecklist"><div class="mcheck-row"><div class="mcheck-box done"></div><div class="mbar" style="width:60%;"></div></div><div class="mcheck-row"><div class="mcheck-box done"></div><div class="mbar" style="width:45%;"></div></div><div class="mcheck-row"><div class="mcheck-box"></div><div class="mbar" style="width:55%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Action Items List</div><span class="card-tag">Checklist</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 8 PROCUREMENT -->
+    <section class="section" id="procurement">
+      <div class="section-head"><div class="section-num">8</div><h2>Project Procurement</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/purchase-requests</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Pending</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Approved</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Purchase Requests</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/contracts</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar"></div><div class="mprofile-lines"><div class="mbar dark" style="width:60%;"></div><div class="mbar" style="width:40%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Subcontractor / Vendor Contracts</div><span class="card-tag">List / Detail</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 9 PORTFOLIO -->
+    <section class="section" id="portfolio">
+      <div class="section-head"><div class="section-num">9</div><h2>Portfolio Management</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/portfolio/dashboard</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">18</div><div class="ml"></div></div><div class="mkpi"><div class="mv">4</div><div class="ml"></div></div><div class="mkpi"><div class="mv">2</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar good" style="height:50%;"></div><div class="bar warn" style="height:30%;"></div><div class="bar neg" style="height:15%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Portfolio Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/portfolio/programs</span></div>
+          <div class="thumb">
+            <div class="mtree">
+              <div class="mtree-row"><div class="mtree-dot"></div><div class="mtree-bar" style="width:70%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:50%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:60%;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Program / Portfolio View</div><span class="card-tag">Tree / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/portfolio/prioritization</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">P1</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">P2</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">P3</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Prioritization Matrix</div><span class="card-tag">Matrix / List</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 10 REPORTING -->
+    <section class="section" id="analytics">
+      <div class="section-head"><div class="section-num">10</div><h2>Reporting &amp; Analytics</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/PRJ-2026-014/status-report</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">62%</div><div class="ml"></div></div><div class="mkpi"><div class="mv">On Time</div><div class="ml"></div></div></div>
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Status Report</div><span class="card-tag">Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/evm</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:55%;"></div><div class="bar alt" style="height:65%;"></div><div class="bar good" style="height:45%;"></div><div class="bar neg" style="height:70%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Earned Value Management (EVM)</div><span class="card-tag">Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/time-cost-variance</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar good" style="height:30%;"></div><div class="bar neg" style="height:55%;"></div><div class="bar good" style="height:20%;"></div><div class="bar neg" style="height:45%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Time &amp; Cost Variance Report</div><span class="card-tag">Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/resource-utilization-report</span></div>
+          <div class="thumb">
+            <div class="mgauge"><div class="mgauge-ring"><div class="mgauge-inner">84%</div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Resource Utilization Report</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/executive-dashboard</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">18</div><div class="ml"></div></div><div class="mkpi"><div class="mv">2.4M</div><div class="ml"></div></div><div class="mkpi"><div class="mv">92%</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:40%;"></div><div class="bar alt" style="height:60%;"></div><div class="bar good" style="height:80%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Executive Portfolio Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 11 ADMIN -->
+    <section class="section" id="admin">
+      <div class="section-head"><div class="section-num">11</div><h2>Administration</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/roles</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Roles &amp; Permissions</div><span class="card-tag">List / Matrix</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/projects/audit-log</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Project Audit Log</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

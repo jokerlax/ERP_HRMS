@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procurement — ERP Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#0c1728;
+    --navy-900:#132238;
+    --navy-800:#1b3050;
+    --navy-700:#24406a;
+    --canvas:#f4f6f9;
+    --card:#ffffff;
+    --border:#e2e6ec;
+    --border-soft:#eceff3;
+    --text-900:#111a2c;
+    --text-700:#334159;
+    --text-500:#64748b;
+    --text-400:#94a3b8;
+    --indigo:#2f5eff;
+    --indigo-dark:#1f42c9;
+    --indigo-soft:#eaefff;
+    --amber:#b7791f;
+    --amber-soft:#fdf3df;
+    --green:#1f8a56;
+    --green-soft:#e6f6ee;
+    --red:#c0362c;
+    --red-soft:#fdeceb;
+    --slate-soft:#eef1f5;
+    --radius:10px;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.06);
+    --shadow-md: 0 4px 16px rgba(15,23,42,0.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background:var(--canvas);
+    color:var(--text-900);
+    font-size:14px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:#c7ceda;border-radius:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+
+  /* ===== SHELL ===== */
+  .shell{display:grid;grid-template-columns:236px 1fr;min-height:100vh;}
+
+  /* ===== SIDEBAR ===== */
+  .sidebar{
+    background:var(--navy-900);
+    color:#c9d4e6;
+    display:flex;flex-direction:column;
+    position:sticky;top:0;height:100vh;
+    border-right:1px solid var(--navy-950);
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    padding:18px 18px 16px;
+    border-bottom:1px solid var(--navy-800);
+  }
+  .brand-mark{
+    width:30px;height:30px;border-radius:7px;
+    background:linear-gradient(135deg,var(--indigo),#5b7fff);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:13px;color:#fff;flex-shrink:0;
+  }
+  .brand-text{font-weight:700;font-size:14.5px;color:#fff;letter-spacing:0.01em;}
+  .brand-sub{font-size:10.5px;color:#8ea1c2;margin-top:1px;letter-spacing:0.03em;text-transform:uppercase;}
+
+  .nav-scroll{flex:1;overflow-y:auto;padding:10px 10px 16px;}
+  .nav-group-label{
+    font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+    color:#5f7396;padding:14px 10px 6px;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:10px;
+    padding:8px 10px;border-radius:7px;
+    font-size:13.2px;font-weight:500;color:#aebdd6;
+    margin-bottom:1px;position:relative;
+  }
+  .nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.85;}
+  .nav-item:hover{background:var(--navy-800);color:#fff;}
+  .nav-item.active{background:var(--navy-700);color:#fff;}
+  .nav-item.active::before{
+    content:"";position:absolute;left:-10px;top:0;bottom:0;width:3px;
+    background:var(--indigo);border-radius:0 3px 3px 0;
+  }
+  .nav-item .count{
+    margin-left:auto;font-size:10.5px;font-weight:700;
+    background:rgba(255,255,255,0.08);color:#c9d4e6;
+    padding:1px 6px;border-radius:20px;
+  }
+  .nav-item.active .count{background:var(--indigo);color:#fff;}
+
+  .sidebar-footer{
+    padding:12px;border-top:1px solid var(--navy-800);
+    display:flex;align-items:center;gap:9px;
+  }
+  .avatar{
+    width:30px;height:30px;border-radius:50%;
+    background:linear-gradient(135deg,#5b7fff,#7c93ff);
+    display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+  }
+  .sf-name{font-size:12.5px;font-weight:600;color:#fff;}
+  .sf-role{font-size:10.5px;color:#8ea1c2;}
+
+  /* ===== MAIN ===== */
+  .main{display:flex;flex-direction:column;min-width:0;}
+
+  .topbar{
+    height:58px;background:var(--card);border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:16px;padding:0 22px;position:sticky;top:0;z-index:20;
+  }
+  .breadcrumb{font-size:12.5px;color:var(--text-500);display:flex;align-items:center;gap:6px;}
+  .breadcrumb b{color:var(--text-900);font-weight:600;}
+  .search-wrap{
+    flex:1;max-width:420px;position:relative;margin-left:20px;
+  }
+  .search-wrap input{
+    width:100%;padding:8px 12px 8px 34px;border-radius:8px;
+    border:1px solid var(--border);background:var(--canvas);
+    font-size:12.8px;color:var(--text-900);outline:none;
+  }
+  .search-wrap input:focus{border-color:var(--indigo);background:#fff;box-shadow:0 0 0 3px var(--indigo-soft);}
+  .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--text-400);}
+  .topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+  .icon-btn{
+    width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+    background:#fff;display:flex;align-items:center;justify-content:center;position:relative;
+  }
+  .icon-btn svg{width:16px;height:16px;color:var(--text-500);}
+  .icon-btn .dot{position:absolute;top:6px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1.5px solid #fff;}
+  .entity-switch{
+    display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;
+    border:1px solid var(--border);border-radius:8px;padding:7px 10px;background:#fff;color:var(--text-700);
+  }
+  .entity-switch svg{width:13px;height:13px;color:var(--text-400);}
+
+  .content{padding:22px 26px 60px;max-width:1520px;width:100%;margin:0 auto;}
+
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;gap:20px;flex-wrap:wrap;}
+  .page-head h1{font-size:22px;font-weight:800;margin:0 0 4px;letter-spacing:-0.01em;}
+  .page-head p{margin:0;color:var(--text-500);font-size:13px;}
+  .head-actions{display:flex;gap:8px;}
+  .btn{
+    border-radius:8px;padding:9px 15px;font-size:12.8px;font-weight:600;
+    border:1px solid var(--border);background:#fff;color:var(--text-700);
+    display:flex;align-items:center;gap:6px;transition:all .12s ease;
+  }
+  .btn svg{width:14px;height:14px;}
+  .btn:hover{border-color:#c7ceda;background:var(--canvas);}
+  .btn-primary{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+  .btn-primary:hover{background:var(--indigo-dark);border-color:var(--indigo-dark);}
+  .btn-ghost{border-color:transparent;background:transparent;}
+  .btn-ghost:hover{background:var(--slate-soft);}
+
+  /* ===== KPI STRIP ===== */
+  .kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
+  .kpi-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px 16px;box-shadow:var(--shadow-sm);
+  }
+  .kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .kpi-label{font-size:11.3px;font-weight:600;color:var(--text-500);text-transform:uppercase;letter-spacing:0.04em;}
+  .kpi-badge{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .kpi-badge svg{width:13px;height:13px;}
+  .kpi-value{font-size:23px;font-weight:800;letter-spacing:-0.01em;}
+  .kpi-delta{font-size:11.5px;font-weight:600;margin-top:4px;display:flex;align-items:center;gap:3px;}
+  .kpi-delta.up{color:var(--green);}
+  .kpi-delta.down{color:var(--red);}
+  .kpi-delta.flat{color:var(--text-500);}
+
+  /* ===== TABS ===== */
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:18px;overflow-x:auto;}
+  .tab{
+    padding:10px 16px;font-size:13px;font-weight:600;color:var(--text-500);
+    border-bottom:2px solid transparent;white-space:nowrap;
+  }
+  .tab.active{color:var(--indigo);border-color:var(--indigo);}
+  .tab:hover:not(.active){color:var(--text-900);}
+
+  /* ===== TOOLBAR ===== */
+  .toolbar{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;
+    padding:12px 14px;border-bottom:none;
+  }
+  .filter-chip{
+    display:flex;align-items:center;gap:6px;
+    border:1px solid var(--border);border-radius:7px;padding:6px 10px;
+    font-size:12px;font-weight:500;color:var(--text-700);background:var(--canvas);
+  }
+  .filter-chip svg{width:12px;height:12px;color:var(--text-400);}
+  .filter-chip.active-filter{background:var(--indigo-soft);border-color:#c7d5ff;color:var(--indigo-dark);}
+  .toolbar .sep{width:1px;height:20px;background:var(--border);margin:0 2px;}
+  .toolbar-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+  .view-toggle{display:flex;border:1px solid var(--border);border-radius:7px;overflow:hidden;}
+  .view-toggle button{padding:6px 9px;background:#fff;border:none;color:var(--text-400);display:flex;}
+  .view-toggle button.active{background:var(--slate-soft);color:var(--text-900);}
+  .view-toggle svg{width:14px;height:14px;}
+
+  /* ===== TABLE ===== */
+  .table-wrap{
+    background:var(--card);border:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);
+    overflow-x:auto;box-shadow:var(--shadow-sm);
+  }
+  table{width:100%;border-collapse:collapse;min-width:1180px;}
+  thead th{
+    text-align:left;font-size:10.8px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;
+    color:var(--text-500);padding:10px 14px;border-bottom:1px solid var(--border);
+    background:var(--canvas);position:sticky;top:0;white-space:nowrap;
+  }
+  thead th input{margin:0;}
+  tbody td{padding:12px 14px;border-bottom:1px solid var(--border-soft);font-size:12.8px;color:var(--text-700);vertical-align:middle;}
+  tbody tr{transition:background .1s ease;}
+  tbody tr:hover{background:#fafbfd;}
+  tbody tr:last-child td{border-bottom:none;}
+  .po-id{font-weight:700;color:var(--indigo-dark);font-family:'JetBrains Mono',monospace;font-size:12px;}
+  .cell-primary{font-weight:600;color:var(--text-900);}
+  .cell-sub{font-size:11px;color:var(--text-400);margin-top:1px;}
+  .amount{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text-900);font-size:12.5px;}
+
+  .status-pill{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:3.5px 9px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.01em;
+  }
+  .status-pill::before{content:"";width:6px;height:6px;border-radius:50%;}
+  .status-draft{background:var(--slate-soft);color:var(--text-500);}
+  .status-draft::before{background:var(--text-400);}
+  .status-pending{background:var(--amber-soft);color:var(--amber);}
+  .status-pending::before{background:var(--amber);}
+  .status-approved{background:var(--green-soft);color:var(--green);}
+  .status-approved::before{background:var(--green);}
+  .status-issued{background:var(--indigo-soft);color:var(--indigo-dark);}
+  .status-issued::before{background:var(--indigo);}
+  .status-rejected{background:var(--red-soft);color:var(--red);}
+  .status-rejected::before{background:var(--red);}
+  .status-partial{background:#fef3e2;color:#a15c00;}
+  .status-partial::before{background:#d98c1f;}
+
+  .vendor-cell{display:flex;align-items:center;gap:8px;}
+  .vendor-logo{
+    width:26px;height:26px;border-radius:6px;background:var(--slate-soft);
+    display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text-500);flex-shrink:0;
+  }
+  .progress-mini{width:64px;height:5px;background:var(--slate-soft);border-radius:4px;overflow:hidden;}
+  .progress-mini > div{height:100%;background:var(--indigo);border-radius:4px;}
+
+  .row-actions{display:flex;gap:4px;opacity:0;transition:opacity .1s;}
+  tbody tr:hover .row-actions{opacity:1;}
+  .row-actions button{
+    width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:#fff;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .row-actions svg{width:13px;height:13px;color:var(--text-500);}
+
+  .table-footer{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:11px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-500);
+  }
+  .pagination{display:flex;gap:4px;align-items:center;}
+  .pagination button{
+    min-width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:12px;color:var(--text-700);font-weight:600;
+  }
+  .pagination button.active{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+  .pagination button:disabled{opacity:0.4;}
+
+  /* ===== WORKFLOW TRACKER (signature element) ===== */
+  .workflow-panel{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:20px 22px;margin-bottom:22px;box-shadow:var(--shadow-sm);
+  }
+  .workflow-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+  .workflow-head h2{font-size:14.5px;font-weight:700;margin:0;}
+  .workflow-head .sub{font-size:12px;color:var(--text-500);margin-top:2px;}
+  .tracker{display:flex;align-items:flex-start;overflow-x:auto;padding:4px 2px;}
+  .tstep{display:flex;flex-direction:column;align-items:center;min-width:140px;position:relative;}
+  .tstep .line{
+    position:absolute;top:15px;left:calc(-50% + 15px);width:calc(100% - 30px);height:2px;background:var(--border);z-index:0;
+  }
+  .tstep:first-child .line{display:none;}
+  .tstep.done .line{background:var(--green);}
+  .tstep.current .line{background:linear-gradient(90deg,var(--green) 50%,var(--border) 50%);}
+  .tnode{
+    width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:#fff;
+    display:flex;align-items:center;justify-content:center;z-index:1;font-size:12px;font-weight:700;color:var(--text-400);
+  }
+  .tstep.done .tnode{background:var(--green);border-color:var(--green);color:#fff;}
+  .tstep.current .tnode{background:#fff;border-color:var(--indigo);color:var(--indigo);box-shadow:0 0 0 4px var(--indigo-soft);}
+  .tstep .tnode svg{width:14px;height:14px;}
+  .tlabel{font-size:11.8px;font-weight:700;color:var(--text-900);margin-top:8px;text-align:center;}
+  .tmeta{font-size:10.5px;color:var(--text-400);margin-top:2px;text-align:center;}
+  .tstep.current .tlabel{color:var(--indigo-dark);}
+
+  /* ===== TWO COL BELOW ===== */
+  .grid-2col{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-top:22px;}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+  .panel-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .panel-head h3{font-size:13.5px;font-weight:700;margin:0;}
+  .panel-body{padding:14px 16px;}
+  .link-more{font-size:12px;color:var(--indigo);font-weight:600;}
+
+  .activity-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border-soft);}
+  .activity-item:last-child{border-bottom:none;}
+  .activity-dot{width:7px;height:7px;border-radius:50%;background:var(--indigo);margin-top:5px;flex-shrink:0;}
+  .activity-dot.green{background:var(--green);}
+  .activity-dot.amber{background:var(--amber);}
+  .activity-dot.red{background:var(--red);}
+  .activity-text{font-size:12.5px;color:var(--text-700);}
+  .activity-text b{color:var(--text-900);font-weight:600;}
+  .activity-time{font-size:11px;color:var(--text-400);margin-top:2px;}
+
+  .approver-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border-soft);}
+  .approver-row:last-child{border-bottom:none;}
+  .approver-info{flex:1;min-width:0;}
+  .approver-name{font-size:12.5px;font-weight:600;color:var(--text-900);}
+  .approver-role{font-size:11px;color:var(--text-400);}
+
+  .budget-bar-row{margin-bottom:14px;}
+  .budget-bar-row:last-child{margin-bottom:0;}
+  .bb-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+  .bb-top .cat{font-weight:600;color:var(--text-700);}
+  .bb-top .val{font-family:'JetBrains Mono',monospace;color:var(--text-500);font-size:11.5px;}
+  .bb-track{height:7px;background:var(--slate-soft);border-radius:4px;overflow:hidden;}
+  .bb-fill{height:100%;border-radius:4px;background:var(--indigo);}
+  .bb-fill.warn{background:var(--amber);}
+  .bb-fill.over{background:var(--red);}
+
+  @media (max-width:1100px){
+    .kpi-strip{grid-template-columns:repeat(2,1fr);}
+    .grid-2col{grid-template-columns:1fr;}
+    .shell{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">EX</div>
+      <div>
+        <div class="brand-text">Exeon ERP</div>
+        <div class="brand-sub">Procurement Suite</div>
+      </div>
+    </div>
+
+    <nav class="nav-scroll">
+      <div class="nav-group-label">Procure‑to‑Pay</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Dashboard</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 16h6M9 8h6M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>Purchase Requisitions<span class="count">18</span></a>
+      <a class="nav-item active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3H8a2 2 0 00-2 2v16l6-3 6 3V5a2 2 0 00-2-2z"/></svg>Purchase Orders<span class="count">42</span></a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Goods Receipt (GRN)<span class="count">7</span></a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8m8 4H8m2-8H8"/></svg>Vendor Invoices<span class="count">11</span></a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Approvals<span class="count">5</span></a>
+
+      <div class="nav-group-label">Master Data</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Vendors / Suppliers</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>Contracts &amp; Agreements</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>RFQ / Tendering</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Item / Catalog Master</a>
+
+      <div class="nav-group-label">Insights</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></svg>Spend Analytics</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Budget Control</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>Audit Log</a>
+
+      <div class="nav-group-label">System</div>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Approval Workflow Setup</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="avatar">RH</div>
+      <div>
+        <div class="sf-name">Rana Haddad</div>
+        <div class="sf-role">Procurement Manager</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <header class="topbar">
+      <div class="breadcrumb">Procurement <span>/</span> <b>Purchase Orders</b></div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search PO #, vendor, item, requisition...">
+      </div>
+      <div class="topbar-right">
+        <div class="entity-switch">Amman HQ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="dot"></span></button>
+        <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82"/></svg></button>
+        <div class="avatar">RH</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <h1>Purchase Orders</h1>
+          <p>Create, track, and manage purchase orders across the full procure‑to‑pay cycle.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export</button>
+          <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Import</button>
+          <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>New Purchase Order</button>
+        </div>
+      </div>
+
+      <!-- ============ KPI STRIP ============ -->
+      <div class="kpi-strip">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Open POs</span>
+            <div class="kpi-badge" style="background:var(--indigo-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--indigo-dark)" stroke-width="2"><path d="M16 3H8a2 2 0 00-2 2v16l6-3 6 3V5a2 2 0 00-2-2z"/></svg></div>
+          </div>
+          <div class="kpi-value">42</div>
+          <div class="kpi-delta up">▲ 6 this week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Pending Approval</span>
+            <div class="kpi-badge" style="background:var(--amber-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          </div>
+          <div class="kpi-value">5</div>
+          <div class="kpi-delta flat">avg. 1.8 days pending</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Committed Spend (MTD)</span>
+            <div class="kpi-badge" style="background:var(--green-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          </div>
+          <div class="kpi-value">JOD 184.6K</div>
+          <div class="kpi-delta up">▲ 12.4% vs last month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Overdue Deliveries</span>
+            <div class="kpi-badge" style="background:var(--red-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg></div>
+          </div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-delta down">▼ needs follow‑up</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Budget Utilization</span>
+            <div class="kpi-badge" style="background:var(--indigo-soft);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--indigo-dark)" stroke-width="2"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></svg></div>
+          </div>
+          <div class="kpi-value">68%</div>
+          <div class="kpi-delta flat">JOD 340K of JOD 500K FY</div>
+        </div>
+      </div>
+
+      <!-- ============ WORKFLOW TRACKER (signature) ============ -->
+      <div class="workflow-panel">
+        <div class="workflow-head">
+          <div>
+            <h2>PO‑2026‑00847 — Dell Precision Workstations (Qty 12)</h2>
+            <div class="sub">Requisition REQ‑2026‑1132 · Cost Center: IT‑Infrastructure · Requested by Omar Sha'ban</div>
+          </div>
+          <span class="status-pill status-pending">Pending Approval</span>
+        </div>
+        <div class="tracker">
+          <div class="tstep done">
+            <div class="line"></div>
+            <div class="tnode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="tlabel">Draft Created</div>
+            <div class="tmeta">Jul 6 · O. Sha'ban</div>
+          </div>
+          <div class="tstep done">
+            <div class="line"></div>
+            <div class="tnode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="tlabel">Budget Check</div>
+            <div class="tmeta">Jul 7 · Passed</div>
+          </div>
+          <div class="tstep current">
+            <div class="line"></div>
+            <div class="tnode">3</div>
+            <div class="tlabel">Approval (2 of 3)</div>
+            <div class="tmeta">Awaiting CFO sign‑off</div>
+          </div>
+          <div class="tstep">
+            <div class="line"></div>
+            <div class="tnode">4</div>
+            <div class="tlabel">Issued to Vendor</div>
+            <div class="tmeta">—</div>
+          </div>
+          <div class="tstep">
+            <div class="line"></div>
+            <div class="tnode">5</div>
+            <div class="tlabel">Goods Receipt</div>
+            <div class="tmeta">—</div>
+          </div>
+          <div class="tstep">
+            <div class="line"></div>
+            <div class="tnode">6</div>
+            <div class="tlabel">Invoice Match</div>
+            <div class="tmeta">—</div>
+          </div>
+          <div class="tstep">
+            <div class="line"></div>
+            <div class="tnode">7</div>
+            <div class="tlabel">Closed</div>
+            <div class="tmeta">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ TABS ============ -->
+      <div class="tabs">
+        <div class="tab active">All Orders</div>
+        <div class="tab">Draft</div>
+        <div class="tab">Pending Approval</div>
+        <div class="tab">Approved / Issued</div>
+        <div class="tab">Partially Received</div>
+        <div class="tab">Fully Received</div>
+        <div class="tab">Closed</div>
+        <div class="tab">Rejected</div>
+      </div>
+
+      <!-- ============ TOOLBAR ============ -->
+      <div class="toolbar">
+        <div class="filter-chip active-filter">Status: All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="filter-chip">Vendor <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="filter-chip">Cost Center <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="filter-chip">Date Range <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="filter-chip">Amount <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+        <div class="sep"></div>
+        <div class="filter-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M10 18h4"/></svg>More filters</div>
+        <div class="toolbar-right">
+          <span style="font-size:12px;color:var(--text-400);">42 results</span>
+          <div class="view-toggle">
+            <button class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+            <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ TABLE ============ -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>PO Number</th>
+              <th>Vendor</th>
+              <th>Cost Center</th>
+              <th>Order Date</th>
+              <th>Delivery Due</th>
+              <th>Amount</th>
+              <th>Receipt Progress</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="po-id">PO-2026-00847</div><div class="cell-sub">REQ-2026-1132</div></td>
+              <td><div class="vendor-cell"><div class="vendor-logo">DL</div><div><div class="cell-primary">Dell Technologies FZ</div><div class="cell-sub">Amman, JO</div></div></div></td>
+              <td>IT‑Infrastructure</td>
+              <td>Jul 6, 2026</td>
+              <td>Jul 28, 2026</td>
+              <td class="amount">JOD 14,280.00</td>
+              <td><div class="progress-mini"><div style="width:0%;"></div></div></td>
+              <td><span class="status-pill status-pending">Pending Approval</span></td>
+              <td><div class="row-actions"><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="po-id">PO-2026-00846</div><div class="cell-sub">REQ-2026-1129</div></td>
+              <td><div class="vendor-cell"><div class="vendor-logo">AJ</div><div><div class="cell-primary">Al‑Jazeera Office Supplies</div><div class="cell-sub">Amman, JO</div></div></div></td>
+              <td>Administration</td>
+              <td>Jul 5, 2026</td>
+              <td>Jul 12, 2026</td>
+              <td class="amount">JOD 1,940.50</td>
+              <td><div class="progress-mini"><div style="width:100%;"></div></div></td>
+              <td><span class="status-pill status-approved">Fully Received</span></td>
+              <td><div class="row-actions"><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="po-id">PO-2026-00845</div><div class="cell-sub">REQ-2026-1127</div></td>
+              <td><div class="vendor-cell"><div class="vendor-logo">SC</div><div><div class="cell-primary">SteelCore Industrial Ltd.</div><div class="cell-sub">Zarqa, JO</div></div></div></td>
+              <td>Manufacturing</td>
+              <td>Jul 3, 2026</td>
+              <td>Jul 20, 2026</td>
+              <td class="amount">JOD 58,750.00</td>
+              <td><div class="progress-mini"><div style="width:45%;"></div></div></td>
+              <td><span class="status-pill status-partial">Partially Received</span></td>
+              <td><div class="row-actions"><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="po-id">PO-2026-00844</div><div class="cell-sub">REQ-2026-1120</div></td>
+              <td><div class="vendor-cell"><div class="vendor-logo">NX</div><div><div class="cell-primary">Nexus Facility Services</div><div class="cell-sub">Amman, JO</div></div></div></td>
+              <td>Facilities</td>
+              <td>Jun 30, 2026</td>
+              <td>Jul 10, 2026</td>
+              <td class="amount">JOD 6,120.00</td>
+              <td><div class="progress-mini"><div style="width:0%;"></div></div></td>
+              <td><span class="status-pill status-rejected">Rejected</span></td>
+              <td><div class="row-actions"><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="po-id">PO-2026-00843</div><div class="cell-sub">REQ-2026-1118</div></td>
+              <td><div class="vendor-cell"><div class="vendor-logo">GT</div><div><div class="cell-primary">Global Tech Distribution</div><div class="cell-sub">Dubai, UAE</div></div></div></td>
+              <td>IT‑Infrastructure</td>
+              <td>Jun 28, 2026</td>
+              <td>Jul 15, 2026</td>
+              <td class="amount">JOD 22,300.00</td>
+              <td><div class="progress-mini"><div style="width:100%;"></div></div></td>
+              <td><span class="status-pill status-issued">Issued</span></td>
+              <td><div class="row-actions"><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="po-id">PO-2026-00842</div><div class="cell-sub">REQ-2026-1115</div></td>
+              <td><div class="vendor-cell"><div class="vendor-logo">PR</div><div><div class="cell-primary">Prime Chemicals Co.</div><div class="cell-sub">Aqaba, JO</div></div></div></td>
+              <td>Production</td>
+              <td>Jun 25, 2026</td>
+              <td>Jul 8, 2026</td>
+              <td class="amount">JOD 9,875.00</td>
+              <td><div class="progress-mini"><div style="width:0%;"></div></div></td>
+              <td><span class="status-pill status-draft">Draft</span></td>
+              <td><div class="row-actions"><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></button></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-footer">
+          <span>Showing 1–6 of 42 purchase orders</span>
+          <div class="pagination">
+            <button disabled>‹</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>…</button>
+            <button>7</button>
+            <button>›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ BOTTOM GRID ============ -->
+      <div class="grid-2col">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Recent Activity</h3>
+            <span class="link-more">View audit log</span>
+          </div>
+          <div class="panel-body">
+            <div class="activity-item">
+              <div class="activity-dot amber"></div>
+              <div><div class="activity-text"><b>PO-2026-00847</b> routed to CFO for final approval</div><div class="activity-time">Today, 10:42 AM · System</div></div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot green"></div>
+              <div><div class="activity-text"><b>PO-2026-00846</b> marked Fully Received — GRN‑3391 posted</div><div class="activity-time">Today, 9:15 AM · Layla Odeh (Warehouse)</div></div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot red"></div>
+              <div><div class="activity-text"><b>PO-2026-00844</b> rejected — budget exceeds Facilities Q3 allocation</div><div class="activity-time">Yesterday, 4:02 PM · Samer Nasser (Finance)</div></div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot"></div>
+              <div><div class="activity-text"><b>REQ-2026-1132</b> converted to Purchase Order PO-2026-00847</div><div class="activity-time">Jul 6, 1:20 PM · Omar Sha'ban</div></div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot green"></div>
+              <div><div class="activity-text">3-way match completed for <b>PO-2026-00841</b> — invoice cleared for payment</div><div class="activity-time">Jul 5, 11:08 AM · System</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Approvers — PO-2026-00847</h3>
+          </div>
+          <div class="panel-body">
+            <div class="approver-row">
+              <div class="avatar" style="background:linear-gradient(135deg,#1f8a56,#38b57a);">HS</div>
+              <div class="approver-info"><div class="approver-name">Hana Saleh</div><div class="approver-role">Department Head — IT</div></div>
+              <span class="status-pill status-approved">Approved</span>
+            </div>
+            <div class="approver-row">
+              <div class="avatar" style="background:linear-gradient(135deg,#1f8a56,#38b57a);">MK</div>
+              <div class="approver-info"><div class="approver-name">Malek Khoury</div><div class="approver-role">Procurement Director</div></div>
+              <span class="status-pill status-approved">Approved</span>
+            </div>
+            <div class="approver-row">
+              <div class="avatar" style="background:linear-gradient(135deg,#b7791f,#d99a3e);">FT</div>
+              <div class="approver-info"><div class="approver-name">Farah Tannous</div><div class="approver-role">Chief Financial Officer</div></div>
+              <span class="status-pill status-pending">Pending</span>
+            </div>
+          </div>
+          <div class="panel-head" style="border-top:1px solid var(--border);">
+            <h3>Budget Impact</h3>
+          </div>
+          <div class="panel-body">
+            <div class="budget-bar-row">
+              <div class="bb-top"><span class="cat">IT‑Infrastructure (FY26)</span><span class="val">184K / 250K JOD</span></div>
+              <div class="bb-track"><div class="bb-fill warn" style="width:74%;"></div></div>
+            </div>
+            <div class="budget-bar-row">
+              <div class="bb-top"><span class="cat">Facilities (Q3)</span><span class="val">61K / 60K JOD</span></div>
+              <div class="bb-track"><div class="bb-fill over" style="width:100%;"></div></div>
+            </div>
+            <div class="budget-bar-row">
+              <div class="bb-top"><span class="cat">Administration (FY26)</span><span class="val">38K / 120K JOD</span></div>
+              <div class="bb-track"><div class="bb-fill" style="width:32%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

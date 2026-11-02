@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRMS — Aurelia Trading Co.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* menu bar / panel = blue, text = white, dashboard = grey */
+    --blue:#1e2a6e;
+    --blue-700:#182258;
+    --blue-600:#2a3782;
+    --blue-hover:#2d3a86;
+    --blue-line:#3d4a96;
+    --white:#ffffff;
+    --white-dim:#c3c9e6;
+    --white-faint:#8f97c4;
+
+    --grey-desk:#9ea3a8;
+    --grey-desk-2:#8b9096;
+    --grey-taskbar:#2b2f34;
+    --grey-line:#c9cdd2;
+
+    --tile-blue:#3b46c4;
+    --tile-red:#d42a2a;
+    --tile-slate:#3f5a58;
+    --tile-green:#2f4a34;
+    --tile-grey:#6b7076;
+
+    --radius:6px;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --shadow:0 -2px 28px rgba(0,0,0,.34);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;font-family:'Inter',system-ui,sans-serif;font-size:14px;
+    color:#1b2430;height:100vh;overflow:hidden;display:flex;flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1200px 600px at 70% 10%, var(--grey-desk) 0%, var(--grey-desk-2) 100%);
+  }
+  :focus-visible{outline:2px solid #ffd24a;outline-offset:1px}
+
+  /* ================= DESKTOP (grey) ================= */
+  .desktop{
+    flex:1 1 auto;overflow:auto;padding:26px 28px 20px;
+  }
+  .desk-head{
+    display:flex;align-items:baseline;gap:12px;margin-bottom:18px;color:#fff;
+    text-shadow:0 1px 3px rgba(0,0,0,.35);
+  }
+  .desk-head h1{margin:0;font-size:18px;font-weight:600;letter-spacing:.2px}
+  .desk-head span{font-size:12.5px;color:#eceef1;opacity:.85}
+
+  .tiles{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));
+    gap:14px;max-width:900px;
+  }
+  .tile{
+    height:112px;border-radius:8px;border:2px solid rgba(255,255,255,.35);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    cursor:pointer;color:#fff;position:relative;
+    box-shadow:0 3px 10px rgba(0,0,0,.22);
+    transition:transform .13s ease, box-shadow .13s ease, filter .13s ease;
+  }
+  .tile:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.3);filter:brightness(1.07)}
+  .tile:active{transform:translateY(-1px)}
+  .tile svg{width:34px;height:34px;stroke-width:1.7}
+  .tile .tl{font-size:12.5px;font-weight:600;letter-spacing:.2px;text-align:center;padding:0 8px}
+  .tile .badge{
+    position:absolute;top:8px;right:8px;background:#fff;color:var(--tile-red);
+    font-size:11px;font-weight:700;border-radius:10px;padding:1px 7px;
+  }
+  .t-blue{background:var(--tile-blue)} .t-red{background:var(--tile-red)}
+  .t-slate{background:var(--tile-slate)} .t-green{background:var(--tile-green)}
+  .t-grey{background:var(--tile-grey)}
+  .t-white{background:#f2f3f5;color:#23272c;border-color:rgba(0,0,0,.12)}
+  .t-white svg{color:#23272c}
+
+  /* ================= TASKBAR ================= */
+  .taskbar{
+    flex:0 0 auto;height:46px;background:var(--grey-taskbar);
+    display:flex;align-items:center;gap:8px;padding:0 8px;z-index:60;
+    box-shadow:0 -1px 0 rgba(255,255,255,.08);
+  }
+  .startbtn{
+    display:flex;align-items:center;gap:9px;height:36px;padding:0 14px;border:0;
+    background:var(--blue);color:#fff;border-radius:5px;font:inherit;font-size:13px;font-weight:600;
+    cursor:pointer;transition:background .12s;
+  }
+  .startbtn:hover{background:var(--blue-600)}
+  .startbtn.open{background:var(--blue-600);box-shadow:inset 0 0 0 1px var(--blue-line)}
+  .startbtn svg{width:17px;height:17px}
+  .tb-sep{width:1px;height:24px;background:#454a51;margin:0 2px}
+  .tb-app{
+    display:flex;align-items:center;gap:8px;height:34px;padding:0 12px;border-radius:5px;
+    color:#c9ced4;font-size:12.5px;cursor:pointer;border-bottom:2px solid transparent;
+  }
+  .tb-app:hover{background:#3a3f45}
+  .tb-app.active{background:#3a3f45;color:#fff;border-bottom-color:#5b6bd6}
+  .tb-app svg{width:15px;height:15px}
+  .taskbar .spacer{flex:1}
+  .tb-tray{display:flex;align-items:center;gap:14px;color:#c9ced4;font-size:12px;padding-right:8px}
+  .tb-tray .clock{font-family:var(--mono);font-size:12px;color:#fff;text-align:right;line-height:1.25}
+  .tb-tray .clock small{display:block;color:#9aa0a6;font-size:10.5px}
+
+  /* ================= START PANEL (blue) ================= */
+  .panel{
+    position:fixed;left:8px;bottom:52px;width:620px;max-width:calc(100vw - 16px);
+    background:var(--blue);border-radius:8px;box-shadow:var(--shadow);
+    display:none;overflow:hidden;z-index:70;
+    grid-template-columns:56px 1fr;
+  }
+  .panel.open{display:grid;animation:rise .16s ease-out}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* left icon rail */
+  .rail{
+    background:var(--blue-700);display:flex;flex-direction:column;align-items:center;
+    padding:14px 0 0;gap:6px;border-right:1px solid var(--blue-line);
+  }
+  .rail .rbtn{
+    width:38px;height:38px;border-radius:6px;display:grid;place-items:center;color:var(--white-dim);
+    cursor:pointer;border:0;background:transparent;
+  }
+  .rail .rbtn:hover{background:var(--blue-hover);color:#fff}
+  .rail .rbtn svg{width:19px;height:19px}
+  .rail .grow{flex:1}
+  .rail .globe{
+    width:56px;height:46px;display:grid;place-items:center;background:var(--blue-600);color:#fff;
+    cursor:pointer;margin-top:6px;
+  }
+  .rail .globe svg{width:21px;height:21px}
+  .rail .power:hover{background:#c22b2b;color:#fff}
+
+  /* right side */
+  .pmain{display:flex;flex-direction:column;min-width:0}
+
+  .phead{
+    display:flex;align-items:center;gap:12px;padding:15px 18px;
+    border-bottom:1px solid var(--blue-line);
+  }
+  .phead .av{
+    width:36px;height:36px;border-radius:50%;background:var(--blue-600);color:#fff;
+    display:grid;place-items:center;flex:0 0 auto;
+  }
+  .phead .av svg{width:20px;height:20px}
+  .phead .who{min-width:0}
+  .phead .nm{font-size:15px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .phead .rl{font-size:11.5px;color:var(--white-faint)}
+  .phead .per{
+    margin-left:auto;font-size:11px;color:var(--white-dim);border:1px solid var(--blue-line);
+    border-radius:4px;padding:3px 9px;white-space:nowrap;
+  }
+
+  .plists{flex:1 1 auto;overflow-y:auto;max-height:min(56vh,430px);padding:6px 10px 4px 18px}
+  .sect{font-size:10.5px;letter-spacing:.7px;color:var(--white-faint);
+        font-weight:600;padding:7px 8px 4px}
+  .group{border-left:1px solid var(--blue-line);padding-left:16px}
+
+  .row{
+    display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:5px;
+    color:#fff;cursor:pointer;position:relative;
+  }
+  .row:hover,.row.hi{background:var(--blue-hover)}
+  .row .ic{width:18px;height:18px;flex:0 0 auto;color:var(--white-faint);display:grid;place-items:center}
+  .row:hover .ic,.row.hi .ic{color:#fff}
+  .row .ic svg{width:17px;height:17px}
+  .row .lb{flex:1;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .sc{font-family:var(--mono);font-size:10.5px;color:var(--white-faint)}
+  .row:hover .sc,.row.hi .sc{color:var(--white-dim)}
+  .row .cnt{background:#d42a2a;color:#fff;font-size:10.5px;font-weight:600;border-radius:9px;padding:1px 7px}
+  .row .arr{width:15px;height:15px;color:var(--white-faint)}
+  .row:hover .arr,.row.hi .arr{color:#fff}
+
+  .pdiv{height:1px;background:var(--blue-line);margin:6px 8px 2px 0}
+
+  /* flyout submenu */
+  .flyout{
+    position:fixed;background:var(--blue-600);border:1px solid var(--blue-line);
+    border-radius:7px;box-shadow:0 10px 30px rgba(0,0,0,.4);padding:5px;min-width:246px;
+    display:none;z-index:80;
+  }
+  .flyout.open{display:block}
+  .flyout .row{padding:7px 10px}
+  .flyout .row:hover,.flyout .row.hi{background:#3a48a0}
+
+  /* search */
+  .psearch{padding:11px 14px 13px 18px;border-top:1px solid var(--blue-line)}
+  .sbox{
+    display:flex;align-items:center;gap:9px;background:#fff;border-radius:4px;padding:0 11px;height:38px;
+    border:2px solid transparent;transition:border-color .12s;
+  }
+  .sbox:focus-within{border-color:#5b6bd6}
+  .sbox svg{width:16px;height:16px;color:#5e646b;flex:0 0 auto}
+  .sbox input{border:0;outline:0;font:inherit;font-size:14px;width:100%;background:transparent;color:#1b2430}
+  .sbox input::placeholder{color:#7a8087}
+  .sbox kbd{
+    font-family:var(--mono);font-size:10px;color:#5e646b;background:#eef0f2;border:1px solid var(--grey-line);
+    border-bottom-width:2px;border-radius:3px;padding:2px 5px;flex:0 0 auto;
+  }
+
+  /* search results replace the lists */
+  .results{display:none;padding:6px 10px 4px 18px;overflow-y:auto;max-height:min(56vh,430px)}
+  .results.on{display:block}
+  .plists.off{display:none}
+  .res{
+    display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:5px;cursor:pointer;color:#fff;
+  }
+  .res:hover,.res.hi{background:var(--blue-hover)}
+  .res .ic{width:18px;height:18px;color:var(--white-faint);display:grid;place-items:center;flex:0 0 auto}
+  .res:hover .ic,.res.hi .ic{color:#fff}
+  .res .ic svg{width:17px;height:17px}
+  .res .tx{flex:1;min-width:0}
+  .res .n{font-size:13.5px}
+  .res .n mark{background:#ffd24a;color:#1b2430;border-radius:2px;padding:0 1px}
+  .res .p{font-size:10.5px;color:var(--white-faint);margin-top:1px}
+  .res .sc{font-family:var(--mono);font-size:10.5px;color:var(--white-faint)}
+  .nores{padding:26px;text-align:center;color:var(--white-faint);font-size:13px}
+
+  .scrim{position:fixed;inset:0;z-index:65;display:none}
+  .scrim.on{display:block}
+
+  /* toast */
+  .toast{
+    position:fixed;left:50%;bottom:60px;transform:translateX(-50%) translateY(14px);
+    background:#12172b;color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;
+    box-shadow:0 8px 26px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.2s;z-index:90;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media (max-width:680px){ .panel{width:calc(100vw - 16px)} }
+</style>
+</head>
+<body>
+
+<!-- ================= DESKTOP ================= -->
+<div class="desktop" id="desktop">
+  <div class="desk-head">
+    <h1>Aurelia Trading Co.</h1>
+    <span>Human Resource Management System</span>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</div>
+
+<!-- ================= TASKBAR ================= -->
+<div class="taskbar">
+  <button class="startbtn" id="startBtn" aria-haspopup="true" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Start
+  </button>
+  <span class="tb-sep"></span>
+  <div class="tb-app active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Payroll</div>
+  <div class="tb-app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Leaves</div>
+  <div class="spacer"></div>
+  <div class="tb-tray">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+    <div class="clock">14:32<small>9 Jul 2026</small></div>
+  </div>
+</div>
+
+<!-- ================= START PANEL ================= -->
+<div class="scrim" id="scrim"></div>
+
+<div class="panel" id="panel" role="dialog" aria-label="Start menu">
+  <div class="rail">
+    <button class="rbtn" title="All modules" aria-label="All modules">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="grow"></div>
+    <button class="rbtn" title="Help" aria-label="Help" data-cmd="help.docs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+    </button>
+    <button class="rbtn" title="My profile" aria-label="My profile" data-cmd="tools.emp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </button>
+    <button class="rbtn power" title="Sign out" aria-label="Sign out" data-cmd="file.exit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10"/></svg>
+    </button>
+    <div class="globe" title="Web portal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+    </div>
+  </div>
+
+  <div class="pmain">
+    <div class="phead">
+      <div class="av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div class="who">
+        <div class="nm">Sreedham — Aurelia Trading</div>
+        <div class="rl">HR administrator</div>
+      </div>
+      <div class="per">July 2026</div>
+    </div>
+
+    <div class="plists" id="plists">
+      <div class="sect">RECENT</div>
+      <div class="group" id="recentList"></div>
+      <div class="pdiv"></div>
+      <div class="sect">MODULES</div>
+      <div class="group" id="moduleList"></div>
+    </div>
+
+    <div class="results" id="results" role="listbox"></div>
+
+    <div class="psearch">
+      <div class="sbox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="searchInput" type="text" placeholder="Search anything (Ctrl+Alt+S)"
+               autocomplete="off" role="combobox" aria-expanded="false" aria-controls="results">
+        <kbd>Ctrl+Alt+S</kbd>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flyout" id="flyout" role="menu"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   ONE registry drives the tiles, the Recent list, the module flyouts
+   and the search box. Add a command once; it appears everywhere.
+   ===================================================================== */
+const S = {
+  pay:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+  slip:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
+  run:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+  leave:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  cal:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>',
+  doc:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg>',
+  alert:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  flight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.8L16 14l-4 2-1 5 1.5 1 2-2.5 3.3.3zM2 9l5 1 2-4 5 1-2 4 5 1"/><path d="M21 3L11 13"/></svg>',
+  resign: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg>',
+  users:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',
+  up:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>',
+  down:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
+  report: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>',
+  gear:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+  help:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>',
+  save:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>',
+  exit:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>',
+  bank:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M6 10v11M10 10v11M14 10v11M18 10v11"/></svg>',
+};
+
+/* Desktop tiles */
+const TILES = [
+  {id:'payroll',    name:'Process Payroll',  cls:'t-blue',  icon:S.pay},
+  {id:'payslips',   name:'Payslips',         cls:'t-white', icon:S.slip},
+  {id:'leaves',     name:'Leave Requests',   cls:'t-slate', icon:S.leave},
+  {id:'documents',  name:'Documents',        cls:'t-red',   icon:S.doc, badge:'4'},
+  {id:'flight',     name:'Flight Requests',  cls:'t-green', icon:S.flight},
+  {id:'resignation',name:'Resignation',      cls:'t-grey',  icon:S.resign},
+];
+
+/* Recent — the flat list at the top of the panel */
+const RECENT = [
+  {id:'pay.run',    label:'Process payroll',            icon:S.run,   sc:'Ctrl+N'},
+  {id:'pay.slips',  label:'View payslips',              icon:S.slip},
+  {id:'file.import',label:'Import employees from Excel', icon:S.up},
+  {id:'lv.apply',   label:'Apply for leave',            icon:S.cal},
+  {id:'doc.expiry', label:'Document expiry alerts',     icon:S.alert, count:4},
+  {id:'fl.new',     label:'New ticket request',         icon:S.flight},
+];
+
+/* Modules — rows with ► that open a flyout */
+const MODULES = [
+  {label:'Payroll and payslip', items:[
+    {id:'pay.run',      label:'Process payroll',   icon:S.run, sc:'Ctrl+N'},
+    {id:'pay.slips',    label:'View payslips',     icon:S.slip},
+    {id:'pay.struct',   label:'Salary structures', icon:S.users},
+    {id:'pay.loans',    label:'Loans and advances',icon:S.pay},
+    {id:'pay.register', label:'Pay register',      icon:S.report},
+    {id:'pay.bank',     label:'Bank transfer list',icon:S.bank},
+  ]},
+  {label:'Leave management', items:[
+    {id:'lv.requests', label:'Leave requests',   icon:S.leave},
+    {id:'lv.apply',    label:'Apply for leave',  icon:S.cal},
+    {id:'lv.approve',  label:'Approve requests', icon:S.leave},
+    {id:'lv.balance',  label:'Leave balances',   icon:S.report},
+    {id:'lv.holidays', label:'Holiday calendar', icon:S.cal},
+  ]},
+  {label:'Document management', items:[
+    {id:'doc.library', label:'Document library', icon:S.doc},
+    {id:'doc.upload',  label:'Upload document',  icon:S.up},
+    {id:'doc.expiry',  label:'Expiry alerts',    icon:S.alert, count:4},
+    {id:'doc.types',   label:'Document types',   icon:S.gear},
+  ]},
+  {label:'Flight request', items:[
+    {id:'fl.requests', label:'Flight requests',    icon:S.flight},
+    {id:'fl.new',      label:'New ticket request', icon:S.flight},
+    {id:'fl.entitle',  label:'Ticket entitlements',icon:S.gear},
+    {id:'fl.approve',  label:'Approve requests',   icon:S.flight},
+  ]},
+  {label:'Resignation and clearance', items:[
+    {id:'rs.list',      label:'Resignations',       icon:S.resign},
+    {id:'rs.new',       label:'Submit resignation', icon:S.resign},
+    {id:'rs.clearance', label:'Exit clearance',     icon:S.report},
+    {id:'rs.settle',    label:'Final settlement',   icon:S.pay},
+  ]},
+  {label:'Tools and setup', items:[
+    {id:'tools.emp',    label:'Employee master', icon:S.users},
+    {id:'file.import',  label:'Import from Excel',icon:S.up},
+    {id:'tools.export', label:'Export data',     icon:S.down},
+    {id:'tools.users',  label:'Users and roles', icon:S.users},
+    {id:'tools.audit',  label:'Audit log',       icon:S.report},
+    {id:'tools.opts',   label:'Options',         icon:S.gear},
+  ]},
+];
+
+/* extra searchable commands not shown as rows */
+const EXTRA = [
+  {id:'help.docs', label:'Documentation', icon:S.help, path:'Help', sc:'F1'},
+  {id:'file.save', label:'Save',          icon:S.save, path:'File', sc:'Ctrl+S'},
+  {id:'file.exit', label:'Sign out',      icon:S.exit, path:'Session'},
+];
+
+/* ---- flatten everything into one searchable command list ---- */
+const COMMANDS = [];
+const seen = new Set();
+function push(c){ if (!seen.has(c.id + c.path)) { seen.add(c.id + c.path); COMMANDS.push(c); } }
+MODULES.forEach(m => m.items.forEach(it => push({...it, path:m.label})));
+TILES.forEach(t => push({id:'open.'+t.id, label:t.name, icon:t.icon, path:'Desktop', module:t.id}));
+EXTRA.forEach(push);
+
+/* =========================== rendering =========================== */
+const $ = id => document.getElementById(id);
+const arrow = '<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>';
+
+(function renderTiles(){
+  $('tiles').innerHTML = TILES.map(t => `
+    <div class="tile ${t.cls}" data-tile="${t.id}" tabindex="0" role="button" aria-label="${t.name}">
+      ${t.badge ? `<span class="badge">${t.badge}</span>` : ''}
+      ${t.icon}<span class="tl">${t.name}</span>
+    </div>`).join('');
+  $('tiles').querySelectorAll('.tile').forEach(el => {
+    const go = () => toast(`Opening ${TILES.find(t => t.id === el.dataset.tile).name}`);
+    el.addEventListener('click', go);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+})();
+
+function rowHTML(it, isModule){
+  return `<div class="row" data-id="${it.id || ''}" ${isModule ? 'data-mod="1"' : ''} role="menuitem" tabindex="-1">
+    ${it.icon ? `<span class="ic">${it.icon}</span>` : ''}
+    <span class="lb">${it.label}</span>
+    ${it.count ? `<span class="cnt">${it.count}</span>` : ''}
+    ${it.sc ? `<span class="sc">${it.sc}</span>` : ''}
+    ${isModule ? arrow : ''}
+  </div>`;
+}
+$('recentList').innerHTML = RECENT.map(r => rowHTML(r, false)).join('');
+$('moduleList').innerHTML = MODULES.map((m,i) =>
+  `<div class="row" data-mod-idx="${i}" role="menuitem" tabindex="-1">
+     <span class="lb">${m.label}</span>${arrow}
+   </div>`).join('');
+
+/* =========================== panel open/close =========================== */
+const panel = $('panel'), scrim = $('scrim'), startBtn = $('startBtn');
+let panelOpen = false;
+
+function openPanel(focusSearch){
+  panel.classList.add('open'); scrim.classList.add('on');
+  startBtn.classList.add('open'); startBtn.setAttribute('aria-expanded','true');
+  panelOpen = true;
+  if (focusSearch) $('searchInput').focus();
+}
+function closePanel(){
+  panel.classList.remove('open'); scrim.classList.remove('on');
+  startBtn.classList.remove('open'); startBtn.setAttribute('aria-expanded','false');
+  closeFlyout(); clearSearch();
+  panelOpen = false;
+}
+startBtn.addEventListener('click', e => { e.stopPropagation(); panelOpen ? closePanel() : openPanel(false); });
+scrim.addEventListener('mousedown', closePanel);
+
+/* =========================== flyout submenus =========================== */
+const flyout = $('flyout');
+let flyIdx = -1;
+
+function openFlyout(idx, anchorEl){
+  const m = MODULES[idx];
+  flyout.innerHTML = m.items.map(it => rowHTML(it, false)).join('');
+  flyout.classList.add('open');
+  flyIdx = idx;
+
+  const r = anchorEl.getBoundingClientRect();
+  const fw = flyout.offsetWidth, fh = flyout.offsetHeight;
+  let left = r.right + 6;
+  if (left + fw > window.innerWidth - 8) left = r.left - fw - 6;   // flip
+  let top = r.top - 6;
+  if (top + fh > window.innerHeight - 8) top = window.innerHeight - fh - 8;
+  flyout.style.left = Math.max(8, left) + 'px';
+  flyout.style.top  = Math.max(8, top) + 'px';
+
+  document.querySelectorAll('#moduleList .row').forEach(x => x.classList.remove('hi'));
+  anchorEl.classList.add('hi');
+
+  flyout.querySelectorAll('.row').forEach(row =>
+    row.addEventListener('click', e => { e.stopPropagation(); run(row.dataset.id); }));
+}
+function closeFlyout(){
+  flyout.classList.remove('open'); flyIdx = -1;
+  document.querySelectorAll('#moduleList .row').forEach(x => x.classList.remove('hi'));
+}
+
+$('moduleList').addEventListener('mouseover', e => {
+  const row = e.target.closest('.row[data-mod-idx]');
+  if (row) openFlyout(+row.dataset.modIdx, row);
+});
+$('moduleList').addEventListener('click', e => {
+  const row = e.target.closest('.row[data-mod-idx]');
+  if (row) { e.stopPropagation(); openFlyout(+row.dataset.modIdx, row); }
+});
+$('recentList').addEventListener('mouseover', () => closeFlyout());
+$('recentList').addEventListener('click', e => {
+  const row = e.target.closest('.row[data-id]');
+  if (row) { e.stopPropagation(); run(row.dataset.id); }
+});
+panel.addEventListener('mousedown', e => e.stopPropagation());
+
+/* =========================== search =========================== */
+let resList = [], resHi = 0;
+const input = $('searchInput');
+
+function score(c, q){
+  const i = c.label.toLowerCase().indexOf(q);
+  if (i === 0) return 100;
+  if (i > 0) return 60;
+  if ((c.label + ' ' + c.path).toLowerCase().includes(q)) return 30;
+  return 0;
+}
+function mark(text, q){
+  const i = text.toLowerCase().indexOf(q);
+  return (i < 0 || !q) ? text
+    : text.slice(0,i) + '<mark>' + text.slice(i, i+q.length) + '</mark>' + text.slice(i+q.length);
+}
+function doSearch(){
+  const q = input.value.trim().toLowerCase();
+  if (!q) { clearSearch(); return; }
+  closeFlyout();
+  $('plists').classList.add('off');
+  $('results').classList.add('on');
+  input.setAttribute('aria-expanded','true');
+
+  resList = COMMANDS.map(c => ({c, s:score(c, q)})).filter(x => x.s > 0)
+                    .sort((a,b) => b.s - a.s).slice(0, 10).map(x => x.c);
+  resHi = 0;
+  const box = $('results');
+  if (!resList.length) { box.innerHTML = `<div class="nores">Nothing matches “${input.value}”.</div>`; return; }
+  box.innerHTML = resList.map((c,i) => `
+    <div class="res ${i===0?'hi':''}" data-i="${i}" role="option">
+      <span class="ic">${c.icon || S.doc}</span>
+      <span class="tx"><div class="n">${mark(c.label, q)}</div><div class="p">${c.path}</div></span>
+      ${c.sc ? `<span class="sc">${c.sc}</span>` : ''}
+    </div>`).join('');
+  box.querySelectorAll('.res').forEach(el => {
+    el.addEventListener('mouseenter', () => setResHi(+el.dataset.i));
+    el.addEventListener('click', e => { e.stopPropagation(); run(resList[+el.dataset.i].id); });
+  });
+}
+function setResHi(i){
+  const els = $('results').querySelectorAll('.res');
+  if (!els.length) return;
+  resHi = (i + els.length) % els.length;
+  els.forEach(e => e.classList.remove('hi'));
+  els[resHi].classList.add('hi');
+  els[resHi].scrollIntoView({block:'nearest'});
+}
+function clearSearch(){
+  input.value = '';
+  $('plists').classList.remove('off');
+  $('results').classList.remove('on');
+  input.setAttribute('aria-expanded','false');
+  resList = []; resHi = 0;
+}
+input.addEventListener('input', doSearch);
+input.addEventListener('keydown', e => {
+  if (!resList.length) { if (e.key === 'Escape') closePanel(); return; }
+  if (e.key === 'ArrowDown') { e.preventDefault(); setResHi(resHi + 1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setResHi(resHi - 1); }
+  else if (e.key === 'Enter') { e.preventDefault(); run(resList[resHi].id); }
+  else if (e.key === 'Escape') { e.preventDefault(); clearSearch(); }
+});
+
+/* =========================== keyboard: list navigation =========================== */
+function visibleRows(){
+  if ($('results').classList.contains('on')) return [];
+  if (flyout.classList.contains('open')) return [...flyout.querySelectorAll('.row')];
+  return [...document.querySelectorAll('#recentList .row, #moduleList .row')];
+}
+let navIdx = -1;
+function setNav(n){
+  const rows = visibleRows();
+  if (!rows.length) return;
+  rows.forEach(r => r.classList.remove('hi'));
+  navIdx = (n + rows.length) % rows.length;
+  rows[navIdx].classList.add('hi');
+  rows[navIdx].scrollIntoView({block:'nearest'});
+}
+
+document.addEventListener('keydown', e => {
+  /* Ctrl+Alt+S — open the panel and focus search */
+  if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 's') {
+    e.preventDefault();
+    if (!panelOpen) openPanel(true); else $('searchInput').focus();
+    return;
+  }
+  if (!panelOpen) {
+    if (e.key === 'Escape') closePanel();
+    return;
+  }
+  if (e.target === input) return;   // search handles its own keys
+
+  switch (e.key) {
+    case 'Escape':
+      e.preventDefault();
+      flyout.classList.contains('open') ? closeFlyout() : closePanel();
+      break;
+    case 'ArrowDown': e.preventDefault(); setNav(navIdx + 1); break;
+    case 'ArrowUp':   e.preventDefault(); setNav(navIdx - 1); break;
+    case 'ArrowRight': {
+      e.preventDefault();
+      const row = visibleRows()[navIdx];
+      if (row && row.dataset.modIdx !== undefined) { openFlyout(+row.dataset.modIdx, row); navIdx = -1; setNav(0); }
+      break;
+    }
+    case 'ArrowLeft': e.preventDefault(); if (flyout.classList.contains('open')) { closeFlyout(); navIdx = -1; } break;
+    case 'Enter': {
+      e.preventDefault();
+      const row = visibleRows()[navIdx];
+      if (!row) break;
+      if (row.dataset.modIdx !== undefined) openFlyout(+row.dataset.modIdx, row);
+      else run(row.dataset.id);
+      break;
+    }
+  }
+});
+
+/* rail buttons */
+document.querySelectorAll('.rail [data-cmd]').forEach(b =>
+  b.addEventListener('click', e => { e.stopPropagation(); run(b.dataset.cmd); }));
+
+/* =========================== dispatch =========================== */
+let toastT;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function run(id){
+  if (!id) return;
+  const cmd = COMMANDS.find(c => c.id === id);
+  const label = cmd ? cmd.label : id;
+  closePanel();
+  /* replace this with your real router / Flask route */
+  toast(cmd && cmd.path ? `${cmd.path} › ${label}` : label);
+}
+</script>
+</body>
+</html>

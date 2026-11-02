@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Management ERP — Full Screen Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#132238; --navy-800:#1b3050;
+    --canvas:#f4f6f9; --card:#ffffff; --border:#e2e6ec; --border-soft:#eceff3;
+    --text-900:#111a2c; --text-700:#334159; --text-500:#64748b; --text-400:#94a3b8;
+    --indigo:#2f5eff; --indigo-dark:#1f42c9; --indigo-soft:#eaefff;
+    --amber:#b7791f; --amber-soft:#fdf3df;
+    --green:#1f8a56; --green-soft:#e6f6ee;
+    --red:#c0362c; --red-soft:#fdeceb;
+    --slate-soft:#eef1f5;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--canvas);color:var(--text-900);}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .hero{background:var(--navy-900);color:#fff;padding:34px 40px 28px;}
+  .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8ea1c2;margin-bottom:8px;}
+  .hero h1{font-size:26px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em;}
+  .hero p{font-size:13.5px;color:#aebdd6;margin:0 0 18px;max-width:660px;line-height:1.5;}
+  .hero-stats{display:flex;gap:22px;flex-wrap:wrap;}
+  .hero-stat .n{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .hero-stat .l{font-size:10.5px;color:#8ea1c2;text-transform:uppercase;letter-spacing:0.04em;margin-top:1px;}
+
+  .toc{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--border);padding:12px 40px;display:flex;gap:8px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(15,23,42,0.04);}
+  .toc a{font-size:11.8px;font-weight:600;color:var(--text-700);background:var(--slate-soft);padding:6px 12px;border-radius:20px;white-space:nowrap;}
+  .toc a:hover{background:var(--indigo-soft);color:var(--indigo-dark);}
+
+  .wrap{padding:36px 40px 80px;max-width:1680px;margin:0 auto;}
+  .section{margin-bottom:44px;scroll-margin-top:64px;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .section-num{font-size:11px;font-weight:800;color:#fff;background:var(--indigo);width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .section-head h2{font-size:16px;font-weight:800;margin:0;letter-spacing:-0.01em;}
+  .section-head .count{font-size:11.5px;color:var(--text-400);font-weight:600;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+
+  .screen-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,0.05);transition:box-shadow .15s ease, transform .15s ease;position:relative;}
+  .screen-card:hover{box-shadow:0 8px 22px rgba(15,23,42,0.1);transform:translateY(-2px);}
+  .chrome{background:var(--slate-soft);padding:7px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);}
+  .chrome .dot{width:6px;height:6px;border-radius:50%;background:#cbd3de;}
+  .chrome .url{margin-left:6px;font-size:9.5px;color:var(--text-400);font-family:'JetBrains Mono',monospace;background:#fff;border-radius:4px;padding:2px 7px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .thumb{padding:10px 12px 12px;background:#fbfcfd;min-height:150px;display:flex;flex-direction:column;gap:6px;}
+  .card-foot{padding:10px 12px;border-top:1px solid var(--border-soft);}
+  .card-title{font-size:12.6px;font-weight:700;color:var(--text-900);}
+  .card-tag{font-size:10px;font-weight:700;color:var(--indigo-dark);background:var(--indigo-soft);padding:1.5px 7px;border-radius:10px;display:inline-block;margin-top:5px;}
+
+  .mbar{height:6px;border-radius:3px;background:var(--border);}
+  .mbar.dark{background:#c7ceda;}
+  .mtitlebar{height:8px;width:40%;border-radius:3px;background:#d3d9e3;margin-bottom:4px;}
+
+  .mkpis{display:flex;gap:6px;}
+  .mkpi{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:6px 7px;}
+  .mkpi .mv{font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .mkpi .ml{height:4px;width:70%;background:var(--border);border-radius:2px;margin-top:4px;}
+
+  .mtable{display:flex;flex-direction:column;gap:5px;flex:1;}
+  .mrow{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border-soft);border-radius:5px;padding:5px 7px;}
+  .mrow .c1{width:14px;height:14px;border-radius:4px;background:var(--slate-soft);flex-shrink:0;}
+  .mrow .c2{flex:1;height:6px;border-radius:3px;background:var(--border);}
+  .mrow .c3{width:32px;height:6px;border-radius:3px;background:var(--border);}
+  .mpill{font-size:8px;font-weight:800;padding:2px 6px;border-radius:8px;flex-shrink:0;}
+  .mpill.g{background:var(--green-soft);color:var(--green);}
+  .mpill.a{background:var(--amber-soft);color:var(--amber);}
+  .mpill.r{background:var(--red-soft);color:var(--red);}
+  .mpill.b{background:var(--indigo-soft);color:var(--indigo-dark);}
+  .mpill.n{background:var(--slate-soft);color:var(--text-400);}
+
+  .mform{display:flex;flex-direction:column;gap:8px;}
+  .mfield .flbl{height:5px;width:34%;background:var(--border);border-radius:2px;margin-bottom:4px;}
+  .mfield .finput{height:16px;border:1px solid var(--border-soft);border-radius:5px;background:#fff;}
+
+  .mchart{flex:1;display:flex;align-items:flex-end;gap:5px;padding:4px 2px;}
+  .mchart .bar{flex:1;border-radius:3px 3px 0 0;background:var(--indigo);opacity:0.85;}
+  .mchart .bar.alt{background:#9fb4ff;}
+  .mchart .bar.neg{background:var(--red);opacity:0.7;}
+  .mchart .bar.warn{background:var(--amber);opacity:0.85;}
+  .mchart .bar.good{background:var(--green);opacity:0.85;}
+
+  .mprofile{display:flex;gap:8px;align-items:flex-start;}
+  .mavatar{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--indigo),#7c93ff);flex-shrink:0;}
+  .mavatar.round{border-radius:50%;}
+  .mprofile-lines{flex:1;display:flex;flex-direction:column;gap:5px;padding-top:3px;}
+
+  .mkanban{display:flex;gap:6px;flex:1;}
+  .mkcol{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:5px;display:flex;flex-direction:column;gap:5px;}
+  .mkcard{height:16px;border-radius:4px;background:var(--slate-soft);}
+  .mkcard.b{background:var(--indigo-soft);}
+  .mkcard.g{background:var(--green-soft);}
+  .mkcard.a{background:var(--amber-soft);}
+  .mkcard.r{background:var(--red-soft);}
+
+  .mflow{display:flex;align-items:center;flex:1;}
+  .mfnode{width:20px;height:20px;border-radius:50%;background:var(--indigo-soft);border:2px solid var(--indigo);flex-shrink:0;}
+  .mfnode.done{background:var(--green);border-color:var(--green);}
+  .mfnode.cur{background:#fff;}
+  .mfline{flex:1;height:2px;background:var(--border);}
+  .mfline.done{background:var(--green);}
+
+  .mtoggle-row{display:flex;gap:6px;}
+  .mtoggle{flex:1;height:20px;border-radius:5px;background:var(--slate-soft);border:1px solid var(--border-soft);}
+  .mtoggle.on{background:var(--indigo-soft);border-color:#c7d5ff;}
+
+  .mgauge{display:flex;align-items:center;justify-content:center;flex:1;}
+  .mgauge-ring{width:56px;height:56px;border-radius:50%;background:conic-gradient(var(--green) 0% 78%, var(--slate-soft) 78% 100%);display:flex;align-items:center;justify-content:center;}
+  .mgauge-inner{width:38px;height:38px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text-900);}
+
+  .mtree{display:flex;flex-direction:column;gap:5px;flex:1;padding-left:4px;}
+  .mtree-row{display:flex;align-items:center;gap:6px;}
+  .mtree-row.l2{padding-left:14px;}
+  .mtree-row.l3{padding-left:28px;}
+  .mtree-dot{width:6px;height:6px;border-radius:50%;background:var(--indigo);flex-shrink:0;}
+  .mtree-bar{flex:1;height:6px;border-radius:3px;background:var(--border);}
+
+  .mdoc{display:flex;gap:8px;align-items:flex-start;}
+  .mdoc-icon{width:28px;height:28px;border-radius:6px;background:var(--indigo-soft);flex-shrink:0;}
+
+  .mfunnel{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;justify-content:center;}
+  .mfunnel-seg{height:12px;border-radius:2px;background:var(--indigo);opacity:0.85;}
+
+  .mavatar-stack{display:flex;}
+  .mavatar-stack .mavatar{width:22px;height:22px;margin-left:-6px;border:2px solid #fff;}
+  .mavatar-stack .mavatar:first-child{margin-left:0;}
+
+  .mleader-row{display:flex;align-items:center;gap:6px;}
+  .mleader-rank{width:14px;height:14px;border-radius:4px;background:var(--slate-soft);font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;color:var(--text-500);flex-shrink:0;}
+
+  .mscore{display:flex;align-items:center;gap:8px;}
+  .mscore-ring{width:36px;height:36px;border-radius:50%;background:conic-gradient(var(--green) 0% 82%, var(--slate-soft) 82% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .mscore-inner{width:26px;height:26px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+
+  .built-badge{position:absolute;top:8px;right:8px;background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:0.02em;}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Exeon ERP · CRM Management Suite</div>
+    <h1>Full Screen Map</h1>
+    <p>Every screen required to run the complete CRM module — from lead capture and qualification through contacts, opportunities, quotes, campaigns, forecasting, and sales performance analytics — grouped by function so you can see the whole system at a glance.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">37</div><div class="l">Total Screens</div></div>
+      <div class="hero-stat"><div class="n">10</div><div class="l">Functional Areas</div></div>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <a href="#master">Setup &amp; Master Data</a>
+    <a href="#leads">Lead Management</a>
+    <a href="#accounts">Contacts &amp; Accounts</a>
+    <a href="#deals">Opportunity / Deal Management</a>
+    <a href="#activities">Sales Activities</a>
+    <a href="#marketing">Marketing &amp; Campaigns</a>
+    <a href="#service">Customer Service Integration</a>
+    <a href="#forecast">Sales Forecasting</a>
+    <a href="#analytics">Reporting &amp; Analytics</a>
+    <a href="#admin">Administration</a>
+  </nav>
+
+  <div class="wrap">
+
+    <!-- 1 SETUP -->
+    <section class="section" id="master">
+      <div class="section-head"><div class="section-num">1</div><h2>Setup &amp; Master Data</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/lead-sources</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Lead Source Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/territories</span></div>
+          <div class="thumb">
+            <div class="mtree">
+              <div class="mtree-row"><div class="mtree-dot"></div><div class="mtree-bar" style="width:70%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:50%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:55%;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Territory / Team Master</div><span class="card-tag">Tree / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/price-list</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Product / Price List Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/pipeline-stages</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode done"></div><div class="mfline"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mform" style="margin-top:6px;"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Pipeline Stage Configuration</div><span class="card-tag">Form / Builder</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2 LEAD MANAGEMENT -->
+    <section class="section" id="leads">
+      <div class="section-head"><div class="section-num">2</div><h2>Lead Management</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/leads</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">214</div><div class="ml"></div></div><div class="mkpi"><div class="mv">38</div><div class="ml"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">New</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Qualified</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Lead List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/leads/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Lead Form</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/leads/LD-30291</span></div>
+          <div class="thumb">
+            <div class="mscore"><div class="mscore-ring"><div class="mscore-inner">82</div></div><div class="mprofile-lines"><div class="mbar dark" style="width:60px;"></div><div class="mbar" style="width:45px;"></div></div></div>
+            <div class="mtable" style="margin-top:4px;"><div class="mrow"><div class="c1"></div><div class="c2"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Lead Detail / Scoring</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/lead-assignment-rules</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mform" style="margin-top:6px;"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Lead Assignment Rules</div><span class="card-tag">Form / Builder</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3 CONTACTS & ACCOUNTS -->
+    <section class="section" id="accounts">
+      <div class="section-head"><div class="section-num">3</div><h2>Contacts &amp; Accounts</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/contacts</span></div>
+          <div class="thumb">
+            <div class="mtitlebar"></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Contact List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/accounts/ACC-4471</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar"></div><div class="mprofile-lines"><div class="mbar dark" style="width:65%;"></div><div class="mbar" style="width:45%;"></div></div></div>
+            <div class="mkpis"><div class="mkpi"><div class="mv">142K</div><div class="ml"></div></div><div class="mkpi"><div class="mv">6</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Account / Company Profile</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/contacts/CT-9021</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar round" style="width:28px;height:28px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:60%;"></div><div class="mbar" style="width:40%;"></div></div></div>
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Contact Detail (360° View)</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/accounts/hierarchy</span></div>
+          <div class="thumb">
+            <div class="mtree">
+              <div class="mtree-row"><div class="mtree-dot"></div><div class="mtree-bar" style="width:75%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:50%;"></div></div>
+              <div class="mtree-row l3"><div class="mtree-dot"></div><div class="mtree-bar" style="width:40%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:55%;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Account Hierarchy</div><span class="card-tag">Tree View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4 OPPORTUNITY -->
+    <section class="section" id="deals">
+      <div class="section-head"><div class="section-num">4</div><h2>Opportunity / Deal Management</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/pipeline</span></div>
+          <div class="thumb">
+            <div class="mkanban"><div class="mkcol"><div class="mkcard"></div><div class="mkcard"></div></div><div class="mkcol"><div class="mkcard b"></div></div><div class="mkcol"><div class="mkcard a"></div></div><div class="mkcol"><div class="mkcard g"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Deal Pipeline (Kanban)</div><span class="card-tag">Kanban View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/opportunities/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Opportunity Form</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/opportunities/OPP-1187</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode done"></div><div class="mfline"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mkpis" style="margin-top:6px;"><div class="mkpi"><div class="mv">62K</div><div class="ml"></div></div><div class="mkpi"><div class="mv">70%</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Opportunity Detail</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/quotes/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Quote / Proposal Builder</div><span class="card-tag">Form / Builder</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/win-loss-analysis</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar good" style="height:60%;"></div><div class="bar neg" style="height:35%;"></div><div class="bar good" style="height:70%;"></div><div class="bar neg" style="height:25%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Win / Loss Analysis</div><span class="card-tag">Report</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5 SALES ACTIVITIES -->
+    <section class="section" id="activities">
+      <div class="section-head"><div class="section-num">5</div><h2>Sales Activities</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/activity-timeline</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode done"></div><div class="mfline"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div></div>
+            <div class="mprofile" style="margin-top:6px;"><div class="mavatar round" style="width:20px;height:20px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:55%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Activity Timeline</div><span class="card-tag">Timeline View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/tasks</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Overdue</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Today</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Done</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Task &amp; Follow-Up List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/call-log</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Call Logging</div><span class="card-tag">Form / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/meetings</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">10:00 AM</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">2:30 PM</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Meeting Scheduler / Calendar</div><span class="card-tag">Calendar</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6 MARKETING -->
+    <section class="section" id="marketing">
+      <div class="section-head"><div class="section-num">6</div><h2>Marketing &amp; Campaigns</h2><span class="count">4 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/campaigns</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Running</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Complete</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Campaign List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/campaigns/new</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mform" style="margin-top:6px;"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Campaign Builder</div><span class="card-tag">Wizard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/email-composer</span></div>
+          <div class="thumb">
+            <div class="mdoc"><div class="mdoc-icon"></div><div class="mprofile-lines"><div class="mbar dark" style="width:70%;"></div><div class="mbar" style="width:50%;"></div></div></div>
+            <div class="mform"><div class="mfield"><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Email Marketing Composer</div><span class="card-tag">Editor</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/campaign-roi</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">3.2x</div><div class="ml"></div></div><div class="mkpi"><div class="mv">18K</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:45%;"></div><div class="bar alt" style="height:65%;"></div><div class="bar good" style="height:80%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Campaign ROI Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7 CUSTOMER SERVICE -->
+    <section class="section" id="service">
+      <div class="section-head"><div class="section-num">7</div><h2>Customer Service Integration</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/accounts/ACC-4471/cases</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Open</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Resolved</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Customer Case History</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/accounts/ACC-4471/health-score</span></div>
+          <div class="thumb">
+            <div class="mscore"><div class="mscore-ring"><div class="mscore-inner">76</div></div><div class="mprofile-lines"><div class="mbar dark" style="width:60px;"></div><div class="mbar" style="width:45px;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Customer Health Score</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 8 SALES FORECASTING -->
+    <section class="section" id="forecast">
+      <div class="section-head"><div class="section-num">8</div><h2>Sales Forecasting</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/forecast</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:40%;"></div><div class="bar alt" style="height:55%;"></div><div class="bar good" style="height:70%;"></div><div class="bar alt" style="height:85%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Forecast Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/quota-management</span></div>
+          <div class="thumb">
+            <div class="mavatar-stack"><div class="mavatar round"></div><div class="mavatar round"></div><div class="mavatar round"></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Quota Management</div><span class="card-tag">List / Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/territory-performance</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:50%;"></div><div class="bar warn" style="height:30%;"></div><div class="bar good" style="height:75%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Territory Performance</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 9 ANALYTICS -->
+    <section class="section" id="analytics">
+      <div class="section-head"><div class="section-num">9</div><h2>Reporting &amp; Analytics</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/sales-performance</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">1.8M</div><div class="ml"></div></div><div class="mkpi"><div class="mv">112%</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:50%;"></div><div class="bar alt" style="height:70%;"></div><div class="bar good" style="height:85%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Sales Performance Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/conversion-funnel</span></div>
+          <div class="thumb">
+            <div class="mfunnel">
+              <div class="mfunnel-seg" style="width:90%;"></div>
+              <div class="mfunnel-seg" style="width:68%; background:#9fb4ff;"></div>
+              <div class="mfunnel-seg" style="width:45%; background:var(--amber);"></div>
+              <div class="mfunnel-seg" style="width:25%; background:var(--green);"></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Conversion Funnel Report</div><span class="card-tag">Funnel Chart</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/leaderboard</span></div>
+          <div class="thumb">
+            <div class="mleader-row"><div class="mleader-rank">1</div><div class="mavatar round" style="width:18px;height:18px;"></div><div class="mbar dark" style="flex:1;"></div></div>
+            <div class="mleader-row"><div class="mleader-rank">2</div><div class="mavatar round" style="width:18px;height:18px;"></div><div class="mbar" style="flex:1;"></div></div>
+            <div class="mleader-row"><div class="mleader-rank">3</div><div class="mavatar round" style="width:18px;height:18px;"></div><div class="mbar" style="flex:1;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Rep Leaderboard</div><span class="card-tag">Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/revenue-analytics</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:35%;"></div><div class="bar alt" style="height:55%;"></div><div class="bar" style="height:45%;"></div><div class="bar alt" style="height:75%;"></div><div class="bar good" style="height:90%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Revenue Analytics</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/executive-dashboard</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">1.8M</div><div class="ml"></div></div><div class="mkpi"><div class="mv">214</div><div class="ml"></div></div><div class="mkpi"><div class="mv">28%</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:45%;"></div><div class="bar alt" style="height:65%;"></div><div class="bar good" style="height:80%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Executive CRM Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 10 ADMIN -->
+    <section class="section" id="admin">
+      <div class="section-head"><div class="section-num">10</div><h2>Administration</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/roles</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Roles &amp; Permissions</div><span class="card-tag">List / Matrix</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/crm/audit-log</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">CRM Audit Log</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Desk Management ERP — Full Screen Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-900:#132238; --navy-800:#1b3050;
+    --canvas:#f4f6f9; --card:#ffffff; --border:#e2e6ec; --border-soft:#eceff3;
+    --text-900:#111a2c; --text-700:#334159; --text-500:#64748b; --text-400:#94a3b8;
+    --indigo:#2f5eff; --indigo-dark:#1f42c9; --indigo-soft:#eaefff;
+    --amber:#b7791f; --amber-soft:#fdf3df;
+    --green:#1f8a56; --green-soft:#e6f6ee;
+    --red:#c0362c; --red-soft:#fdeceb;
+    --slate-soft:#eef1f5;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--canvas);color:var(--text-900);}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .hero{background:var(--navy-900);color:#fff;padding:34px 40px 28px;}
+  .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8ea1c2;margin-bottom:8px;}
+  .hero h1{font-size:26px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em;}
+  .hero p{font-size:13.5px;color:#aebdd6;margin:0 0 18px;max-width:660px;line-height:1.5;}
+  .hero-stats{display:flex;gap:22px;flex-wrap:wrap;}
+  .hero-stat .n{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .hero-stat .l{font-size:10.5px;color:#8ea1c2;text-transform:uppercase;letter-spacing:0.04em;margin-top:1px;}
+
+  .toc{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--border);padding:12px 40px;display:flex;gap:8px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(15,23,42,0.04);}
+  .toc a{font-size:11.8px;font-weight:600;color:var(--text-700);background:var(--slate-soft);padding:6px 12px;border-radius:20px;white-space:nowrap;}
+  .toc a:hover{background:var(--indigo-soft);color:var(--indigo-dark);}
+
+  .wrap{padding:36px 40px 80px;max-width:1680px;margin:0 auto;}
+  .section{margin-bottom:44px;scroll-margin-top:64px;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .section-num{font-size:11px;font-weight:800;color:#fff;background:var(--indigo);width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .section-head h2{font-size:16px;font-weight:800;margin:0;letter-spacing:-0.01em;}
+  .section-head .count{font-size:11.5px;color:var(--text-400);font-weight:600;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+
+  .screen-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,0.05);transition:box-shadow .15s ease, transform .15s ease;position:relative;}
+  .screen-card:hover{box-shadow:0 8px 22px rgba(15,23,42,0.1);transform:translateY(-2px);}
+  .chrome{background:var(--slate-soft);padding:7px 10px;display:flex;align-items:center;gap:5px;border-bottom:1px solid var(--border);}
+  .chrome .dot{width:6px;height:6px;border-radius:50%;background:#cbd3de;}
+  .chrome .url{margin-left:6px;font-size:9.5px;color:var(--text-400);font-family:'JetBrains Mono',monospace;background:#fff;border-radius:4px;padding:2px 7px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .thumb{padding:10px 12px 12px;background:#fbfcfd;min-height:150px;display:flex;flex-direction:column;gap:6px;}
+  .card-foot{padding:10px 12px;border-top:1px solid var(--border-soft);}
+  .card-title{font-size:12.6px;font-weight:700;color:var(--text-900);}
+  .card-tag{font-size:10px;font-weight:700;color:var(--indigo-dark);background:var(--indigo-soft);padding:1.5px 7px;border-radius:10px;display:inline-block;margin-top:5px;}
+
+  .mbar{height:6px;border-radius:3px;background:var(--border);}
+  .mbar.dark{background:#c7ceda;}
+  .mtitlebar{height:8px;width:40%;border-radius:3px;background:#d3d9e3;margin-bottom:4px;}
+
+  .mkpis{display:flex;gap:6px;}
+  .mkpi{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:6px 7px;}
+  .mkpi .mv{font-size:11px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .mkpi .ml{height:4px;width:70%;background:var(--border);border-radius:2px;margin-top:4px;}
+
+  .mtable{display:flex;flex-direction:column;gap:5px;flex:1;}
+  .mrow{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border-soft);border-radius:5px;padding:5px 7px;}
+  .mrow .c1{width:14px;height:14px;border-radius:4px;background:var(--slate-soft);flex-shrink:0;}
+  .mrow .c2{flex:1;height:6px;border-radius:3px;background:var(--border);}
+  .mrow .c3{width:32px;height:6px;border-radius:3px;background:var(--border);}
+  .mpill{font-size:8px;font-weight:800;padding:2px 6px;border-radius:8px;flex-shrink:0;}
+  .mpill.g{background:var(--green-soft);color:var(--green);}
+  .mpill.a{background:var(--amber-soft);color:var(--amber);}
+  .mpill.r{background:var(--red-soft);color:var(--red);}
+  .mpill.b{background:var(--indigo-soft);color:var(--indigo-dark);}
+  .mpill.n{background:var(--slate-soft);color:var(--text-400);}
+
+  .mform{display:flex;flex-direction:column;gap:8px;}
+  .mfield .flbl{height:5px;width:34%;background:var(--border);border-radius:2px;margin-bottom:4px;}
+  .mfield .finput{height:16px;border:1px solid var(--border-soft);border-radius:5px;background:#fff;}
+
+  .mchart{flex:1;display:flex;align-items:flex-end;gap:5px;padding:4px 2px;}
+  .mchart .bar{flex:1;border-radius:3px 3px 0 0;background:var(--indigo);opacity:0.85;}
+  .mchart .bar.alt{background:#9fb4ff;}
+  .mchart .bar.neg{background:var(--red);opacity:0.7;}
+  .mchart .bar.warn{background:var(--amber);opacity:0.85;}
+  .mchart .bar.good{background:var(--green);opacity:0.85;}
+
+  .mprofile{display:flex;gap:8px;align-items:flex-start;}
+  .mavatar{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--indigo),#7c93ff);flex-shrink:0;}
+  .mavatar.round{border-radius:50%;}
+  .mprofile-lines{flex:1;display:flex;flex-direction:column;gap:5px;padding-top:3px;}
+
+  .mkanban{display:flex;gap:6px;flex:1;}
+  .mkcol{flex:1;background:#fff;border:1px solid var(--border-soft);border-radius:6px;padding:5px;display:flex;flex-direction:column;gap:5px;}
+  .mkcard{height:16px;border-radius:4px;background:var(--slate-soft);}
+  .mkcard.b{background:var(--indigo-soft);}
+  .mkcard.g{background:var(--green-soft);}
+  .mkcard.a{background:var(--amber-soft);}
+  .mkcard.r{background:var(--red-soft);}
+
+  .mflow{display:flex;align-items:center;flex:1;}
+  .mfnode{width:20px;height:20px;border-radius:50%;background:var(--indigo-soft);border:2px solid var(--indigo);flex-shrink:0;}
+  .mfnode.done{background:var(--green);border-color:var(--green);}
+  .mfnode.cur{background:#fff;}
+  .mfline{flex:1;height:2px;background:var(--border);}
+  .mfline.done{background:var(--green);}
+
+  .mtoggle-row{display:flex;gap:6px;}
+  .mtoggle{flex:1;height:20px;border-radius:5px;background:var(--slate-soft);border:1px solid var(--border-soft);}
+  .mtoggle.on{background:var(--indigo-soft);border-color:#c7d5ff;}
+
+  .mgauge{display:flex;align-items:center;justify-content:center;flex:1;}
+  .mgauge-ring{width:56px;height:56px;border-radius:50%;background:conic-gradient(var(--green) 0% 78%, var(--slate-soft) 78% 100%);display:flex;align-items:center;justify-content:center;}
+  .mgauge-inner{width:38px;height:38px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text-900);}
+
+  .mtree{display:flex;flex-direction:column;gap:5px;flex:1;padding-left:4px;}
+  .mtree-row{display:flex;align-items:center;gap:6px;}
+  .mtree-row.l2{padding-left:14px;}
+  .mtree-row.l3{padding-left:28px;}
+  .mtree-dot{width:6px;height:6px;border-radius:50%;background:var(--indigo);flex-shrink:0;}
+  .mtree-bar{flex:1;height:6px;border-radius:3px;background:var(--border);}
+
+  /* chat bubble mock for live chat */
+  .mchat{display:flex;flex-direction:column;gap:6px;flex:1;justify-content:flex-end;}
+  .mchat-bubble{max-width:70%;padding:5px 8px;border-radius:8px;font-size:0;}
+  .mchat-bubble .bline{height:5px;background:currentColor;border-radius:3px;opacity:0.6;}
+  .mchat-bubble.left{align-self:flex-start;background:var(--slate-soft);color:var(--text-500);}
+  .mchat-bubble.right{align-self:flex-end;background:var(--indigo-soft);color:var(--indigo-dark);}
+
+  /* article/document card for KB */
+  .mdoc{display:flex;gap:8px;align-items:flex-start;}
+  .mdoc-icon{width:28px;height:28px;border-radius:6px;background:var(--indigo-soft);flex-shrink:0;}
+
+  /* star rating for CSAT */
+  .mstars{display:flex;gap:3px;}
+  .mstar{width:12px;height:12px;background:var(--amber);clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);}
+  .mstar.off{background:var(--border);}
+
+  .built-badge{position:absolute;top:8px;right:8px;background:var(--green);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:0.02em;}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Exeon ERP · Service Desk Management Suite</div>
+    <h1>Full Screen Map</h1>
+    <p>Every screen required to run the complete Service Desk / Help Desk module — from ticket intake and triage through SLA tracking, self-service, knowledge base, automation, and agent performance analytics — grouped by function so you can see the whole system at a glance.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">34</div><div class="l">Total Screens</div></div>
+      <div class="hero-stat"><div class="n">10</div><div class="l">Functional Areas</div></div>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <a href="#master">Setup &amp; Master Data</a>
+    <a href="#tickets">Ticket Management</a>
+    <a href="#portal">Self-Service Portal</a>
+    <a href="#kb">Knowledge Base</a>
+    <a href="#sla">SLA &amp; Escalation</a>
+    <a href="#automation">Automation &amp; Workflow</a>
+    <a href="#comms">Communication</a>
+    <a href="#cmdb">Assets &amp; Change Mgmt</a>
+    <a href="#analytics">Reporting &amp; Analytics</a>
+    <a href="#admin">Administration</a>
+  </nav>
+
+  <div class="wrap">
+
+    <!-- 1 SETUP -->
+    <section class="section" id="master">
+      <div class="section-head"><div class="section-num">1</div><h2>Setup &amp; Master Data</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/catalog</span></div>
+          <div class="thumb">
+            <div class="mkanban"><div class="mkcol"><div class="mkcard"></div></div><div class="mkcol"><div class="mkcard b"></div></div><div class="mkcol"><div class="mkcard"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Service Catalog</div><span class="card-tag">Gallery / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/sla-policies</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Critical: 1h</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">High: 4h</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Low: 48h</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">SLA Policy Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/categories</span></div>
+          <div class="thumb">
+            <div class="mtree">
+              <div class="mtree-row"><div class="mtree-dot"></div><div class="mtree-bar" style="width:70%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:50%;"></div></div>
+              <div class="mtree-row l2"><div class="mtree-dot"></div><div class="mtree-bar" style="width:55%;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Category / Priority Master</div><span class="card-tag">Tree / List</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/teams</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Team / Group Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/customers</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar" style="width:24px;height:24px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:55%;"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Customer / Contact Master</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2 TICKET MANAGEMENT -->
+    <section class="section" id="tickets">
+      <div class="section-head"><div class="section-num">2</div><h2>Ticket Management</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/tickets</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">128</div><div class="ml"></div></div><div class="mkpi"><div class="mv">14</div><div class="ml"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Open</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Resolved</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Ticket List (All Tickets)</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/tickets/new</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Ticket Form</div><span class="card-tag">Form</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/tickets/TCK-88213</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mprofile" style="margin-top:6px;"><div class="mavatar round" style="width:22px;height:22px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:60%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Ticket Detail View</div><span class="card-tag">Detail View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/my-tickets</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">6</div><div class="ml"></div></div><div class="mkpi"><div class="mv">2</div><div class="ml"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Overdue</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Today</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">My Tickets (Agent View)</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/triage-queue</span></div>
+          <div class="thumb">
+            <div class="mkanban"><div class="mkcol"><div class="mkcard"></div><div class="mkcard"></div></div><div class="mkcol"><div class="mkcard a"></div></div><div class="mkcol"><div class="mkcard g"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Ticket Queue / Triage</div><span class="card-tag">Kanban View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3 SELF-SERVICE -->
+    <section class="section" id="portal">
+      <div class="section-head"><div class="section-num">3</div><h2>Self-Service Portal</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/portal/home</span></div>
+          <div class="thumb">
+            <div class="mkanban" style="flex:none;height:38px;"><div class="mkcol"></div><div class="mkcol"></div><div class="mkcol"></div></div>
+            <div class="mform"><div class="mfield"><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Customer Portal Home</div><span class="card-tag">Landing Page</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/portal/kb/how-to-reset-password</span></div>
+          <div class="thumb">
+            <div class="mdoc"><div class="mdoc-icon"></div><div class="mprofile-lines"><div class="mbar dark" style="width:70%;"></div><div class="mbar" style="width:50%;"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Knowledge Base Article (Public)</div><span class="card-tag">Content View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/portal/submit-request</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Submit Request Form</div><span class="card-tag">Form</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4 KNOWLEDGE BASE -->
+    <section class="section" id="kb">
+      <div class="section-head"><div class="section-num">4</div><h2>Knowledge Base</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/kb/articles</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill g">Published</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Draft</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">KB Article List</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/kb/editor</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">New Article Editor</div><span class="card-tag">Editor</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/kb/analytics</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">1.2K</div><div class="ml"></div></div><div class="mkpi"><div class="mv">86%</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:50%;"></div><div class="bar alt" style="height:70%;"></div><div class="bar good" style="height:35%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">KB Analytics</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5 SLA & ESCALATION -->
+    <section class="section" id="sla">
+      <div class="section-head"><div class="section-num">5</div><h2>SLA &amp; Escalation</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/sla-compliance</span></div>
+          <div class="thumb">
+            <div class="mgauge"><div class="mgauge-ring"><div class="mgauge-inner">94%</div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">SLA Compliance Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/escalation-rules</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mform" style="margin-top:6px;"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Escalation Rules Configuration</div><span class="card-tag">Form / Builder</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/breach-alerts</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill r">Breached</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">At Risk</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">SLA Breach Alerts</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6 AUTOMATION -->
+    <section class="section" id="automation">
+      <div class="section-head"><div class="section-num">6</div><h2>Automation &amp; Workflow</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/automation-builder</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mkanban" style="flex:none;height:34px;"><div class="mkcol"></div><div class="mkcol"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Workflow / Automation Builder</div><span class="card-tag">Visual Builder</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/canned-responses</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Canned Responses / Macros</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/routing-rules</span></div>
+          <div class="thumb">
+            <div class="mform"><div class="mfield"><div class="flbl"></div><div class="finput"></div></div></div>
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Ticket Routing Rules</div><span class="card-tag">Form</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7 COMMUNICATION -->
+    <section class="section" id="comms">
+      <div class="section-head"><div class="section-num">7</div><h2>Communication &amp; Collaboration</h2><span class="count">3 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/live-chat</span></div>
+          <div class="thumb">
+            <div class="mchat">
+              <div class="mchat-bubble left"><div class="bline" style="width:60px;"></div></div>
+              <div class="mchat-bubble right"><div class="bline" style="width:45px;"></div></div>
+              <div class="mchat-bubble left"><div class="bline" style="width:70px;"></div></div>
+            </div>
+          </div>
+          <div class="card-foot"><div class="card-title">Live Chat Console</div><span class="card-tag">Chat View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/email-to-ticket</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill b">Converted</span></div><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill n">Pending</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Email-to-Ticket Mapping</div><span class="card-tag">List / Config</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/tickets/TCK-88213/notes</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar round" style="width:22px;height:22px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:55%;"></div><div class="mbar" style="width:40%;"></div></div></div>
+            <div class="mprofile"><div class="mavatar round" style="width:22px;height:22px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:50%;"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Internal Notes / Collaboration</div><span class="card-tag">Thread View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 8 ASSETS & CHANGE -->
+    <section class="section" id="cmdb">
+      <div class="section-head"><div class="section-num">8</div><h2>Assets &amp; Change Management</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/linked-assets</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Linked Assets (CMDB)</div><span class="card-tag">List View</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/change-requests</span></div>
+          <div class="thumb">
+            <div class="mflow"><div class="mfnode done"></div><div class="mfline done"></div><div class="mfnode cur" style="border-color:var(--indigo);"></div><div class="mfline"></div><div class="mfnode"></div></div>
+            <div class="mtable" style="margin-top:6px;"><div class="mrow"><div class="c1"></div><div class="c2"></div><span class="mpill a">Review</span></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Change Management Requests</div><span class="card-tag">List / Tracker</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 9 ANALYTICS -->
+    <section class="section" id="analytics">
+      <div class="section-head"><div class="section-num">9</div><h2>Reporting &amp; Analytics</h2><span class="count">5 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/agent-performance</span></div>
+          <div class="thumb">
+            <div class="mprofile"><div class="mavatar round" style="width:24px;height:24px;"></div><div class="mprofile-lines"><div class="mbar dark" style="width:55%;"></div></div></div>
+            <div class="mkpis"><div class="mkpi"><div class="mv">42</div><div class="ml"></div></div><div class="mkpi"><div class="mv">4.7</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Agent Performance Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/ticket-volume</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar" style="height:40%;"></div><div class="bar alt" style="height:60%;"></div><div class="bar" style="height:50%;"></div><div class="bar alt" style="height:80%;"></div><div class="bar" style="height:65%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Ticket Volume Trends</div><span class="card-tag">Chart / Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/csat</span></div>
+          <div class="thumb">
+            <div class="mstars"><div class="mstar"></div><div class="mstar"></div><div class="mstar"></div><div class="mstar"></div><div class="mstar off"></div></div>
+            <div class="mkpis"><div class="mkpi"><div class="mv">4.2</div><div class="ml"></div></div><div class="mkpi"><div class="mv">312</div><div class="ml"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">CSAT / Survey Results</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/response-time</span></div>
+          <div class="thumb">
+            <div class="mchart"><div class="bar good" style="height:35%;"></div><div class="bar" style="height:55%;"></div><div class="bar warn" style="height:70%;"></div><div class="bar neg" style="height:85%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">First Response / Resolution Time</div><span class="card-tag">Report</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/executive-dashboard</span></div>
+          <div class="thumb">
+            <div class="mkpis"><div class="mkpi"><div class="mv">1.2K</div><div class="ml"></div></div><div class="mkpi"><div class="mv">94%</div><div class="ml"></div></div><div class="mkpi"><div class="mv">4.5</div><div class="ml"></div></div></div>
+            <div class="mchart"><div class="bar" style="height:45%;"></div><div class="bar alt" style="height:65%;"></div><div class="bar good" style="height:80%;"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Executive Service Dashboard</div><span class="card-tag">Dashboard</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 10 ADMIN -->
+    <section class="section" id="admin">
+      <div class="section-head"><div class="section-num">10</div><h2>Administration</h2><span class="count">2 screens</span></div>
+      <div class="grid">
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/roles</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+            <div class="mtoggle-row"><div class="mtoggle on"></div><div class="mtoggle"></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Roles &amp; Permissions</div><span class="card-tag">List / Matrix</span></div>
+        </div>
+
+        <div class="screen-card">
+          <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">/servicedesk/audit-log</span></div>
+          <div class="thumb">
+            <div class="mtable"><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div><div class="mrow"><div class="c1"></div><div class="c2"></div><div class="c3"></div></div></div>
+          </div>
+          <div class="card-foot"><div class="card-title">Service Desk Audit Log</div><span class="card-tag">List View</span></div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

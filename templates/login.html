@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Enterprise ERP Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --ink: #0f172a;
+    --navy: #1e293b;
+    --blue: #2563eb;
+    --blue-hover: #1d4ed8;
+    --muted: #64748b;
+    --font: 'Inter', -apple-system, sans-serif;
+  }
+  
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  /* Layout Containers */
+  #appContainer {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+  }
+  
+  .view-pane {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+    box-sizing: border-box;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px) scale(0.98);
+  }
+  
+  .view-pane.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    z-index: 10;
+  }
+
+  /* --- LOGIN SCREEN --- */
+  .login-card {
+    background: var(--card);
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.6);
+  }
+  
+  .brand-logo {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 16px -4px rgba(15, 23, 42, 0.2);
+  }
+  .brand-logo svg { color: #fff; width: 24px; height: 24px; }
+  
+  .login-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0 0 8px 0;
+  }
+  .login-sub {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 32px 0;
+  }
+  
+  .input-group { margin-bottom: 20px; }
+  .input-group label {
+    display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 8px;
+  }
+  .input-group input {
+    width: 100%; height: 44px; padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #f8fafc;
+  }
+  .input-group input:focus {
+    outline: none; border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background: #fff;
+  }
+  
+  .btn-primary {
+    width: 100%; height: 46px;
+    background: var(--blue); color: #fff;
+    border: none; border-radius: 8px;
+    font-size: 15px; font-weight: 600; font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary:hover { background: var(--blue-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+  .btn-primary:active { transform: translateY(0); }
+  
+  .loader {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* --- PORTAL SCREEN --- */
+  .portal-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .portal-title {
+    font-size: 32px; font-weight: 800; letter-spacing: -0.5px;
+    color: var(--navy); margin: 0 0 12px 0;
+  }
+  .portal-sub {
+    font-size: 15px; color: var(--muted); margin: 0;
+  }
+  
+  .grid-apps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  
+  .app-card {
+    width: 250px;
+    flex: 0 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .app-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+    border-color: #cbd5e1;
+  }
+  
+  .app-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    background: #f1f5f9; color: #475569;
+    transition: all 0.3s;
+  }
+  .app-icon svg { width: 28px; height: 28px; }
+  
+  .app-card:hover .app-icon {
+    background: var(--blue); color: #fff;
+    transform: scale(1.05);
+  }
+  
+  .app-name {
+    font-size: 16px; font-weight: 700; color: var(--ink); margin: 0 0 6px 0;
+  }
+  .app-desc {
+    font-size: 13px; color: var(--muted); margin: 0; line-height: 1.4;
+  }
+  
+  .app-card.setting-card {
+    border: 2px dashed #cbd5e1;
+    background: transparent;
+  }
+  .app-card.setting-card:hover {
+    border-color: var(--blue);
+    background: #eff6ff;
+  }
+  .app-card.setting-card .app-icon { background: transparent; color: #94a3b8; }
+  .app-card.setting-card:hover .app-icon { background: var(--blue); color: #fff; }
+
+  /* --- DARK MODE (GLASSMORPHISM) --- */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a;
+      --card: rgba(30, 41, 59, 0.7);
+      --border: rgba(255, 255, 255, 0.1);
+      --ink: #f8fafc;
+      --navy: #e2e8f0;
+      --muted: #94a3b8;
+    }
+    
+    body {
+      background: radial-gradient(circle at top left, #1e293b, #020617);
+    }
+    
+    .login-card, .app-card {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    
+    .login-card {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .input-group input {
+      background: rgba(15, 23, 42, 0.6);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .input-group input:focus {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+    
+    .app-icon {
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+    }
+    
+    .app-card.setting-card {
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .app-card.setting-card:hover {
+      border-color: var(--blue);
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    #loginError {
+      background: rgba(185, 28, 28, 0.2) !important;
+      border-color: rgba(248, 113, 113, 0.3) !important;
+      color: #fca5a5 !important;
+    }
+
+    .account-quick-btn {
+      background: rgba(30, 41, 59, 0.8) !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+      color: #e2e8f0 !important;
+    }
+    .account-quick-btn:hover {
+      background: rgba(37, 99, 235, 0.15) !important;
+      border-color: var(--blue) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="appContainer">
+
+  <!-- VIEW 1: LOGIN -->
+  <div class="view-pane active" id="viewLogin">
+    <div class="login-card">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <h1 class="login-title">Welcome back</h1>
+      <p class="login-sub">Sign in manually with your enterprise credentials.</p>
+
+      <!-- Error Alert Message -->
+      <div id="loginError" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.4; margin-bottom: 20px;">
+        <div style="display:flex; align-items:flex-start; gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span id="loginErrorMsg">Invalid email or password.</span>
+        </div>
+      </div>
+      
+      <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="off">
+        <div class="input-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" name="email" placeholder="e.g. admin@erp.com" required autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label for="loginPassword">Password</label>
+          <div style="position: relative;">
+            <input type="password" id="loginPassword" name="password" placeholder="Enter password (admin@123)" required autocomplete="new-password" style="padding-right: 44px;">
+            <button type="button" id="togglePasswordBtn" onclick="togglePasswordVisibility()" title="Show/Hide password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); padding: 6px; display: flex; align-items: center; justify-content: center;">
+              <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn-primary" id="btnSignIn">
+          <span id="btnText">Sign In</span>
+          <div class="loader" id="btnLoader"></div>
+        </button>
+
+        <!-- Authorized Accounts Quick Reference / Pill Buttons -->
+        <div style="margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border); font-size: 12px; color: var(--muted);">
+          <div style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; color: var(--navy); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+            <span>Authorized Accounts</span>
+            <span style="font-weight: normal; color: var(--muted); font-size: 11.5px;">Password: <code style="background: rgba(148, 163, 184, 0.18); padding: 2px 6px; border-radius: 4px; color: var(--blue); font-weight: 700;">admin@123</code></span>
+          </div>
+          <p style="margin: 0 0 10px 0; font-size: 12px; line-height: 1.4;">Type manually, or click any account to populate the login ID:</p>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <button type="button" class="account-quick-btn" onclick="setLoginId('admin@erp.com')" style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 500; color: var(--navy); cursor: pointer; transition: all 0.2s; text-align: left;" onmouseover="this.style.borderColor='var(--blue)'; this.style.background='#eff6ff'" onmouseout="this.style.borderColor='var(--border)'; this.style.background='#f8fafc'">
+              <span><strong>admin@erp.com</strong></span>
+              <span style="font-size: 11px; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 12px; font-weight: 600;">Admin</span>
+            </button>
+            <button type="button" class="account-quick-btn" onclick="setLoginId('employee@erp.com')" style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 500; color: var(--navy); cursor: pointer; transition: all 0.2s; text-align: left;" onmouseover="this.style.borderColor='var(--blue)'; this.style.background='#eff6ff'" onmouseout="this.style.borderColor='var(--border)'; this.style.background='#f8fafc'">
+              <span><strong>employee@erp.com</strong></span>
+              <span style="font-size: 11px; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-weight: 600;">Employee</span>
+            </button>
+            <button type="button" class="account-quick-btn" onclick="setLoginId('manager@erp.com')" style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 500; color: var(--navy); cursor: pointer; transition: all 0.2s; text-align: left;" onmouseover="this.style.borderColor='var(--blue)'; this.style.background='#eff6ff'" onmouseout="this.style.borderColor='var(--border)'; this.style.background='#f8fafc'">
+              <span><strong>manager@erp.com</strong></span>
+              <span style="font-size: 11px; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 12px; font-weight: 600;">Manager</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- VIEW 2: PORTAL -->
+  <div class="view-pane" id="viewPortal">
+    <div class="portal-header">
+      <!-- Active User Profile Bar -->
+      <div id="portalUserBadge" style="display: inline-flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); padding: 6px 16px; border-radius: 999px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        <div id="portalUserAvatar" style="width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">A</div>
+        <span style="font-size: 13px; font-weight: 600; color: var(--navy);" id="portalUserText">admin@erp.com</span>
+        <span id="portalUserRoleBadge" style="background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">Administrator</span>
+        <button onclick="handleLogout()" type="button" style="background: none; border: none; color: #ef4444; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'" onmouseout="this.style.background='none'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Sign Out
+        </button>
+      </div>
+
+      <h1 class="portal-title">Enterprise Management System</h1>
+      <p class="portal-sub">Choose a module below to launch the application.</p>
+    </div>
+    
+    <div class="grid-apps">
+      <!-- HRMS Module -->
+      <a href="payroll.html" class="app-card">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
+        </div>
+        <h3 class="app-name">Core HRMS</h3>
+        <p class="app-desc">Employee Database, Payroll, Leaves & Settings</p>
+      </a>
+      
+
+      <!-- Asset Manager Module -->
+      <div class="app-card" onclick="window.location.href='/asset'">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+        </div>
+        <h3 class="app-name">Asset Manager</h3>
+        <p class="app-desc">Equipment, Licenses, and IT Inventory</p>
+      </div>
+      
+      <!-- Finance & Accounting Module -->
+      <div class="app-card" onclick="window.location.href='/finance'">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3 class="app-name">Finance & Accounting</h3>
+        <p class="app-desc">Ledgers, Invoices, and Financials</p>
+      </div>
+
+      <!-- Procurement Module -->
+      <div class="app-card" onclick="window.location.href='/procurement'">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        </div>
+        <h3 class="app-name">Procurement (Purchase)</h3>
+        <p class="app-desc">Purchase orders, vendors, and sourcing</p>
+      </div>
+
+      <!-- Inventory Management Module -->
+      <div class="app-card" onclick="window.location.href='/inventory'">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <h3 class="app-name">Inventory Management</h3>
+        <p class="app-desc">Stock levels, warehouses, and item tracking</p>
+      </div>
+
+      <!-- Sales & Distribution Module -->
+      <div class="app-card" onclick="window.location.href='/sales'">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        </div>
+        <h3 class="app-name">Sales & Distribution</h3>
+        <p class="app-desc">Quotations, sales orders, and delivery</p>
+      </div>
+      
+      <!-- Manufacturing Module -->
+      <div class="app-card" onclick="window.location.href='/manufacture'" style="cursor: pointer;">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <h3 class="app-name">Manufacturing</h3>
+        <p class="app-desc">BOMs, Work Orders, and Production</p>
+      </div>
+
+      <!-- Project Management Module -->
+      <div class="app-card" onclick="window.location.href='/project'">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <h3 class="app-name">Project Management</h3>
+        <p class="app-desc">Tasks, milestones, and timesheets</p>
+      </div>
+
+      <!-- CRM Module -->
+      <div class="app-card" onclick="window.location.href='/crm'">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <h3 class="app-name">CRM</h3>
+        <p class="app-desc">Leads, opportunities, and customers</p>
+      </div>
+
+      <!-- Service Desk Module -->
+      <div class="app-card" onclick="window.location.href='/desk'">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+        </div>
+        <h3 class="app-name">Service Desk</h3>
+        <p class="app-desc">Tickets, SLAs, and customer support</p>
+      </div>
+      
+      <!-- ERP Setting (Add New) -->
+      <a href="erpset.html" class="app-card setting-card">
+        <div class="app-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <h3 class="app-name">ERP Setting</h3>
+        <p class="app-desc">Add or configure new ERP modules</p>
+      </a>
+      
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const VALID_USERS = {
+    'admin@erp.com': { role: 'Administrator', badgeBg: '#dbeafe', badgeColor: '#1e40af', initial: 'A' },
+    'employee@erp.com': { role: 'Employee', badgeBg: '#e0e7ff', badgeColor: '#3730a3', initial: 'E' },
+    'manager@erp.com': { role: 'Manager', badgeBg: '#fef3c7', badgeColor: '#92400e', initial: 'M' }
+  };
+  const VALID_PASSWORD = 'admin@123';
+
+  window.addEventListener('DOMContentLoaded', () => {
+    // Check if user was previously saved
+    const savedUserJson = localStorage.getItem('currentUser');
+    if (savedUserJson) {
+      try {
+        const savedUser = JSON.parse(savedUserJson);
+        if (savedUser && savedUser.email && VALID_USERS[savedUser.email]) {
+          updatePortalUserDisplay(savedUser.email);
+        }
+      } catch (err) {}
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('view') === 'portal') {
+      document.getElementById('viewLogin').classList.remove('active');
+      document.getElementById('viewPortal').classList.add('active');
+    }
+
+    // Dismiss error on input
+    document.getElementById('loginEmail')?.addEventListener('input', hideError);
+    document.getElementById('loginPassword')?.addEventListener('input', hideError);
+  });
+
+  function setLoginId(email) {
+    const emailInput = document.getElementById('loginEmail');
+    if (emailInput) {
+      emailInput.value = email;
+      hideError();
+      const pwdInput = document.getElementById('loginPassword');
+      if (pwdInput) pwdInput.focus();
+    }
+  }
+
+  function togglePasswordVisibility() {
+    const pwdInput = document.getElementById('loginPassword');
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (!pwdInput || !eyeIcon) return;
+
+    if (pwdInput.type === 'password') {
+      pwdInput.type = 'text';
+      eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+    } else {
+      pwdInput.type = 'password';
+      eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+    }
+  }
+
+  function showError(msg) {
+    const errBox = document.getElementById('loginError');
+    const errMsg = document.getElementById('loginErrorMsg');
+    if (errBox && errMsg) {
+      errMsg.textContent = msg;
+      errBox.style.display = 'block';
+    }
+  }
+
+  function hideError() {
+    const errBox = document.getElementById('loginError');
+    if (errBox) {
+      errBox.style.display = 'none';
+    }
+  }
+
+  function updatePortalUserDisplay(email) {
+    const userMeta = VALID_USERS[email] || { role: 'Enterprise User', badgeBg: '#dbeafe', badgeColor: '#1e40af', initial: email.charAt(0).toUpperCase() };
+    const avatarEl = document.getElementById('portalUserAvatar');
+    const textEl = document.getElementById('portalUserText');
+    const roleBadgeEl = document.getElementById('portalUserRoleBadge');
+
+    if (avatarEl) avatarEl.textContent = userMeta.initial;
+    if (textEl) textEl.textContent = email;
+    if (roleBadgeEl) {
+      roleBadgeEl.textContent = userMeta.role;
+      roleBadgeEl.style.background = userMeta.badgeBg;
+      roleBadgeEl.style.color = userMeta.badgeColor;
+    }
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    hideError();
+
+    const emailInput = document.getElementById('loginEmail');
+    const pwdInput = document.getElementById('loginPassword');
+    
+    // Normalize email (lowercase, strip extra whitespaces around '@')
+    const email = (emailInput ? emailInput.value : '').toLowerCase().replace(/\s+/g, '');
+    const password = pwdInput ? pwdInput.value : '';
+
+    if (!VALID_USERS[email]) {
+      showError('Invalid login ID. Authorized accounts are: admin@erp.com, employee@erp.com, manager@erp.com');
+      return;
+    }
+
+    if (password !== VALID_PASSWORD) {
+      showError('Invalid password. Authorized password is: admin@123');
+      return;
+    }
+
+    const btn = document.getElementById('btnSignIn');
+    const txt = document.getElementById('btnText');
+    const ldr = document.getElementById('btnLoader');
+    
+    // Show loading state
+    txt.style.display = 'none';
+    ldr.style.display = 'block';
+    btn.style.opacity = '0.8';
+    btn.disabled = true;
+
+    // Save session
+    const userData = { email: email, role: VALID_USERS[email].role, initial: VALID_USERS[email].initial };
+    localStorage.setItem('currentUser', JSON.stringify(userData));
+    updatePortalUserDisplay(email);
+
+    // Transition smoothly to portal
+    setTimeout(() => {
+      document.getElementById('viewLogin').classList.remove('active');
+      
+      setTimeout(() => {
+        document.getElementById('viewPortal').classList.add('active');
+        // Reset button state
+        txt.style.display = 'inline';
+        ldr.style.display = 'none';
+        btn.style.opacity = '1';
+        btn.disabled = false;
+      }, 300);
+      
+    }, 600);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('currentUser');
+    const pwdInput = document.getElementById('loginPassword');
+    if (pwdInput) pwdInput.value = '';
+    
+    document.getElementById('viewPortal').classList.remove('active');
+    setTimeout(() => {
+      document.getElementById('viewLogin').classList.add('active');
+    }, 300);
+  }
+</script>
+</body>
+</html>

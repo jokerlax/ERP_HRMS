@@ -1,0 +1,194 @@
+{
+    "config": {
+        "sd_customers": {
+            "group": "Setup & Master Data",
+            "title": "Customer Master",
+            "url": "/sd/customers"
+        },
+        "sd_items": {
+            "group": "Setup & Master Data",
+            "title": "Product / Item Master",
+            "url": "/sd/items"
+        },
+        "sd_price_lists": {
+            "group": "Setup & Master Data",
+            "title": "Price List & Discount Master",
+            "url": "/sd/price-lists"
+        },
+        "sd_territories": {
+            "group": "Setup & Master Data",
+            "title": "Sales Area / Territory Master",
+            "url": "/sd/territories"
+        },
+        "sd_terms_conditions": {
+            "group": "Setup & Master Data",
+            "title": "Terms & Conditions Master",
+            "url": "/sd/terms-conditions"
+        },
+        "sd_quotations": {
+            "group": "Quotation Management",
+            "title": "Quotation List",
+            "url": "/sd/quotations"
+        },
+        "sd_quotations_new": {
+            "group": "Quotation Management",
+            "title": "New Quotation Form",
+            "url": "/sd/quotations/new"
+        },
+        "sd_quotations_detail": {
+            "group": "Quotation Management",
+            "title": "Quotation Detail / Approval",
+            "url": "/sd/quotations/QT-2026-0412"
+        },
+        "sd_quotations_convert": {
+            "group": "Quotation Management",
+            "title": "Quotation-to-Order Conversion",
+            "url": "/sd/quotations/convert"
+        },
+        "sd_orders": {
+            "group": "Sales Order Management",
+            "title": "Sales Order List",
+            "url": "/sd/orders"
+        },
+        "sd_orders_new": {
+            "group": "Sales Order Management",
+            "title": "New Sales Order Form",
+            "url": "/sd/orders/new"
+        },
+        "sd_orders_detail": {
+            "group": "Sales Order Management",
+            "title": "Sales Order Detail / Tracker",
+            "url": "/sd/orders/SO-2026-3387"
+        },
+        "sd_orders_amendment": {
+            "group": "Sales Order Management",
+            "title": "Order Amendment",
+            "url": "/sd/orders/amendment"
+        },
+        "sd_orders_approval_queue": {
+            "group": "Sales Order Management",
+            "title": "Order Approval Queue",
+            "url": "/sd/orders/approval-queue"
+        },
+        "sd_pricing_config": {
+            "group": "Pricing & Credit",
+            "title": "Pricing Configuration",
+            "url": "/sd/pricing-config"
+        },
+        "sd_credit_check": {
+            "group": "Pricing & Credit",
+            "title": "Credit Limit Check",
+            "url": "/sd/credit-check"
+        },
+        "sd_credit_hold": {
+            "group": "Pricing & Credit",
+            "title": "Credit Hold Management",
+            "url": "/sd/credit-hold"
+        },
+        "sd_deliveries": {
+            "group": "Delivery & Shipping",
+            "title": "Delivery Note List",
+            "url": "/sd/deliveries"
+        },
+        "sd_deliveries_create": {
+            "group": "Delivery & Shipping",
+            "title": "Create Delivery / Picking",
+            "url": "/sd/deliveries/create"
+        },
+        "sd_deliveries_packing_dispatch": {
+            "group": "Delivery & Shipping",
+            "title": "Packing & Dispatch",
+            "url": "/sd/deliveries/packing-dispatch"
+        },
+        "sd_shipment_tracking": {
+            "group": "Delivery & Shipping",
+            "title": "Shipment Tracking",
+            "url": "/sd/shipment-tracking"
+        },
+        "sd_delivery_schedule": {
+            "group": "Delivery & Shipping",
+            "title": "Delivery Schedule / Route Planning",
+            "url": "/sd/delivery-schedule"
+        },
+        "sd_returns": {
+            "group": "Returns & Claims",
+            "title": "Sales Return (RMA)",
+            "url": "/sd/returns"
+        },
+        "sd_returns_approval": {
+            "group": "Returns & Claims",
+            "title": "Return Approval",
+            "url": "/sd/returns/approval"
+        },
+        "sd_claims": {
+            "group": "Returns & Claims",
+            "title": "Claims / Complaints Management",
+            "url": "/sd/claims"
+        },
+        "sd_invoices": {
+            "group": "Billing & Invoicing",
+            "title": "Sales Invoice List",
+            "url": "/sd/invoices"
+        },
+        "sd_invoices_create": {
+            "group": "Billing & Invoicing",
+            "title": "Create Invoice (from Delivery)",
+            "url": "/sd/invoices/create"
+        },
+        "sd_invoices_print_send": {
+            "group": "Billing & Invoicing",
+            "title": "Invoice Print / Send",
+            "url": "/sd/invoices/print-send"
+        },
+        "sd_credit_debit_memo": {
+            "group": "Billing & Invoicing",
+            "title": "Credit / Debit Memo",
+            "url": "/sd/credit-debit-memo"
+        },
+        "sd_warehouse_allocation": {
+            "group": "Logistics Coordination",
+            "title": "Warehouse Allocation",
+            "url": "/sd/warehouse-allocation"
+        },
+        "sd_carriers": {
+            "group": "Logistics Coordination",
+            "title": "Carrier / Transporter Management",
+            "url": "/sd/carriers"
+        },
+        "sd_order_status_dashboard": {
+            "group": "Reporting & Analytics",
+            "title": "Sales Order Status Dashboard",
+            "url": "/sd/order-status-dashboard"
+        },
+        "sd_order_to_cash": {
+            "group": "Reporting & Analytics",
+            "title": "Order-to-Cash Cycle Report",
+            "url": "/sd/order-to-cash"
+        },
+        "sd_sales_by_region": {
+            "group": "Reporting & Analytics",
+            "title": "Sales by Customer / Region",
+            "url": "/sd/sales-by-region"
+        },
+        "sd_backorder_report": {
+            "group": "Reporting & Analytics",
+            "title": "Backorder Report",
+            "url": "/sd/backorder-report"
+        },
+        "sd_executive_dashboard": {
+            "group": "Reporting & Analytics",
+            "title": "Executive Sales Dashboard",
+            "url": "/sd/executive-dashboard"
+        },
+        "sd_roles": {
+            "group": "Administration",
+            "title": "Roles & Permissions",
+            "url": "/sd/roles"
+        },
+        "sd_audit_log": {
+            "group": "Administration",
+            "title": "Sales & Distribution Audit Log",
+            "url": "/sd/audit-log"
+        }
+    }
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AureliaHRMS · Flight</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/payroll.css') }}">
+  <style>
+    /* Specific styles for the placeholder */
+    .placeholder-card {
+      padding: 60px 24px;
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      background-color: var(--white);
+    }
+    .placeholder-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .placeholder-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a href="login.html" class="sidebar-brand" style="text-decoration: none; color: inherit;">
+      <div class="logo-mark"><div class="diamond"></div></div>
+      <span>AureliaHRMS</span>
+    </a>
+    <div class="sidebar-menu">
+      <div class="menu-label">TICKETS</div>
+      <a href="#" class="menu-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        New ticket request
+      </a>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        Flight requests
+      </a>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Approvals
+      </a>
+
+      <div class="menu-label" style="margin-top: 24px;">SETUP</div>
+      <a href="#" class="menu-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Ticket entitlements
+      </a>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <!-- TOP NAVIGATION -->
+    <header class="top-nav">
+      <nav class="nav-links">
+        <a href="#">Dashboard</a>
+        <a href="employees.html">Employees</a>`n        <a href="/">Payroll</a>
+        <a href="/leaves">Leaves</a>
+        <a href="/documents">Documents</a>
+        <a href="/flight" class="active">Flight</a>
+        <a href="/resignation">Resignation</a>
+        <a href="/reports">Reports</a>
+        <a href="/settings">Settings</a>
+      </nav>
+      <div class="top-right">
+        <span class="datetime" id="currentDateTime">09 Jul 2026 · 18:52</span>
+        <div class="user-avatar">SR</div>
+        <button class="btn-signout">Sign out</button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <div class="breadcrumbs">
+        <span class="crumb" style="color: var(--brand-yellow); font-weight: 500;">Flight</span>
+      </div>
+
+      <h1 class="page-title">New ticket request</h1>
+
+      <div class="card">
+        <div class="placeholder-card">
+          <div class="placeholder-title">New ticket request</div>
+          <div class="placeholder-desc">This screen loads here. Wire it to your Flask route and render the module inside this card.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

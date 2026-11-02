@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRMS — Human Resource Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1e3a5f; --navy-700:#17304f; --navy-050:#eef3f9;
+    --canvas:#eef1f5; --surface:#fff;
+    --ink:#1b2430; --muted:#6a7583; --faint:#95a0ad;
+    --border:#dde2e9; --border-strong:#c9d1db;
+    --hover:#f4f7fb; --sel:#e9f0fa;
+    --green:#0c7a52; --rust:#b04a2f; --amber:#a86a12; --blue:#215d9c;
+    --gold:#b08428;
+    --shadow-menu:0 6px 20px rgba(20,30,45,.16),0 1px 3px rgba(20,30,45,.10);
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;font-family:'Inter',system-ui,sans-serif;font-size:13px;color:var(--ink);
+    background:var(--canvas);display:flex;flex-direction:column;height:100vh;overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+
+  /* ================= title bar ================= */
+  .titlebar{
+    display:flex;align-items:center;gap:10px;height:34px;flex:0 0 auto;
+    background:var(--navy);color:#fff;padding:0 6px 0 10px;user-select:none;
+  }
+  .titlebar .mark{
+    width:19px;height:19px;border-radius:4px;display:grid;place-items:center;
+    background:linear-gradient(150deg,var(--gold),#8a6417);color:#1b1200;font-size:10px;font-weight:800;
+  }
+  .titlebar .name{font-size:12px;font-weight:600;letter-spacing:.2px}
+  .titlebar .doc{font-size:12px;color:#a9bcd4}
+  .titlebar .spacer{flex:1}
+  .winbtn{
+    width:40px;height:34px;display:grid;place-items:center;color:#cdd8e6;cursor:default;
+  }
+  .winbtn:hover{background:rgba(255,255,255,.10)}
+  .winbtn.close:hover{background:#c4342b;color:#fff}
+
+  /* ================= menu bar ================= */
+  .menubar{
+    display:flex;align-items:center;flex:0 0 auto;height:30px;padding:0 4px;
+    background:var(--surface);border-bottom:1px solid var(--border);user-select:none;
+  }
+  .mb-item{
+    position:relative;height:24px;padding:0 9px;display:flex;align-items:center;
+    font-size:12.5px;border-radius:4px;cursor:default;white-space:nowrap;color:var(--ink);
+  }
+  .mb-item:hover{background:var(--hover)}
+  .mb-item.open{background:var(--navy);color:#fff}
+  .mb-item u{text-decoration:none}
+  body.alt-mode .mb-item u{text-decoration:underline}
+  .menubar .spacer{flex:1}
+
+  /* command search in the menubar */
+  .cmdsearch{
+    position:relative;display:flex;align-items:center;gap:6px;height:24px;margin-right:4px;
+    border:1px solid var(--border-strong);border-radius:5px;background:#fff;padding:0 8px;width:250px;
+    transition:border-color .12s,box-shadow .12s;
+  }
+  .cmdsearch:focus-within{border-color:var(--navy);box-shadow:0 0 0 2px var(--navy-050)}
+  .cmdsearch svg{width:13px;height:13px;color:var(--faint);flex:0 0 auto}
+  .cmdsearch input{
+    border:0;outline:0;background:transparent;font:inherit;font-size:12px;width:100%;color:var(--ink);
+  }
+  .cmdsearch input::placeholder{color:var(--faint)}
+  .cmdsearch kbd{
+    font-family:var(--mono);font-size:9.5px;color:var(--muted);background:var(--canvas);
+    border:1px solid var(--border);border-bottom-width:2px;border-radius:3px;padding:1px 4px;flex:0 0 auto;
+  }
+
+  /* ================= dropdown menus ================= */
+  .menu{
+    position:absolute;top:calc(100% + 3px);left:0;
+    min-width:224px;background:#fff;border:1px solid var(--border-strong);
+    border-radius:7px;box-shadow:var(--shadow-menu);padding:4px;z-index:100;display:none;
+  }
+  .menu.flip{left:auto;right:0}
+  .menu.open{display:block;animation:menuIn .09s ease-out}
+  @keyframes menuIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+  .mi{
+    display:flex;align-items:center;gap:9px;height:28px;padding:0 8px;border-radius:5px;
+    cursor:default;white-space:nowrap;color:var(--ink);position:relative;
+  }
+  .mi .ico{width:15px;height:15px;flex:0 0 auto;color:var(--muted);display:grid;place-items:center}
+  .mi .ico svg{width:15px;height:15px}
+  .mi .lbl{flex:1;font-size:12.5px}
+  .mi .sc{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:-.2px}
+  .mi .arrow{width:12px;height:12px;color:var(--muted)}
+  .mi:hover,.mi.hi{background:var(--navy);color:#fff}
+  .mi:hover .ico,.mi.hi .ico,.mi:hover .sc,.mi.hi .sc,.mi:hover .arrow,.mi.hi .arrow{color:#cdd8e6}
+  .mi.disabled{color:var(--faint);pointer-events:none}
+  .mi.disabled .ico{color:var(--border-strong)}
+  .mi .check{width:15px;text-align:center;font-size:11px}
+  .msep{height:1px;background:var(--border);margin:4px 6px}
+  .mtitle{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);
+    font-weight:600;padding:6px 9px 3px}
+  .submenu{position:absolute;left:100%;top:-5px;margin-left:1px}
+  .submenu.flip{left:auto;right:100%;margin-left:0;margin-right:1px}
+
+  /* ================= command palette results ================= */
+  .cmdresults{
+    position:absolute;top:calc(100% + 5px);right:0;width:420px;max-height:340px;overflow:auto;
+    background:#fff;border:1px solid var(--border-strong);border-radius:8px;box-shadow:var(--shadow-menu);
+    padding:5px;z-index:120;display:none;
+  }
+  .cmdresults.open{display:block}
+  .cr-head{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);
+    font-weight:600;padding:6px 9px 4px}
+  .cr{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:5px;cursor:default}
+  .cr .ico{width:16px;height:16px;color:var(--muted);flex:0 0 auto}
+  .cr .ico svg{width:16px;height:16px}
+  .cr .txt{flex:1;min-width:0}
+  .cr .nm{font-size:12.5px;font-weight:500}
+  .cr .nm mark{background:#fdf0c8;color:inherit;border-radius:2px;padding:0 1px}
+  .cr .path{font-size:10.5px;color:var(--faint);margin-top:1px}
+  .cr .sc{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  .cr.hi{background:var(--navy);color:#fff}
+  .cr.hi .ico,.cr.hi .path,.cr.hi .sc{color:#cdd8e6}
+  .cr.hi .nm mark{background:#8a6417;color:#fff}
+  .cr-empty{padding:20px;text-align:center;color:var(--faint);font-size:12.5px}
+
+  /* ================= tabs ================= */
+  .tabs{
+    display:flex;align-items:flex-end;gap:2px;flex:0 0 auto;height:33px;padding:0 8px;
+    background:var(--canvas);border-bottom:1px solid var(--border);
+  }
+  .tab{
+    display:flex;align-items:center;gap:7px;height:27px;padding:0 12px;border-radius:6px 6px 0 0;
+    background:#e2e7ee;color:var(--muted);font-size:12px;cursor:pointer;border:1px solid transparent;
+    border-bottom:0;max-width:190px;
+  }
+  .tab:hover{background:#e8edf3}
+  .tab.active{background:var(--surface);color:var(--ink);font-weight:600;border-color:var(--border)}
+  .tab .x{width:14px;height:14px;border-radius:3px;display:grid;place-items:center;color:var(--faint);font-size:13px;line-height:1}
+  .tab .x:hover{background:var(--border-strong);color:var(--ink)}
+
+  /* ================= workspace ================= */
+  .work{flex:1 1 auto;overflow:auto;background:var(--surface);position:relative}
+  .pane{display:none;height:100%}
+  .pane.active{display:block}
+
+  .welcome{
+    height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:22px;padding:30px;text-align:center;
+  }
+  .welcome h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
+  .welcome p{margin:0;color:var(--muted);font-size:13px;max-width:440px;line-height:1.6}
+  .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:760px;width:100%}
+  .tile{
+    display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 10px;
+    border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;
+    transition:border-color .14s,transform .14s,box-shadow .14s;
+  }
+  .tile:hover{border-color:var(--navy);transform:translateY(-2px);box-shadow:0 6px 18px rgba(20,30,45,.09)}
+  .tile .ti{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--navy-050);color:var(--navy)}
+  .tile .ti svg{width:19px;height:19px}
+  .tile .tn{font-size:12px;font-weight:600}
+  .tile .td{font-size:10.5px;color:var(--faint)}
+  .hintline{font-size:11.5px;color:var(--faint)}
+  .hintline kbd{
+    font-family:var(--mono);font-size:10px;background:var(--canvas);border:1px solid var(--border);
+    border-bottom-width:2px;border-radius:3px;padding:1px 5px;color:var(--muted);
+  }
+
+  /* generic module placeholder */
+  .modhead{padding:20px 24px 0}
+  .modhead h2{margin:0 0 4px;font-size:16px;font-weight:700}
+  .modhead p{margin:0;color:var(--muted);font-size:12.5px}
+  .modbody{padding:18px 24px 24px}
+  .empty{
+    border:1px dashed var(--border-strong);border-radius:10px;padding:44px;text-align:center;
+    color:var(--faint);font-size:12.5px;background:#fbfcfd;
+  }
+  .empty b{display:block;color:var(--ink);font-size:13px;font-weight:600;margin-bottom:5px}
+
+  /* ================= status bar ================= */
+  .statusbar{
+    display:flex;align-items:center;gap:16px;flex:0 0 auto;height:24px;padding:0 12px;
+    background:var(--navy);color:#a9bcd4;font-size:11px;user-select:none;
+  }
+  .statusbar .sb{display:flex;align-items:center;gap:6px}
+  .statusbar .dot{width:6px;height:6px;border-radius:50%;background:#4ec08c}
+  .statusbar .spacer{flex:1}
+  .statusbar b{color:#fff;font-weight:500}
+
+  .scrim-inert{position:fixed;inset:0;z-index:90;display:none}
+  .scrim-inert.on{display:block}
+
+  @media (max-width:900px){
+    .cmdsearch{width:170px}
+    .tiles{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TITLE BAR ============ -->
+<div class="titlebar">
+  <span class="mark">H</span>
+  <span class="name">HRMS</span>
+  <span class="doc">— Aurelia Trading Co.</span>
+  <div class="spacer"></div>
+  <div class="winbtn"><svg width="10" height="10" viewBox="0 0 12 12"><rect x="1" y="5.5" width="10" height="1" fill="currentColor"/></svg></div>
+  <div class="winbtn"><svg width="10" height="10" viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9" fill="none" stroke="currentColor"/></svg></div>
+  <div class="winbtn close"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="1.1"/></svg></div>
+</div>
+
+<!-- ============ MENU BAR ============ -->
+<div class="menubar" id="menubar" role="menubar" aria-label="Main menu"></div>
+
+<!-- ============ TABS ============ -->
+<div class="tabs" id="tabs"></div>
+
+<!-- ============ WORKSPACE ============ -->
+<div class="work" id="work">
+  <div class="pane active" data-pane="home">
+    <div class="welcome">
+      <div>
+        <h1>Human Resource Management System</h1>
+        <p>Choose a module below, use the menu bar, or search every command with the box in the top-right.</p>
+      </div>
+      <div class="tiles" id="tiles"></div>
+      <div class="hintline">
+        Press <kbd>Alt</kbd> for menu access keys · <kbd>Alt</kbd>+<kbd>Q</kbd> or <kbd>Ctrl</kbd>+<kbd>K</kbd> to search commands
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STATUS BAR ============ -->
+<div class="statusbar">
+  <span class="sb"><span class="dot"></span>Connected — <b>hrms@localhost</b></span>
+  <span class="sb">Period: <b>July 2026</b></span>
+  <span class="sb">Currency: <b>JOD</b></span>
+  <div class="spacer"></div>
+  <span class="sb" id="sbMsg">Ready</span>
+  <span class="sb">User: <b>Farah Odeh</b></span>
+</div>
+
+<div class="scrim-inert" id="inert"></div>
+
+<script>
+/* ===========================================================================
+   ONE COMMAND REGISTRY drives the menu bar, the submenus, and the search box.
+   Adding a command here makes it appear in the menu AND become searchable.
+   =========================================================================== */
+const I = {                                    // 15px inline icons
+  file:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>',
+  save:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>',
+  print:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>',
+  imp:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>',
+  exp:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
+  exit:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>',
+  undo:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 103-7.7L3 8"/></svg>',
+  redo:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 7v6h-6"/><path d="M21 13a9 9 0 11-3-7.7L21 8"/></svg>',
+  cut:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg>',
+  copy:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
+  paste:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>',
+  find:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0114.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0020.5 15"/></svg>',
+  pay:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+  slip:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
+  run:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+  leave:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  doc:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg>',
+  flight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.8 19.8L16 14l-4 2-1 5 1.5 1 2-2.5 3.3.3zM2 9l5 1 2-4 5 1-2 4 5 1"/><path d="M21 3L11 13"/></svg>',
+  resign: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg>',
+  users:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>',
+  report: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>',
+  gear:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+  help:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>',
+  win:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>',
+};
+
+/* Module descriptors — used by tiles, tabs, and the "open module" commands */
+const MODULES = {
+  payroll:    {name:'Payroll',      icon:I.pay,    desc:'Payslips & runs',   blurb:'Process monthly payroll, generate payslips, and review the pay register.'},
+  leaves:     {name:'Leaves',       icon:I.leave,  desc:'Requests & balance',blurb:'Apply for leave, approve requests, and track annual balances.'},
+  documents:  {name:'Documents',    icon:I.doc,    desc:'Files & expiry',    blurb:'Store employee documents and get alerts before passports or permits expire.'},
+  flight:     {name:'Flight',       icon:I.flight, desc:'Ticket requests',   blurb:'Raise annual ticket requests for employees and eligible dependents.'},
+  resignation:{name:'Resignation',  icon:I.resign, desc:'Exit & clearance',  blurb:'Submit resignations and track exit clearance across departments.'},
+};
+
+/* ---- the registry: every command lives here exactly once ---- */
+const MENUS = [
+  { label:'File', key:'f', items:[
+    {id:'file.new',      label:'New Payroll Run…', icon:I.run,  sc:'Ctrl+N'},
+    {id:'file.open',     label:'Open…',            icon:I.file, sc:'Ctrl+O'},
+    {sep:true},
+    {id:'file.save',     label:'Save',             icon:I.save, sc:'Ctrl+S'},
+    {id:'file.saveas',   label:'Save As…',         icon:I.save, sc:'Ctrl+Shift+S'},
+    {sep:true},
+    {label:'Import', icon:I.imp, items:[
+      {id:'file.imp.emp',  label:'Employees from Excel…', icon:I.users},
+      {id:'file.imp.att',  label:'Attendance from Excel…',icon:I.leave},
+      {id:'file.imp.leave',label:'Leave balances…',       icon:I.leave},
+    ]},
+    {label:'Export', icon:I.exp, items:[
+      {id:'file.exp.xlsx', label:'Pay register (.xlsx)', icon:I.exp},
+      {id:'file.exp.csv',  label:'Bank transfer file (.csv)', icon:I.exp},
+      {id:'file.exp.pdf',  label:'Payslips (.pdf)', icon:I.exp},
+    ]},
+    {sep:true},
+    {id:'file.print',    label:'Print…',           icon:I.print, sc:'Ctrl+P'},
+    {sep:true},
+    {id:'file.exit',     label:'Exit',             icon:I.exit,  sc:'Alt+F4'},
+  ]},
+
+  { label:'Edit', key:'e', items:[
+    {id:'edit.undo',  label:'Undo',  icon:I.undo,  sc:'Ctrl+Z', disabled:true},
+    {id:'edit.redo',  label:'Redo',  icon:I.redo,  sc:'Ctrl+Y', disabled:true},
+    {sep:true},
+    {id:'edit.cut',   label:'Cut',   icon:I.cut,   sc:'Ctrl+X'},
+    {id:'edit.copy',  label:'Copy',  icon:I.copy,  sc:'Ctrl+C'},
+    {id:'edit.paste', label:'Paste', icon:I.paste, sc:'Ctrl+V'},
+    {sep:true},
+    {id:'edit.find',  label:'Find…', icon:I.find,  sc:'Ctrl+F'},
+  ]},
+
+  { label:'View', key:'v', items:[
+    {id:'view.toolbar', label:'Toolbar',    check:true},
+    {id:'view.status',  label:'Status bar', check:true},
+    {sep:true},
+    {id:'view.refresh', label:'Refresh',    icon:I.refresh, sc:'F5'},
+    {sep:true},
+    {id:'view.zoomin',  label:'Zoom In',    sc:'Ctrl+='},
+    {id:'view.zoomout', label:'Zoom Out',   sc:'Ctrl+-'},
+    {id:'view.zoomreset',label:'Reset Zoom',sc:'Ctrl+0'},
+  ]},
+
+  { label:'Payroll', key:'p', items:[
+    {id:'pay.open',    label:'Process Payroll',   icon:I.pay,  module:'payroll'},
+    {id:'pay.newrun',  label:'New Payroll Run…',  icon:I.run},
+    {id:'pay.slips',   label:'View Payslips',     icon:I.slip},
+    {sep:true},
+    {id:'pay.components', label:'Salary Components', icon:I.gear},
+    {id:'pay.structure',  label:'Salary Structures', icon:I.users},
+    {id:'pay.loans',      label:'Loans & Advances',  icon:I.pay},
+    {sep:true},
+    {label:'Reports', icon:I.report, items:[
+      {id:'pay.rep.register', label:'Pay register'},
+      {id:'pay.rep.bank',     label:'Bank transfer list'},
+      {id:'pay.rep.ss',       label:'Social security summary'},
+      {id:'pay.rep.tax',      label:'Income tax summary'},
+    ]},
+  ]},
+
+  { label:'Leaves', key:'l', items:[
+    {id:'lv.open',    label:'Leave Requests',   icon:I.leave, module:'leaves'},
+    {id:'lv.apply',   label:'Apply for Leave…', icon:I.leave},
+    {id:'lv.approve', label:'Approve Requests',  icon:I.leave},
+    {sep:true},
+    {id:'lv.balance', label:'Leave Balances',   icon:I.report},
+    {id:'lv.types',   label:'Leave Types',      icon:I.gear},
+    {id:'lv.holidays',label:'Holiday Calendar', icon:I.leave},
+  ]},
+
+  { label:'Documents', key:'d', items:[
+    {id:'doc.open',    label:'Document Library', icon:I.doc, module:'documents'},
+    {id:'doc.upload',  label:'Upload Document…', icon:I.imp},
+    {sep:true},
+    {id:'doc.expiry',  label:'Expiry Alerts',    icon:I.report},
+    {id:'doc.types',   label:'Document Types',   icon:I.gear},
+  ]},
+
+  { label:'Flight', key:'i', items:[
+    {id:'fl.open',    label:'Flight Requests',  icon:I.flight, module:'flight'},
+    {id:'fl.new',     label:'New Ticket Request…', icon:I.flight},
+    {sep:true},
+    {id:'fl.entitle', label:'Ticket Entitlements', icon:I.gear},
+    {id:'fl.approve', label:'Approve Requests',    icon:I.flight},
+  ]},
+
+  { label:'Resignation', key:'r', items:[
+    {id:'rs.open',      label:'Resignations',       icon:I.resign, module:'resignation'},
+    {id:'rs.new',       label:'Submit Resignation…',icon:I.resign},
+    {sep:true},
+    {id:'rs.clearance', label:'Exit Clearance',     icon:I.report},
+    {id:'rs.settle',    label:'Final Settlement',   icon:I.pay},
+  ]},
+
+  { label:'Tools', key:'t', items:[
+    {id:'tools.emp',   label:'Employee Master', icon:I.users},
+    {id:'tools.dept',  label:'Departments',     icon:I.win},
+    {id:'tools.users', label:'Users & Roles',   icon:I.users},
+    {sep:true},
+    {id:'tools.audit', label:'Audit Log',       icon:I.report},
+    {id:'tools.backup',label:'Backup Database…',icon:I.save},
+    {sep:true},
+    {id:'tools.opts',  label:'Options…',        icon:I.gear},
+  ]},
+
+  { label:'Window', key:'w', items:[
+    {id:'win.close',    label:'Close Tab',      sc:'Ctrl+W'},
+    {id:'win.closeall', label:'Close All Tabs'},
+    {sep:true},
+    {id:'win.next',     label:'Next Tab',       sc:'Ctrl+Tab'},
+  ]},
+
+  { label:'Help', key:'h', items:[
+    {id:'help.docs',  label:'Documentation',   icon:I.help, sc:'F1'},
+    {id:'help.short', label:'Keyboard Shortcuts', icon:I.help},
+    {sep:true},
+    {id:'help.about', label:'About HRMS',      icon:I.help},
+  ]},
+];
+
+/* ---------------- flatten the registry for the search box ---------------- */
+const COMMANDS = [];
+(function flatten(menus, trail){
+  menus.forEach(m => {
+    const path = trail.concat(m.label);
+    (m.items || []).forEach(it => {
+      if (it.sep) return;
+      if (it.items) flatten([it], path);          // nested submenu
+      else COMMANDS.push({id:it.id, label:it.label, icon:it.icon, sc:it.sc,
+                          module:it.module, disabled:it.disabled,
+                          path:path.join(' › ')});
+    });
+  });
+})(MENUS, []);
+
+/* =========================== menu bar rendering =========================== */
+const menubar = document.getElementById('menubar');
+let openIdx = -1;          // which top-level menu is open
+let hiItem = -1;           // highlighted item within the open menu
+
+function buildMenuBar(){
+  MENUS.forEach((m, idx) => {
+    const btn = document.createElement('div');
+    btn.className = 'mb-item'; btn.setAttribute('role','menuitem');
+    btn.tabIndex = -1; btn.dataset.idx = idx;
+    // underline the access-key letter
+    const i = m.label.toLowerCase().indexOf(m.key);
+    btn.innerHTML = i < 0 ? m.label
+      : m.label.slice(0,i) + '<u>' + m.label[i] + '</u>' + m.label.slice(i+1);
+    btn.addEventListener('click', e => {
+      if (e.target.closest('.menu')) return;   // click was on an item, not the bar
+      e.stopPropagation();
+      openIdx === idx ? closeMenus() : openMenu(idx);
+    });
+    btn.addEventListener('mouseenter', () => { if (openIdx > -1 && openIdx !== idx) openMenu(idx); });
+    menubar.appendChild(btn);
+
+    const menu = document.createElement('div');
+    menu.className = 'menu'; menu.dataset.menu = idx; menu.setAttribute('role','menu');
+    menu.innerHTML = renderItems(m.items);
+    btn.appendChild(menu);
+  });
+
+  const spacer = document.createElement('div'); spacer.className = 'spacer';
+  menubar.appendChild(spacer);
+  menubar.appendChild(buildSearch());
+}
+
+function renderItems(items){
+  return items.map(it => {
+    if (it.sep) return '<div class="msep"></div>';
+    if (it.items) return `
+      <div class="mi has-sub" data-sub="1">
+        <span class="ico">${it.icon || ''}</span>
+        <span class="lbl">${it.label}</span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        <div class="menu submenu">${renderItems(it.items)}</div>
+      </div>`;
+    const ico = it.check
+      ? `<span class="check" data-checked="1">✓</span>`
+      : `<span class="ico">${it.icon || ''}</span>`;
+    return `
+      <div class="mi ${it.disabled ? 'disabled' : ''}" data-id="${it.id}" role="menuitem">
+        ${ico}<span class="lbl">${it.label}</span>
+        ${it.sc ? `<span class="sc">${it.sc}</span>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function openMenu(idx){
+  closeMenus(true);
+  openIdx = idx; hiItem = -1;
+  menubar.children[idx].classList.add('open');
+  const menu = menubar.children[idx].querySelector('.menu');
+  menu.classList.remove('flip');
+  menu.classList.add('open');
+  // keep the dropdown inside the window
+  const r = menu.getBoundingClientRect();
+  if (r.right > window.innerWidth - 8) menu.classList.add('flip');
+  document.getElementById('inert').classList.add('on');
+}
+function closeMenus(keepInert){
+  document.querySelectorAll('.mb-item.open').forEach(e => e.classList.remove('open'));
+  document.querySelectorAll('.menu.open').forEach(e => e.classList.remove('open'));
+  document.querySelectorAll('.mi.hi').forEach(e => e.classList.remove('hi'));
+  openIdx = -1; hiItem = -1;
+  if (!keepInert) document.getElementById('inert').classList.remove('on');
+  document.body.classList.remove('alt-mode');
+}
+document.getElementById('inert').addEventListener('mousedown', () => closeMenus());
+
+/* submenu open on hover */
+document.addEventListener('mouseover', e => {
+  const mi = e.target.closest('.mi.has-sub');
+  if (mi) {
+    mi.parentElement.querySelectorAll(':scope > .mi.has-sub > .submenu.open')
+      .forEach(s => { if (s !== mi.querySelector('.submenu')) s.classList.remove('open'); });
+    const sub = mi.querySelector('.submenu');
+    sub.classList.remove('flip');
+    sub.classList.add('open');
+    const r = sub.getBoundingClientRect();
+    if (r.right > window.innerWidth - 8) sub.classList.add('flip');
+  }
+});
+
+/* click a command */
+document.addEventListener('click', e => {
+  const mi = e.target.closest('.mi[data-id]');
+  if (!mi) return;
+  e.stopPropagation();
+  const chk = mi.querySelector('.check');
+  if (chk) {                                   // checkable item: toggle, keep menu open
+    const on = chk.dataset.checked === '1';
+    chk.dataset.checked = on ? '0' : '1';
+    chk.textContent = on ? '' : '✓';
+    return;
+  }
+  runCommand(mi.dataset.id);
+  closeMenus();
+});
+
+/* =========================== command search =========================== */
+function buildSearch(){
+  const wrap = document.createElement('div');
+  wrap.className = 'cmdsearch';
+  wrap.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    <input id="cmdInput" type="text" placeholder="Search menus and commands" autocomplete="off"
+           role="combobox" aria-expanded="false" aria-controls="cmdResults">
+    <kbd>Alt+Q</kbd>
+    <div class="cmdresults" id="cmdResults" role="listbox"></div>`;
+  return wrap;
+}
+
+let crHi = 0, crList = [];
+function scoreMatch(cmd, q){
+  const hay = (cmd.label + ' ' + cmd.path).toLowerCase();
+  const i = cmd.label.toLowerCase().indexOf(q);
+  if (i === 0) return 100;             // label starts with query
+  if (i > 0)   return 60;              // label contains query
+  if (hay.includes(q)) return 30;      // path contains query
+  return 0;
+}
+function highlight(text, q){
+  const i = text.toLowerCase().indexOf(q);
+  if (i < 0 || !q) return text;
+  return text.slice(0,i) + '<mark>' + text.slice(i, i+q.length) + '</mark>' + text.slice(i+q.length);
+}
+function renderResults(q){
+  const box = document.getElementById('cmdResults');
+  q = q.trim().toLowerCase();
+  if (!q) {                            // no query: show a few useful starting points
+    crList = COMMANDS.filter(c => c.module);
+  } else {
+    crList = COMMANDS.map(c => ({c, s: scoreMatch(c, q)}))
+                     .filter(x => x.s > 0)
+                     .sort((a,b) => b.s - a.s)
+                     .slice(0, 12)
+                     .map(x => x.c);
+  }
+  crHi = 0;
+  if (!crList.length) {
+    box.innerHTML = `<div class="cr-empty">No command matches “${q}”.</div>`;
+  } else {
+    box.innerHTML = `<div class="cr-head">${q ? 'Commands' : 'Go to module'}</div>` +
+      crList.map((c,i) => `
+        <div class="cr ${i===0?'hi':''}" data-i="${i}" role="option">
+          <span class="ico">${c.icon || I.file}</span>
+          <span class="txt">
+            <div class="nm">${highlight(c.label, q)}</div>
+            <div class="path">${c.path}</div>
+          </span>
+          ${c.sc ? `<span class="sc">${c.sc}</span>` : ''}
+        </div>`).join('');
+    box.querySelectorAll('.cr').forEach(el => {
+      el.addEventListener('mouseenter', () => setCrHi(+el.dataset.i));
+      el.addEventListener('click', () => { runCommand(crList[+el.dataset.i].id); closeSearch(); });
+    });
+  }
+  box.classList.add('open');
+  document.getElementById('cmdInput').setAttribute('aria-expanded','true');
+}
+function setCrHi(i){
+  const box = document.getElementById('cmdResults');
+  const els = box.querySelectorAll('.cr');
+  if (!els.length) return;
+  crHi = (i + els.length) % els.length;
+  els.forEach(e => e.classList.remove('hi'));
+  els[crHi].classList.add('hi');
+  els[crHi].scrollIntoView({block:'nearest'});
+}
+function openSearch(){
+  const inp = document.getElementById('cmdInput');
+  inp.focus(); inp.select(); renderResults(inp.value);
+}
+function closeSearch(){
+  const box = document.getElementById('cmdResults');
+  box.classList.remove('open');
+  document.getElementById('cmdInput').setAttribute('aria-expanded','false');
+  document.getElementById('cmdInput').blur();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('cmdInput');
+  inp.addEventListener('focus', () => renderResults(inp.value));
+  inp.addEventListener('input', () => renderResults(inp.value));
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setCrHi(crHi + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setCrHi(crHi - 1); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (crList[crHi]) { runCommand(crList[crHi].id); inp.value=''; closeSearch(); }
+    } else if (e.key === 'Escape') { inp.value=''; closeSearch(); }
+  });
+  document.addEventListener('mousedown', e => {
+    if (!e.target.closest('.cmdsearch')) closeSearch();
+  });
+});
+
+/* =========================== keyboard: menu access =========================== */
+function menuItems(){
+  if (openIdx < 0) return [];
+  return [...menubar.children[openIdx].querySelectorAll(':scope > .menu > .mi:not(.disabled)')];
+}
+function setHi(n){
+  const items = menuItems();
+  if (!items.length) return;
+  items.forEach(i => i.classList.remove('hi'));
+  hiItem = (n + items.length) % items.length;
+  items[hiItem].classList.add('hi');
+}
+
+document.addEventListener('keydown', e => {
+  const inSearch = e.target.id === 'cmdInput';
+
+  /* Alt+Q / Ctrl+K → command search */
+  if ((e.altKey && e.key.toLowerCase() === 'q') || (e.ctrlKey && e.key.toLowerCase() === 'k')) {
+    e.preventDefault(); closeMenus(); openSearch(); return;
+  }
+  if (inSearch) return;
+
+  /* bare Alt → show access-key underlines */
+  if (e.key === 'Alt') { e.preventDefault(); document.body.classList.toggle('alt-mode'); return; }
+
+  /* Alt + letter → open that menu */
+  if (e.altKey && /^[a-z]$/i.test(e.key)) {
+    const idx = MENUS.findIndex(m => m.key === e.key.toLowerCase());
+    if (idx > -1) { e.preventDefault(); document.body.classList.add('alt-mode'); openMenu(idx); setHi(0); }
+    return;
+  }
+
+  if (openIdx < 0) {
+    /* global shortcuts when no menu is open */
+    if (e.ctrlKey && e.key.toLowerCase() === 'n') { e.preventDefault(); runCommand('file.new'); }
+    if (e.ctrlKey && e.key.toLowerCase() === 's') { e.preventDefault(); runCommand('file.save'); }
+    if (e.ctrlKey && e.key.toLowerCase() === 'p') { e.preventDefault(); runCommand('file.print'); }
+    if (e.ctrlKey && e.key.toLowerCase() === 'w') { e.preventDefault(); runCommand('win.close'); }
+    if (e.key === 'F5') { e.preventDefault(); runCommand('view.refresh'); }
+    if (e.key === 'F1') { e.preventDefault(); runCommand('help.docs'); }
+    return;
+  }
+
+  /* a menu is open: full keyboard navigation */
+  switch (e.key) {
+    case 'Escape':    e.preventDefault(); closeMenus(); break;
+    case 'ArrowDown': e.preventDefault(); setHi(hiItem + 1); break;
+    case 'ArrowUp':   e.preventDefault(); setHi(hiItem - 1); break;
+    case 'ArrowRight':e.preventDefault(); openMenu((openIdx + 1) % MENUS.length); setHi(0); break;
+    case 'ArrowLeft': e.preventDefault(); openMenu((openIdx - 1 + MENUS.length) % MENUS.length); setHi(0); break;
+    case 'Home':      e.preventDefault(); setHi(0); break;
+    case 'End':       e.preventDefault(); setHi(menuItems().length - 1); break;
+    case 'Enter': {
+      e.preventDefault();
+      const it = menuItems()[hiItem];
+      if (it) { it.click(); }
+      break;
+    }
+  }
+});
+
+/* =========================== tabs & panes =========================== */
+const tabsEl = document.getElementById('tabs');
+const workEl = document.getElementById('work');
+const openTabs = new Map();
+let activeTab = 'home';
+
+function addTab(id, name, icon){
+  if (openTabs.has(id)) { activateTab(id); return; }
+  const tab = document.createElement('div');
+  tab.className = 'tab'; tab.dataset.tab = id;
+  tab.innerHTML = `<span style="width:14px;height:14px;display:grid;place-items:center">${icon}</span>
+                   <span style="overflow:hidden;text-overflow:ellipsis">${name}</span>
+                   <span class="x" title="Close">×</span>`;
+  tab.querySelector('span:nth-child(1) svg')?.setAttribute('width','13');
+  tab.querySelector('span:nth-child(1) svg')?.setAttribute('height','13');
+  tab.addEventListener('click', e => {
+    if (e.target.classList.contains('x')) { closeTab(id); e.stopPropagation(); }
+    else activateTab(id);
+  });
+  tabsEl.appendChild(tab);
+
+  const pane = document.createElement('div');
+  pane.className = 'pane'; pane.dataset.pane = id;
+  const m = MODULES[id];
+  pane.innerHTML = `
+    <div class="modhead"><h2>${name}</h2><p>${m ? m.blurb : ''}</p></div>
+    <div class="modbody">
+      <div class="empty">
+        <b>${name} workspace</b>
+        This pane is where the ${name.toLowerCase()} screen loads.
+        Wire it to your Flask route and render the module here.
+      </div>
+    </div>`;
+  workEl.appendChild(pane);
+  openTabs.set(id, {tab, pane});
+  activateTab(id);
+}
+function activateTab(id){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === id));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('active', p.dataset.pane === id));
+  activeTab = id;
+}
+function closeTab(id){
+  const rec = openTabs.get(id);
+  if (!rec) return;
+  rec.tab.remove(); rec.pane.remove(); openTabs.delete(id);
+  if (activeTab === id) activateTab(openTabs.size ? [...openTabs.keys()].pop() : 'home');
+}
+/* Home tab is permanent */
+(function homeTab(){
+  const t = document.createElement('div');
+  t.className = 'tab active'; t.dataset.tab = 'home';
+  t.innerHTML = `<span style="width:13px;height:13px;display:grid;place-items:center">${I.win}</span><span>Home</span>`;
+  t.addEventListener('click', () => activateTab('home'));
+  tabsEl.appendChild(t);
+})();
+
+/* =========================== command dispatch =========================== */
+function status(msg){ document.getElementById('sbMsg').textContent = msg; }
+
+function runCommand(id){
+  const cmd = COMMANDS.find(c => c.id === id);
+  if (!cmd) return;
+
+  /* commands that open a module get a real tab */
+  if (cmd.module) {
+    const m = MODULES[cmd.module];
+    addTab(cmd.module, m.name, m.icon);
+    status(`Opened ${m.name}`);
+    return;
+  }
+
+  switch (id) {
+    case 'win.close':    if (activeTab !== 'home') closeTab(activeTab); status('Tab closed'); return;
+    case 'win.closeall': [...openTabs.keys()].forEach(closeTab); status('All tabs closed'); return;
+    case 'win.next': {
+      const keys = ['home', ...openTabs.keys()];
+      activateTab(keys[(keys.indexOf(activeTab) + 1) % keys.length]);
+      return;
+    }
+    case 'file.print':   status('Print dialog'); window.print(); return;
+    case 'file.exit':    status('Exit requested'); return;
+    case 'view.refresh': status('Refreshed'); return;
+    case 'help.about':   status('HRMS v1.0 — Payroll, Leaves, Documents, Flight, Resignation'); return;
+  }
+  /* everything else: report it — replace with your real handler */
+  status(`${cmd.path} › ${cmd.label}`);
+}
+
+/* =========================== welcome tiles =========================== */
+(function tiles(){
+  const el = document.getElementById('tiles');
+  el.innerHTML = Object.entries(MODULES).map(([id,m]) => `
+    <div class="tile" data-mod="${id}">
+      <span class="ti">${m.icon}</span>
+      <span class="tn">${m.name}</span>
+      <span class="td">${m.desc}</span>
+    </div>`).join('');
+  el.querySelectorAll('.tile').forEach(t =>
+    t.addEventListener('click', () => {
+      const m = MODULES[t.dataset.mod];
+      addTab(t.dataset.mod, m.name, m.icon);
+      status(`Opened ${m.name}`);
+    }));
+})();
+
+buildMenuBar();
+</script>
+</body>
+</html>

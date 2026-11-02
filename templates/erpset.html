@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AureliaERP · Super Admin System Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #f4f6f9;
+    --bg-card: #ffffff;
+    --bg-sidebar: #132238;
+    --bg-sidebar-hover: #1c2d47;
+    --bg-topbar: #132238;
+    --border-color: #e2e8f0;
+    --border-dark: #1e2d42;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-light: #cbd5e1;
+    --primary: #2f5eff;
+    --primary-hover: #1f42c9;
+    --primary-light: #eaefff;
+    --success: #10b981;
+    --success-light: #d1fae5;
+    --warning: #f59e0b;
+    --warning-light: #fef3c7;
+    --danger: #ef4444;
+    --danger-light: #fee2e2;
+    --purple: #8b5cf6;
+    --purple-light: #f3e8ff;
+    --side-width: 260px;
+    --top-height: 64px;
+    --radius: 10px;
+  }
+
+  body.dark-mode {
+    --bg-main: #0b1120;
+    --bg-card: #1e293b;
+    --bg-sidebar: #0f172a;
+    --bg-sidebar-hover: #1e293b;
+    --bg-topbar: #0f172a;
+    --border-color: #334155;
+    --border-dark: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-light: #64748b;
+    --primary-light: #1e293b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+    width: 100vw; height: 100vh; overflow: hidden;
+    display: grid;
+    grid-template-columns: var(--side-width) 1fr;
+    grid-template-rows: var(--top-height) 1fr;
+    grid-template-areas: "brand topbar" "sidebar main";
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* BRAND & TOPBAR */
+  .brand-area {
+    grid-area: brand; background: var(--bg-topbar);
+    display: flex; align-items: center; gap: 12px; padding: 0 20px;
+    border-bottom: 1px solid var(--border-dark);
+  }
+  .brand-logo {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--primary);
+    display: flex; align-items: center; justify-content: center; color: #fff;
+    font-weight: 800; font-size: 16px;
+  }
+  .brand-title { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+  .brand-title span { color: #38bdf8; font-weight: 600; font-size: 11px; margin-left: 4px; text-transform: uppercase; background: rgba(56,189,248,0.15); padding: 2px 6px; border-radius: 4px; }
+
+  .topbar-area {
+    grid-area: topbar; background: var(--bg-topbar);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; border-bottom: 1px solid var(--border-dark);
+  }
+  .topbar-title { color: #fff; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+
+  /* SIDEBAR MENU */
+  .sidebar-area {
+    grid-area: sidebar; background: var(--bg-sidebar);
+    overflow-y: auto; padding: 20px 0; border-right: 1px solid var(--border-dark);
+  }
+  .menu-group { margin-bottom: 22px; }
+  .menu-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #64748b;
+    padding: 0 24px 10px; text-transform: uppercase;
+  }
+  .menu-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 24px; color: #cbd5e1;
+    cursor: pointer; border-left: 3px solid transparent; font-size: 13.5px; font-weight: 500;
+    transition: all 0.15s ease; text-decoration: none;
+  }
+  .menu-item:hover { background: var(--bg-sidebar-hover); color: #fff; }
+  .menu-item.active { background: var(--bg-sidebar-hover); color: #fff; border-left-color: var(--primary); font-weight: 600; }
+  .menu-item svg { width: 18px; height: 18px; color: #94a3b8; flex-shrink: 0; }
+  .menu-item.active svg, .menu-item:hover svg { color: #38bdf8; }
+
+  /* MAIN CANVAS */
+  .main-area { grid-area: main; overflow-y: auto; padding: 28px 32px 60px; }
+  .crumb { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+  .crumb b { color: var(--primary); font-weight: 600; }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
+  .page-title { font-size: 26px; font-weight: 800; letter-spacing: -0.4px; margin: 0; }
+
+  /* CARDS & UI COMPONENTS */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: var(--radius); padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+  }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); }
+  .card-title { font-size: 17px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; }
+  .card-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+
+  /* FORM CONTROLS */
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+  .form-control {
+    height: 40px; border: 1px solid var(--border-color); background: var(--bg-card);
+    border-radius: 6px; padding: 0 12px; font-size: 13.5px; color: var(--text-main);
+    outline: none; transition: border-color 0.15s; width: 100%;
+  }
+  .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(47,94,255,0.12); }
+  select.form-control { cursor: pointer; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 38px; padding: 0 16px; font-size: 13px; font-weight: 600; border-radius: 6px;
+    cursor: pointer; border: 1px solid transparent; transition: all 0.15s ease;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-outline { background: var(--bg-card); border-color: var(--border-color); color: var(--text-main); }
+  .btn-outline:hover { background: var(--border-color); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { filter: brightness(0.9); }
+
+  /* BADGES */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding:2px 6px; border-radius:10px; font-size:10px; font-weight: 600; white-space: nowrap; }
+  .badge-success { background: var(--success-light); color: var(--success); }
+  .badge-warning { background: var(--warning-light); color: var(--warning); }
+  .badge-danger { background: var(--danger-light); color: var(--danger); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .badge-primary { background: var(--primary-light); color: var(--primary); }
+
+  /* TABLES */
+  .data-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .data-table th { background: var(--bg-main); padding: 12px 16px; font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+  .data-table td { padding: 13px 16px; font-size: 13px; color: var(--text-main); border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+  .data-table tbody tr:hover { background: rgba(0,0,0,0.015); }
+
+  /* PERMISSION MATRIX TABLE */
+  .perm-matrix-wrapper { overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; }
+  .perm-table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+  .perm-table th { background: #0f172a; color: #fff; font-size: 11.5px; font-weight: 700; padding: 10px 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; border-right: 1px solid #1e293b; }
+  .perm-table th:first-child { text-align: left; padding-left: 16px; width: 260px; }
+  .perm-table td { padding: 8px; text-align: center; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); }
+  .perm-table td:first-child { text-align: left; padding-left: 16px; font-weight: 600; font-size: 13px; }
+  .perm-module-row { background: var(--primary-light); font-weight: 700 !important; cursor: pointer; }
+  .perm-module-row td { color: var(--primary); border-top: 2px solid var(--border-color); }
+  .perm-checkbox { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+
+  /* TOGGLE SWITCH */
+  .switch { position: relative; display: inline-block; width: 42px; height: 22px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .2s; border-radius: 22px; }
+  .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .2s; border-radius: 50%; }
+  input:checked + .slider { background-color: var(--primary); }
+  input:checked + .slider:before { transform: translateX(20px); }
+
+  /* TOAST NOTIFICATION */
+  .toast {
+    position: fixed; bottom: 30px; right: 30px; background: var(--bg-sidebar); color: #fff;
+    padding: 12px 22px; border-radius: 8px; font-weight: 600; font-size: 13.5px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25); transform: translateY(100px); opacity: 0;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 99999; border-left: 4px solid var(--primary);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* MODALS */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15,23,42,0.6); backdrop-filter: blur(3px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-card { background: var(--bg-card); border-radius: 12px; width: 560px; max-width: 92vw; max-height: 90vh; overflow-y: auto; padding: 26px; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.25); animation: modalPop 0.18s cubic-bezier(0.16,1,0.3,1); }
+  @keyframes modalPop { 0% { opacity:0; transform:scale(0.94); } 100% { opacity:1; transform:scale(1); } }
+
+  /* ── Mobile & Responsive Updates ── */
+  .mobile-nav-toggle { display:none; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.08); border-radius:6px; cursor:pointer; color:#94a3b8; margin-right:12px; transition:all 0.15s; }
+  .mobile-nav-toggle:hover { color:#fff; background:rgba(255,255,255,0.15); }
+  .mobile-nav-toggle svg { width:20px; height:20px; }
+
+  @media (max-width: 768px) {
+    body { grid-template-columns:1fr !important; grid-template-areas: "topbar" "main" !important; }
+    .brand-area { display:none !important; }
+    .sidebar-area { position:fixed; top:64px; left:0; z-index:10000; width:260px !important; height:calc(100vh - 64px); transform:translateX(-100%); transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar-area.open { transform:translateX(0); box-shadow:4px 0 25px rgba(0,0,0,0.3); }
+    .mobile-nav-toggle { display:inline-flex !important; }
+    .main-area { padding:16px !important; }
+    .form-grid { grid-template-columns:1fr !important; }
+    .card { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .data-table, table { min-width:650px; }
+  }
+
+  </style>
+</head>
+<body>
+
+  <!-- BRAND -->
+  <div class="brand-area">
+    <div class="brand-logo">SA</div>
+    <div class="brand-title">Aurelia<span>SuperAdmin</span></div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar-area">
+    <div class="topbar-title">
+        <div class="mobile-nav-toggle" id="mobileSidebarToggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </div>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      Enterprise System Administration Module
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-outline" style="color:#cbd5e1; border-color:#334155; padding:0 12px; height:34px;" onclick="toggleDarkMode()">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        Dark Mode
+      </button>
+      <a href="login.html?view=portal" style="color:#94a3b8; font-size:13px; font-weight:600; text-decoration:none;">&larr; Back to Portal</a>
+      <div style="width:36px; height:36px; border-radius:50%; background:#2f5eff; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">SA</div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR MENU -->
+  <div class="sidebar-area">
+    <div class="menu-group">
+      <div class="menu-label">Access &amp; Security</div>
+      <a href="#" class="menu-item active" onclick="switchNav('usermgmt', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        User Management
+      </a>
+      <a href="#" class="menu-item" onclick="switchNav('rolemgmt', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Role Management
+      </a>
+      <a href="#" class="menu-item" onclick="switchNav('permissions', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        Permission Matrix
+      </a>
+      <a href="#" class="menu-item" onclick="switchNav('security', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        Security &amp; 2FA
+      </a>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-label">System Control</div>
+      <a href="#" class="menu-item" onclick="switchNav('company', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Company Profile
+      </a>
+      <a href="#" class="menu-item" onclick="switchNav('modules', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Module Control
+      </a>
+      <a href="#" class="menu-item" onclick="switchNav('workflow', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        Workflow &amp; Approvals
+      </a>
+      <a href="#" class="menu-item" onclick="switchNav('notifications', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        Notifications
+      </a>
+    </div>
+
+    <div class="menu-group">
+      <div class="menu-label">Domain Settings</div>
+      <a href="#" class="menu-item" onclick="switchNav('financesetting', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        Finance &amp; Taxes
+      </a>
+      <a href="#" class="menu-item" onclick="switchNav('inventorysetting', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        Inventory &amp; Warehouses
+      </a>
+      <a href="#" class="menu-item" onclick="switchNav('systemsetting', this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
+        System &amp; Backup
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN CANVAS -->
+  <div class="main-area" id="mainCanvas"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toastBox">Settings updated successfully</div>
+
+  <!-- MODAL CONTAINER -->
+  <div class="modal-overlay" id="globalModalOverlay" onclick="closeModal()">
+    <div class="modal-card" onclick="event.stopPropagation()" id="globalModalCard"></div>
+  </div>
+
+  <script>
+    let CURRENT_PAGE = 'usermgmt';
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.textContent = msg;
+      box.classList.add('show');
+      setTimeout(() => box.classList.remove('show'), 3000);
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      showToast('Theme view updated');
+    }
+
+    function switchNav(page, el) {
+      document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+      if (el) el.classList.add('active');
+      CURRENT_PAGE = page;
+      renderPage();
+    }
+
+    function closeModal() {
+      document.getElementById('globalModalOverlay').classList.remove('open');
+    }
+
+    // ─────────────────────────────────────────────
+    // RENDER SECTION PAGES
+    // ─────────────────────────────────────────────
+
+    function renderPage() {
+      const canvas = document.getElementById('mainCanvas');
+
+      // 1. USER MANAGEMENT
+      if (CURRENT_PAGE === 'usermgmt') {
+        canvas.innerHTML = `
+          <div class="crumb">System Administration / <b>User Management</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">User Management</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Manage user accounts, credentials, roles, and security lockouts.</div>
+            </div>
+            <button class="btn btn-primary" onclick="openCreateUserModal()">Create New User</button>
+          </div>
+
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <input type="text" placeholder="Search users by name, email..." class="form-control" style="width:200px;">
+                <select class="form-control" style="width:160px;">
+                  <option value="">All Roles</option>
+                  <option>Super Admin</option>
+                  <option>HR Director</option>
+                  <option>CFO</option>
+                  <option>PMO Director</option>
+                </select>
+                <select class="form-control" style="width:140px;">
+                  <option value="">All Statuses</option>
+                  <option>Active</option>
+                  <option>Locked</option>
+                  <option>Disabled</option>
+                </select>
+              </div>
+              <div style="font-size:13px; color:var(--text-muted); font-weight:600;">Total Active Users: 148</div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>User Profile</th>
+                    <th>Email / Username</th>
+                    <th>Assigned Role</th>
+                    <th>Department</th>
+                    <th>2FA Status</th>
+                    <th>Account Status</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong style="color:var(--text-main);">Arfath Khan</strong><div style="font-size:11px; color:var(--text-muted);">Emp ID: EMP-1001</div></td>
+                    <td>arfath.khan@company.com</td>
+                    <td><span class="badge badge-purple">Super Admin</span></td>
+                    <td>Executive PMO</td>
+                    <td><span class="badge badge-success">Enabled</span></td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td style="text-align:right;">
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('Password reset link sent to Arfath Khan')">Reset Pass</button>
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('User permissions loaded')">Edit</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tariq Mansoor</strong><div style="font-size:11px; color:var(--text-muted);">Emp ID: EMP-1002</div></td>
+                    <td>tariq.mansoor@company.com</td>
+                    <td><span class="badge badge-primary">CFO / Finance</span></td>
+                    <td>Finance &amp; Treasury</td>
+                    <td><span class="badge badge-success">Enabled</span></td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td style="text-align:right;">
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('Password reset link sent')">Reset Pass</button>
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('User permissions loaded')">Edit</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Fariha Mansoor</strong><div style="font-size:11px; color:var(--text-muted);">Emp ID: EMP-2041</div></td>
+                    <td>fariha.mansoor@company.com</td>
+                    <td><span class="badge badge-primary">HR Director</span></td>
+                    <td>Human Resources</td>
+                    <td><span class="badge badge-warning">Pending</span></td>
+                    <td><span class="badge badge-danger">Locked</span></td>
+                    <td style="text-align:right;">
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('Account unlocked successfully!')">Unlock</button>
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('User details opened')">Edit</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. ROLE MANAGEMENT
+      else if (CURRENT_PAGE === 'rolemgmt') {
+        canvas.innerHTML = `
+          <div class="crumb">System Administration / <b>Role Management</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Role Management</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Define custom security roles, default assignments, and description templates.</div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Create Role Modal opened')">Create New Role</button>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Role Name</th>
+                    <th>Role Description</th>
+                    <th>Default Role</th>
+                    <th>Assigned Users</th>
+                    <th>Access Scope</th>
+                    <th style="text-align:right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background:rgba(139,92,246,0.04);">
+                    <td><strong style="color:var(--purple);">Super Admin</strong> <span class="badge badge-purple">System Master</span></td>
+                    <td>Unrestricted root access to every current and future ERP module &amp; setting.</td>
+                    <td><span class="badge badge-primary">System Default</span></td>
+                    <td>3 Users</td>
+                    <td><span class="badge badge-purple">Full Control</span></td>
+                    <td style="text-align:right;">
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" disabled>Protected</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>HR Director</strong></td>
+                    <td>Complete administration over Employee master, Payroll, Recruitment &amp; Appraisals.</td>
+                    <td>—</td>
+                    <td>8 Users</td>
+                    <td>HR &amp; Payroll Modules</td>
+                    <td style="text-align:right;">
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('Role duplicated')">Duplicate</button>
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('Role edited')">Edit</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Finance Controller (CFO)</strong></td>
+                    <td>General Ledger, Accounts Payable, Accounts Receivable, VAT Tax Returns &amp; Audits.</td>
+                    <td>—</td>
+                    <td>5 Users</td>
+                    <td>Finance &amp; Accounting</td>
+                    <td style="text-align:right;">
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('Role duplicated')">Duplicate</button>
+                      <button class="btn btn-outline" style="padding:4px 8px; font-size:11.5px;" onclick="showToast('Role edited')">Edit</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. PERMISSION MATRIX
+      else if (CURRENT_PAGE === 'permissions') {
+        canvas.innerHTML = `
+          <div class="crumb">System Administration / <b>Permission Matrix</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Role Permission Matrix</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Configure granular 12-point permissions per module, page, and sub-page.</div>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btn-outline" onclick="showToast('Matrix reset to defaults')">Reset</button>
+              <button class="btn btn-primary" onclick="showToast('Permission matrix changes saved successfully!')">Save Matrix</button>
+            </div>
+          </div>
+
+          <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:8px; padding:12px 18px; margin-bottom:20px; color:#9f1239; font-size:13px; display:flex; align-items:center; justify-content:space-between;">
+            <div><strong>⚡ Super Admin Override Active:</strong> Super Admin users automatically possess unrestricted access to every module, page, feature, and action.</div>
+            <span class="badge badge-purple">Root Enforcement</span>
+          </div>
+
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+              <div style="display:flex; gap:12px; align-items:center;">
+                <label style="font-size:13px; font-weight:600; color:var(--text-muted);">Target Role:</label>
+                <select class="form-control" style="width:220px;" onchange="showToast('Loaded permissions for selected role')">
+                  <option>Finance Controller (CFO)</option>
+                  <option>HR Director</option>
+                  <option>Warehouse Manager</option>
+                  <option>Sales Manager</option>
+                  <option>Standard Employee</option>
+                </select>
+                <input type="text" placeholder="Search module or page..." class="form-control" style="width:220px;" id="matrixSearch" onkeyup="filterMatrix()">
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-outline" style="padding:4px 10px; font-size:12px;" onclick="toggleAllMatrix(true)">Select All</button>
+                <button class="btn btn-outline" style="padding:4px 10px; font-size:12px;" onclick="toggleAllMatrix(false)">Clear All</button>
+              </div>
+            </div>
+
+            <div class="perm-matrix-wrapper">
+              <table class="perm-table" id="permTable">
+                <thead>
+                  <tr>
+                    <th>Module / Page Hierarchy</th>
+                    <th>View</th>
+                    <th>Create</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                    <th>Approve</th>
+                    <th>Reject</th>
+                    <th>Import</th>
+                    <th>Export</th>
+                    <th>Print</th>
+                    <th>Upload</th>
+                    <th>Download</th>
+                    <th>Full Ctrl</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dashboard -->
+                  <tr class="perm-module-row">
+                    <td>📊 Dashboard Module</td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                  </tr>
+
+                  <!-- Finance -->
+                  <tr class="perm-module-row">
+                    <td>💵 Finance &amp; Accounting Module</td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                  </tr>
+                  <tr>
+                    <td style="padding-left:36px;">· General Ledger (/gl/journal-entries)</td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                  </tr>
+                  <tr>
+                    <td style="padding-left:36px;">· Accounts Payable (/ap/invoices)</td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                  </tr>
+
+                  <!-- Inventory -->
+                  <tr class="perm-module-row">
+                    <td>📦 Inventory &amp; Warehouse Module</td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                  </tr>
+                  <tr>
+                    <td style="padding-left:36px;">· Stock Balance Inquiry (/inventory/stock-balance)</td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                    <td><input type="checkbox" class="perm-checkbox" checked></td>
+                    <td><input type="checkbox" class="perm-checkbox"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // 4. COMPANY SETTINGS
+      else if (CURRENT_PAGE === 'company') {
+        canvas.innerHTML = `
+          <div class="crumb">System Control / <b>Company Profile</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Company Profile &amp; Entities</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Configure corporate identity, tax registration, branches, and multi-currency formats.</div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Company profile saved successfully!')">Save Profile</button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Corporate Information</h3>
+            <div class="form-grid" style="margin-top:14px;">
+              <div class="form-group"><label>Legal Company Name</label><input type="text" class="form-control" value="Aurelia Enterprise Systems LLC"></div>
+              <div class="form-group"><label>Tax Registration (ZATCA VAT ID)</label><input type="text" class="form-control" value="310499281000003"></div>
+              <div class="form-group"><label>Commercial Registration (CR #)</label><input type="text" class="form-control" value="1010884920"></div>
+              <div class="form-group"><label>Base Currency</label><select class="form-control"><option selected>SAR - Saudi Riyal</option><option>USD - US Dollar</option><option>EUR - Euro</option></select></div>
+              <div class="form-group"><label>Default Time Zone</label><select class="form-control"><option selected>Asia/Riyadh (GMT+3)</option><option>UTC (GMT+0)</option></select></div>
+              <div class="form-group"><label>System Date Format</label><select class="form-control"><option selected>YYYY-MM-DD</option><option>DD/MM/YYYY</option></select></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Company Branches &amp; Business Units</h3>
+            <div class="table-responsive">
+              <table class="data-table" style="margin-top:14px;">
+                <thead>
+                  <tr>
+                    <th>Branch Code</th>
+                    <th>Branch Name</th>
+                    <th>Location City</th>
+                    <th>Branch Manager</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>BR-RYD-01</td><td>Riyadh Headquarters &amp; PMO</td><td>Riyadh</td><td>Majid Al-Otaibi</td><td><span class="badge badge-success">Active HQ</span></td></tr>
+                  <tr><td>BR-JED-02</td><td>Jeddah Port Logistics Center</td><td>Jeddah</td><td>Fahad Al-Sulaiman</td><td><span class="badge badge-success">Active</span></td></tr>
+                  <tr><td>BR-DMM-03</td><td>Dammam Heavy Industrial Hub</td><td>Dammam</td><td>Khaled Zahrani</td><td><span class="badge badge-success">Active</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // 5. SECURITY SETTINGS
+      else if (CURRENT_PAGE === 'security') {
+        canvas.innerHTML = `
+          <div class="crumb">Access &amp; Security / <b>Security &amp; 2FA</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Security Policy &amp; 2FA</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Password complexity, mandatory 2FA enforcement, IP whitelisting, and active session locks.</div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Security policy updated!')">Save Security Settings</button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Authentication &amp; Password Policy</h3>
+            <div class="form-grid" style="margin-top:14px;">
+              <div class="form-group"><label>Minimum Password Length</label><input type="number" class="form-control" value="12"></div>
+              <div class="form-group"><label>Require Special Characters</label><select class="form-control"><option selected>Yes (Mandatory)</option><option>No</option></select></div>
+              <div class="form-group"><label>Password Expiry Period</label><select class="form-control"><option selected>Every 90 Days</option><option>Never</option></select></div>
+              <div class="form-group"><label>Session Inactivity Timeout</label><select class="form-control"><option selected>30 Minutes</option><option>60 Minutes</option></select></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Two-Factor Authentication (2FA) Enforcement</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+              <div>
+                <strong style="font-size:14px;">Enforce 2FA for All Admin Accounts</strong>
+                <div style="font-size:12.5px; color:var(--text-muted);">Users with admin permissions will be forced to pair Google Authenticator or SMS OTP.</div>
+              </div>
+              <label class="switch"><input type="checkbox" checked onchange="showToast('2FA Enforcement policy toggled')"><span class="slider"></span></label>
+            </div>
+          </div>
+        `;
+      }
+
+      // 6. MODULE MANAGEMENT
+      else if (CURRENT_PAGE === 'modules') {
+        canvas.innerHTML = `
+          <div class="crumb">System Control / <b>Module Control</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">ERP Module Control Center</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Enable or disable system modules and toggle enterprise feature flags.</div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="card" style="margin-bottom:0;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div><h3 class="card-title">Core HRMS &amp; Payroll</h3><div class="card-subtitle">Employees, Payroll, Leaves &amp; Attendance</div></div>
+                <label class="switch"><input type="checkbox" checked onchange="showToast('Module toggled')"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div><h3 class="card-title">Finance &amp; Accounting</h3><div class="card-subtitle">General Ledger, AP/AR &amp; ZATCA VAT</div></div>
+                <label class="switch"><input type="checkbox" checked onchange="showToast('Module toggled')"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div><h3 class="card-title">Procurement ERP</h3><div class="card-subtitle">Purchase Orders, RFQs &amp; Vendors</div></div>
+                <label class="switch"><input type="checkbox" checked onchange="showToast('Module toggled')"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div><h3 class="card-title">Inventory Management</h3><div class="card-subtitle">Stock Balance, Warehouses &amp; Bins</div></div>
+                <label class="switch"><input type="checkbox" checked onchange="showToast('Module toggled')"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div><h3 class="card-title">Manufacturing ERP</h3><div class="card-subtitle">BOM, Work Orders &amp; Production</div></div>
+                <label class="switch"><input type="checkbox" checked onchange="showToast('Module toggled')"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div><h3 class="card-title">Project Management</h3><div class="card-subtitle">Gantt, WBS &amp; Resource Allocation</div></div>
+                <label class="switch"><input type="checkbox" checked onchange="showToast('Module toggled')"><span class="slider"></span></label>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div><h3 class="card-title">CRM &amp; Sales Suite</h3><div class="card-subtitle">Leads, Opportunities, Campaigns &amp; Forecasts</div></div>
+                <label class="switch"><input type="checkbox" checked onchange="showToast('Module toggled')"><span class="slider"></span></label>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 7. WORKFLOW SETTINGS
+      else if (CURRENT_PAGE === 'workflow') {
+        canvas.innerHTML = `
+          <div class="crumb">System Control / <b>Workflow &amp; Approvals</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Multi-Level Approval Workflows</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Automated escalation rules and multi-level sign-offs across Purchase, Expense &amp; Leave requests.</div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Workflow rule builder opened')">+ Create Approval Rule</button>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Workflow Name</th>
+                    <th>Target Module</th>
+                    <th>Threshold Trigger</th>
+                    <th>Approval Chain</th>
+                    <th>Escalation Rule</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>PO Capital Expense Approval</strong></td>
+                    <td>Procurement</td>
+                    <td>Amount &gt; 50,000 SAR</td>
+                    <td>L1: Dept Head &rarr; L2: CFO &rarr; L3: Super Admin</td>
+                    <td>Auto-escalate after 48 hours</td>
+                    <td><span class="badge badge-success">Active Rule</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Employee Leave Request</strong></td>
+                    <td>HRMS</td>
+                    <td>Days &gt; 3 Days</td>
+                    <td>L1: Line Manager &rarr; L2: HR Manager</td>
+                    <td>Notify HR after 24 hours</td>
+                    <td><span class="badge badge-success">Active Rule</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // 8. NOTIFICATION SETTINGS
+      else if (CURRENT_PAGE === 'notifications') {
+        canvas.innerHTML = `
+          <div class="crumb">System Control / <b>Notifications</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Notification &amp; Gateway Settings</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Configure Email SMTP, SMS Gateways, Web Push, and WhatsApp Business API integrations.</div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Notification settings saved!')">Save Gateways</button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Email (SMTP) Gateway Configuration</h3>
+            <div class="form-grid" style="margin-top:14px;">
+              <div class="form-group"><label>SMTP Host</label><input type="text" class="form-control" value="smtp.office365.com"></div>
+              <div class="form-group"><label>SMTP Port</label><input type="number" class="form-control" value="587"></div>
+              <div class="form-group"><label>Sender Address</label><input type="email" class="form-control" value="notifications@company.com"></div>
+              <div class="form-group"><label>Encryption</label><select class="form-control"><option selected>TLS / STARTTLS</option><option>SSL</option></select></div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 9. FINANCE SETTINGS
+      else if (CURRENT_PAGE === 'financesetting') {
+        canvas.innerHTML = `
+          <div class="crumb">Domain Settings / <b>Finance &amp; Taxes</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Finance &amp; Tax Configuration</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">VAT rate rules, ZATCA e-invoicing parameters, and invoice numbering sequences.</div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Tax rules updated!')">Save Tax Rules</button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">ZATCA VAT Tax Settings</h3>
+            <div class="form-grid" style="margin-top:14px;">
+              <div class="form-group"><label>Standard VAT Rate (%)</label><input type="text" class="form-control" value="15.0%"></div>
+              <div class="form-group"><label>ZATCA Phase 2 E-Invoicing Mode</label><select class="form-control"><option selected>Clearance &amp; Reporting (Active)</option></select></div>
+              <div class="form-group"><label>Sales Invoice Prefix</label><input type="text" class="form-control" value="INV-2026-"></div>
+              <div class="form-group"><label>Auto Sequence Start</label><input type="number" class="form-control" value="10001"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 10. INVENTORY SETTINGS
+      else if (CURRENT_PAGE === 'inventorysetting') {
+        canvas.innerHTML = `
+          <div class="crumb">Domain Settings / <b>Inventory &amp; Warehouses</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Inventory &amp; Stock Rules</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Stock valuation method, barcode formats, and automatic reorder parameters.</div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Inventory rules saved!')">Save Inventory Rules</button>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Valuation &amp; Barcode Defaults</h3>
+            <div class="form-grid" style="margin-top:14px;">
+              <div class="form-group"><label>Default Stock Valuation</label><select class="form-control"><option selected>FIFO (First-In First-Out)</option><option>Weighted Average</option></select></div>
+              <div class="form-group"><label>Default Barcode Protocol</label><select class="form-control"><option selected>DataMatrix 2D / Code-128</option></select></div>
+              <div class="form-group"><label>Reorder Buffer Margin (%)</label><input type="text" class="form-control" value="15%"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 11. SYSTEM SETTINGS
+      else if (CURRENT_PAGE === 'systemsetting') {
+        canvas.innerHTML = `
+          <div class="crumb">Domain Settings / <b>System &amp; Backup</b></div>
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">System Backup &amp; Maintenance</h1>
+              <div style="font-size:13.5px; color:var(--text-muted); margin-top:2px;">Execute manual database backups, inspect system logs, and purge server cache.</div>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btn-outline" onclick="showToast('Redis &amp; Memory cache flushed!')">Purge Cache</button>
+              <button class="btn btn-primary" onclick="showToast('Full Database Backup created successfully!')">Create Instant Backup</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">System Environment Status</h3>
+            <div class="form-grid" style="margin-top:14px;">
+              <div><span style="font-size:12px; color:var(--text-muted);">Database Host:</span><br><strong>PostgreSQL 16 (Port 5432)</strong></div>
+              <div><span style="font-size:12px; color:var(--text-muted);">Flask Core Version:</span><br><strong>Python 3.11.8 (Active)</strong></div>
+              <div><span style="font-size:12px; color:var(--text-muted);">License Key:</span><br><strong>AUR-ENT-2026-UNLIMITED</strong></div>
+              <div><span style="font-size:12px; color:var(--text-muted);">System Maintenance Mode:</span><br><span class="badge badge-success">Operational</span></div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // MODAL DIALOG HELPERS
+    // ─────────────────────────────────────────────
+
+    function openCreateUserModal() {
+      const card = document.getElementById('globalModalCard');
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+          <h3 style="margin:0; font-size:18px; font-weight:700;">Create New Enterprise User</h3>
+          <button onclick="closeModal()" style="background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-muted);">&times;</button>
+        </div>
+        <div class="form-grid" style="gap:14px;">
+          <div class="form-group"><label>First Name</label><input type="text" class="form-control" placeholder="e.g. Tariq"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" class="form-control" placeholder="e.g. Al-Sulaiman"></div>
+          <div class="form-group"><label>Email Address</label><input type="email" class="form-control" placeholder="user@company.com"></div>
+          <div class="form-group"><label>Assigned Role</label><select class="form-control"><option>Finance Controller</option><option>HR Director</option><option>Warehouse Manager</option><option>Super Admin</option></select></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:24px;">
+          <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="showToast('New user account created successfully!'); closeModal();">Create User</button>
+        </div>
+      `;
+      document.getElementById('globalModalOverlay').classList.add('open');
+    }
+
+    function toggleAllMatrix(state) {
+      const boxes = document.querySelectorAll('#permTable input[type="checkbox"]');
+      boxes.forEach(b => b.checked = state);
+      showToast(state ? 'Selected all permissions' : 'Cleared all permissions');
+    }
+
+    function filterMatrix() {
+      const q = document.getElementById('matrixSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('#permTable tbody tr');
+      rows.forEach(r => {
+        const text = r.children[0].innerText.toLowerCase();
+        r.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    // Init
+    renderPage();
+  
+    /* ===== Sidebar Toggle for Mobile ===== */
+    function wireMobileSidebar() {
+      var btn = document.getElementById('mobileSidebarToggle');
+      var sidebar = document.querySelector('.sidebar-area');
+      if (!btn || !sidebar) return;
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        sidebar.classList.toggle('open');
+      });
+      document.addEventListener('click', function(e) {
+        if (!sidebar.contains(e.target) && sidebar.classList.contains('open')) {
+          sidebar.classList.remove('open');
+        }
+      });
+      var menuItems = sidebar.querySelectorAll('.menu-item');
+      menuItems.forEach(function(el) {
+        el.addEventListener('click', function() {
+          sidebar.classList.remove('open');
+        });
+      });
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', wireMobileSidebar);
+    } else {
+      wireMobileSidebar();
+    }
+
+  </script>
+</body>
+</html>
