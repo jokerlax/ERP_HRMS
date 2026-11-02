@@ -265,6 +265,7 @@
       border-color: var(--blue);
       background: rgba(37, 99, 235, 0.1);
     }
+<<<<<<< HEAD
 
     #loginError {
       background: rgba(185, 28, 28, 0.2) !important;
@@ -281,6 +282,8 @@
       background: rgba(37, 99, 235, 0.15) !important;
       border-color: var(--blue) !important;
     }
+=======
+>>>>>>> 82dc2a418f469dc837846b6498b151303db5c426
   }
 </style>
 </head>
@@ -295,6 +298,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
       <h1 class="login-title">Welcome back</h1>
+<<<<<<< HEAD
       <p class="login-sub">Sign in manually with your enterprise credentials.</p>
 
       <!-- Error Alert Message -->
@@ -321,12 +325,25 @@
               </svg>
             </button>
           </div>
+=======
+      <p class="login-sub">Sign in to your enterprise account.</p>
+      
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" value="admin@aurelia.com" required>
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" value="password123" required>
+>>>>>>> 82dc2a418f469dc837846b6498b151303db5c426
         </div>
         
         <button type="submit" class="btn-primary" id="btnSignIn">
           <span id="btnText">Sign In</span>
           <div class="loader" id="btnLoader"></div>
         </button>
+<<<<<<< HEAD
 
         <!-- Authorized Accounts Quick Reference / Pill Buttons -->
         <div style="margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--border); font-size: 12px; color: var(--muted);">
@@ -350,6 +367,8 @@
             </button>
           </div>
         </div>
+=======
+>>>>>>> 82dc2a418f469dc837846b6498b151303db5c426
       </form>
     </div>
   </div>
@@ -357,6 +376,7 @@
   <!-- VIEW 2: PORTAL -->
   <div class="view-pane" id="viewPortal">
     <div class="portal-header">
+<<<<<<< HEAD
       <!-- Active User Profile Bar -->
       <div id="portalUserBadge" style="display: inline-flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); padding: 6px 16px; border-radius: 999px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
         <div id="portalUserAvatar" style="width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">A</div>
@@ -368,6 +388,8 @@
         </button>
       </div>
 
+=======
+>>>>>>> 82dc2a418f469dc837846b6498b151303db5c426
       <h1 class="portal-title">Enterprise Management System</h1>
       <p class="portal-sub">Choose a module below to launch the application.</p>
     </div>
@@ -479,6 +501,7 @@
 </div>
 
 <script>
+<<<<<<< HEAD
   const VALID_USERS = {
     'admin@erp.com': { role: 'Administrator', badgeBg: '#dbeafe', badgeColor: '#1e40af', initial: 'A' },
     'employee@erp.com': { role: 'Employee', badgeBg: '#e0e7ff', badgeColor: '#3730a3', initial: 'E' },
@@ -498,11 +521,15 @@
       } catch (err) {}
     }
 
+=======
+  window.addEventListener('DOMContentLoaded', () => {
+>>>>>>> 82dc2a418f469dc837846b6498b151303db5c426
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('view') === 'portal') {
       document.getElementById('viewLogin').classList.remove('active');
       document.getElementById('viewPortal').classList.add('active');
     }
+<<<<<<< HEAD
 
     // Dismiss error on input
     document.getElementById('loginEmail')?.addEventListener('input', hideError);
@@ -585,6 +612,13 @@
       return;
     }
 
+=======
+  });
+
+  function handleLogin(e) {
+    e.preventDefault();
+    
+>>>>>>> 82dc2a418f469dc837846b6498b151303db5c426
     const btn = document.getElementById('btnSignIn');
     const txt = document.getElementById('btnText');
     const ldr = document.getElementById('btnLoader');
@@ -593,6 +627,7 @@
     txt.style.display = 'none';
     ldr.style.display = 'block';
     btn.style.opacity = '0.8';
+<<<<<<< HEAD
     btn.disabled = true;
 
     // Save session
@@ -625,6 +660,19 @@
     setTimeout(() => {
       document.getElementById('viewLogin').classList.add('active');
     }, 300);
+=======
+    
+    // Simulate network request and transition
+    setTimeout(() => {
+      document.getElementById('viewLogin').classList.remove('active');
+      
+      // Short delay before showing portal to allow fade out
+      setTimeout(() => {
+        document.getElementById('viewPortal').classList.add('active');
+      }, 300);
+      
+    }, 800); // 800ms fake auth delay
+>>>>>>> 82dc2a418f469dc837846b6498b151303db5c426
   }
 </script>
 </body>
