@@ -113,6 +113,17 @@
     background: #fff;
   }
   
+  /* Prevent browser autofill styling */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 40px #f8fafc inset !important;
+    box-shadow: 0 0 0 40px #f8fafc inset !important;
+    -webkit-text-fill-color: var(--ink) !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+  
   .btn-primary {
     width: 100%; height: 46px;
     background: var(--blue); color: #fff;
@@ -285,7 +296,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
       <h1 class="login-title">Welcome back</h1>
-      <p class="login-sub">Sign in manually with your enterprise credentials.</p>
+      <p class="login-sub">Sign in to your enterprise account.</p>
 
       <!-- Error Alert Message -->
       <div id="loginError" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.4; margin-bottom: 20px;">
@@ -296,14 +307,18 @@
       </div>
       
       <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="off">
+        <!-- Hidden decoy inputs to deflect browser autofill -->
+        <input type="text" name="decoy_user" style="position: absolute; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
+        <input type="password" name="decoy_pass" style="position: absolute; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
+
         <div class="input-group">
           <label for="loginEmail">Email Address</label>
-          <input type="email" id="loginEmail" name="email" placeholder="e.g. admin@erp.com" required autocomplete="off">
+          <input type="email" id="loginEmail" name="email" placeholder="e.g. admin@erp.com" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly');">
         </div>
         <div class="input-group">
           <label for="loginPassword">Password</label>
           <div style="position: relative;">
-            <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required autocomplete="current-password" style="padding-right: 44px;">
+            <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" style="padding-right: 44px;">
             <button type="button" id="togglePasswordBtn" onclick="togglePasswordVisibility()" title="Show/Hide password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); padding: 6px; display: flex; align-items: center; justify-content: center;">
               <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -442,7 +457,17 @@
   };
   const VALID_PASSWORD = 'admin@123';
 
+  function clearPassword() {
+    const p = document.getElementById('loginPassword');
+    if (p) p.value = '';
+  }
+
   window.addEventListener('DOMContentLoaded', () => {
+    clearPassword();
+    setTimeout(clearPassword, 50);
+    setTimeout(clearPassword, 200);
+    setTimeout(clearPassword, 500);
+
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('view') === 'portal') {
       document.getElementById('viewLogin').classList.remove('active');
@@ -453,6 +478,8 @@
     document.getElementById('loginEmail')?.addEventListener('input', hideError);
     document.getElementById('loginPassword')?.addEventListener('input', hideError);
   });
+
+  window.addEventListener('pageshow', clearPassword);
 
 
   function togglePasswordVisibility() {
